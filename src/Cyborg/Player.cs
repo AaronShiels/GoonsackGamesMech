@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Cyborg.Core
+namespace Cyborg
 {
-    public class Player
+    public class Player2
     {
         private const float _acceleration = 400f;
         private const float _friction = 0.6f;
@@ -16,7 +16,7 @@ namespace Cyborg.Core
         private Vector2 _position = new Vector2(16, 16);
         private Vector2 _velocity = new Vector2();
 
-        public Player(ContentManager content)
+        public Player2(ContentManager content)
         {
             _texture = content.Load<Texture2D>("player");
         }
