@@ -1,5 +1,5 @@
 namespace Cyborg.Components
 {
-    public interface IPlayerControlled : IMovingBody
+    public interface IPlayerControlled : IMovingBody, IAnimatedSprite
     { }
 }

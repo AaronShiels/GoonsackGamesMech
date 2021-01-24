@@ -1,9 +1,9 @@
-using Cyborg.Core;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Cyborg.Components
 {
     public interface ISprite : IBody
     {
-        string Sprite { get; }
+        Texture2D Sprite { get; }
     }
 }

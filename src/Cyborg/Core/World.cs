@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Entities;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Core
@@ -12,12 +11,13 @@ namespace Cyborg.Core
         private readonly IList<IUpdateSystem> _updateSystems;
         private readonly IList<IDrawSystem> _drawSystems;
 
-        public World(IEnumerable<IUpdateSystem> updateSystems, IEnumerable<IDrawSystem> drawSystems, IServiceProvider serviceProvider)
+        public World(IEnumerable<IUpdateSystem> updateSystems, IEnumerable<IDrawSystem> drawSystems, IEntityManager entityManager)
         {
             _updateSystems = updateSystems.ToList();
             _drawSystems = drawSystems.ToList();
 
-            _ = serviceProvider.GetRequiredService<Player>();
+            var player = entityManager.Create<Player>();
+            player.Position = new Vector2(160, 90);
         }
 
         public void Update(GameTime gameTime)

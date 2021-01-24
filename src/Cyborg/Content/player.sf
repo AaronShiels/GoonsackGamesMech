@@ -1,0 +1,33 @@
+{
+  "textureAtlas": {
+    "texture": "player.png",
+    "regionWidth": 32,
+    "regionHeight": 32
+  },
+  "cycles": {
+    "walk_right": {
+      "frames": [0,1]
+    },
+    "walk_up_right": {
+      "frames": [2,3]
+    },
+    "walk_up": {
+      "frames": [4,5]
+    },
+    "walk_up_left": {
+      "frames": [6,7]
+    },
+    "walk_left": {
+      "frames": [8,9]
+    },
+    "walk_down_left": {
+      "frames": [10,11]
+    },
+    "walk_down": {
+      "frames": [12,13]
+    },
+    "walk_down_right": {
+      "frames": [14,15]
+    }
+  }
+}

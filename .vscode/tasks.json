@@ -13,10 +13,16 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "mgcb-editor: launch",
+            "label": "mgcb-editor",
             "command": "mgcb-editor",
             "type": "process",
             "problemMatcher": "$msCompile"
-        }
+        },
+        {
+            "label": "sprite-factory",
+            "command": "C:/Source/SpriteFactory/SpriteFactory.exe",
+            "type": "shell",
+            "problemMatcher": "$msCompile"
+        },
     ]
 }
