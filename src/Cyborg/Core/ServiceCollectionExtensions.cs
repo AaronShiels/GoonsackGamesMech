@@ -9,10 +9,15 @@ namespace Cyborg.Core
             where TService2 : class
             where TImplementation : class, TService1, TService2
         {
-            return services
-                .AddSingleton<TImplementation>()
-                .AddSingleton<TService1>(svc => svc.GetRequiredService<TImplementation>())
-                .AddSingleton<TService2>(svc => svc.GetRequiredService<TImplementation>());
+            if (typeof(TService1) != typeof(TImplementation))
+                services.AddSingleton<TService1>(svc => svc.GetRequiredService<TImplementation>());
+
+            if (typeof(TService2) != typeof(TImplementation))
+                services.AddSingleton<TService2>(svc => svc.GetRequiredService<TImplementation>());
+
+            services.AddSingleton<TImplementation>();
+
+            return services;
         }
     }
 }

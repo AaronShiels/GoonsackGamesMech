@@ -3,6 +3,7 @@ using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
 using Cyborg.Entities;
+using Cyborg.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,38 +14,29 @@ namespace Cyborg.Systems
         private const float _playerForce = 8000f;
 
         private readonly IEntityManager _entityManager;
+        private readonly IGameInput _gameInput;
 
-        public PlayerSystem(IEntityManager entityManager)
+        public PlayerSystem(IEntityManager entityManager, IGameInput gameInput)
         {
             _entityManager = entityManager;
+            _gameInput = gameInput;
         }
 
         public void Update(GameTime gameTime)
         {
-            var entities = _entityManager.Get<IPlayer>();
-            if (!entities.Any())
+            var entity = _entityManager.Get<IPlayer>().SingleOrDefault();
+            if (entity == null)
                 return;
 
-            var keyboardState = Keyboard.GetState();
-
-            // Calculate direction
-            var horizontalInput = keyboardState.IsKeyDown(Keys.D) ? 1 : keyboardState.IsKeyDown(Keys.A) ? -1 : 0;
-            var verticalInput = keyboardState.IsKeyDown(Keys.S) ? 1 : keyboardState.IsKeyDown(Keys.W) ? -1 : 0;
-            var combinedInput = new Vector2(horizontalInput, verticalInput);
-            var direction = combinedInput != Vector2.Zero ? Vector2.Normalize(combinedInput) : Vector2.Zero;
-
-            foreach (var entity in entities)
+            // Apply force
+            if (_gameInput.Direction != Vector2.Zero)
             {
-                // Apply force
-                if (direction != Vector2.Zero)
-                {
-                    entity.Force = direction * _playerForce;
-                    entity.AnimatedSprite.Play(GetAnimation(direction));
-                }
-                else
-                {
-                    entity.Force = Vector2.Zero;
-                }
+                entity.Force = _gameInput.Direction * _playerForce;
+                entity.AnimatedSprite.Play(GetAnimation(_gameInput.Direction));
+            }
+            else
+            {
+                entity.Force = Vector2.Zero;
             }
         }
 
