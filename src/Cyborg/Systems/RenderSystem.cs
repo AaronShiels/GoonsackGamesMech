@@ -2,7 +2,6 @@ using Cyborg.Components;
 using Cyborg.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended.Sprites;
 
 namespace Cyborg.Systems
 {
@@ -45,7 +44,7 @@ namespace Cyborg.Systems
                 _spriteBatch.Draw(entity.Sprite, entity.Position, null, Color.White, 0f, entity.Size / 2, Vector2.One, SpriteEffects.None, 0f);
 
             foreach (var entity in animatedSpriteEntities)
-                _spriteBatch.Draw(entity.AnimatedSprite, entity.Position);
+                _spriteBatch.Draw(entity.AnimatedSprite.Texture, entity.Position, entity.AnimatedSprite.Frame, Color.White, 0f, entity.Size / 2, Vector2.One, SpriteEffects.None, 0f);
 
             _spriteBatch.End();
         }
