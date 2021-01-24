@@ -1,6 +1,7 @@
 ﻿using System;
 using Cyborg.Core;
 using Cyborg.Entities;
+using Cyborg.Input;
 using Cyborg.Systems;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
@@ -79,12 +80,13 @@ namespace Cyborg
             // Core infrastructure
             services.AddSingleton<IWorld, World>();
             services.AddSingleton<IEntityManager, IUpdateSystem, EntityManager>();
+            services.AddSingleton<IGameInput, GameInput, GameInput>();
 
             // Systems
+            services.AddSingleton<IUpdateSystem, GameInputSystem>();
             services.AddSingleton<IUpdateSystem, PlayerSystem>();
             services.AddSingleton<IUpdateSystem, PhysicsSystem>();
-            services.AddSingleton<IUpdateSystem, RenderSystem>();
-            services.AddSingleton<IDrawSystem, RenderSystem>();
+            services.AddSingleton<IUpdateSystem, IDrawSystem, SpriteRenderSystem>();
 
             // Entities
             services.AddSingleton<Player>();
