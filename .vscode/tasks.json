@@ -6,10 +6,16 @@
         {
             "label": "dotnet: build",
             "command": "dotnet",
-            "type": "shell",
+            "type": "process",
             "args": [
                 "build"
             ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "mgcb-editor: launch",
+            "command": "mgcb-editor",
+            "type": "process",
             "problemMatcher": "$msCompile"
         }
     ]
