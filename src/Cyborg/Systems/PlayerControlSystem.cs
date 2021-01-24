@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
@@ -31,12 +32,55 @@ namespace Cyborg.Systems
             var combinedInput = new Vector2(horizontalInput, verticalInput);
             var direction = combinedInput != Vector2.Zero ? Vector2.Normalize(combinedInput) : Vector2.Zero;
 
-            // Apply force
             foreach (var entity in entities)
+            {
+                // Apply force
                 if (direction != Vector2.Zero)
+                {
                     entity.Force = direction * _playerForce;
+                    entity.CurrentAnimation = GetAnimation(direction);
+                }
                 else
+                {
                     entity.Force = Vector2.Zero;
+                }
+
+                // Play animation
+                if (entity.CurrentAnimation != null)
+                    entity.AnimatedSprite.Play(entity.CurrentAnimation);
+            }
+
+        }
+
+        private static string GetAnimation(Vector2 direction)
+        {
+            if (direction.X > 0)
+            {
+                if (direction.Y > 0)
+                    return "walk_down_right";
+                else if (direction.Y < 0)
+                    return "walk_up_right";
+                else
+                    return "walk_right";
+            }
+            else if (direction.X < 0)
+            {
+                if (direction.Y > 0)
+                    return "walk_down_left";
+                else if (direction.Y < 0)
+                    return "walk_up_left";
+                else
+                    return "walk_left";
+            }
+            else
+            {
+                if (direction.Y > 0)
+                    return "walk_down";
+                else if (direction.Y < 0)
+                    return "walk_up";
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(direction));
         }
     }
 }

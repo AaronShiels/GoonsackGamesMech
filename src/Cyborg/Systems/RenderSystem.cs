@@ -1,25 +1,20 @@
-using System.Collections.Generic;
-using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Sprites;
 
 namespace Cyborg.Systems
 {
-    public class RenderSystem : IDrawSystem
+    public class RenderSystem : IUpdateSystem, IDrawSystem
     {
-        private readonly ContentManager _contentManager;
         private readonly SpriteBatch _spriteBatch;
         private readonly GraphicsDevice _graphicsDevice;
         private readonly IEntityManager _entityManager;
-        private readonly IDictionary<string, Texture2D> _textureDictionary = new Dictionary<string, Texture2D>();
         private readonly Matrix _globalTransform;
 
-        public RenderSystem(ContentManager contentManager, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, IEntityManager entityManager)
+        public RenderSystem(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, IEntityManager entityManager)
         {
-            _contentManager = contentManager;
             _spriteBatch = spriteBatch;
             _graphicsDevice = graphicsDevice;
             _entityManager = entityManager;
@@ -27,31 +22,30 @@ namespace Cyborg.Systems
             _globalTransform = ComputeScalingTransform(_graphicsDevice.PresentationParameters.BackBufferWidth, _graphicsDevice.PresentationParameters.BackBufferHeight, Constants.BaseWidth, Constants.BaseHeight);
         }
 
+        public void Update(GameTime gameTime)
+        {
+            var entities = _entityManager.Get<IAnimatedSprite>();
+
+            var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            foreach (var entity in entities)
+                entity.AnimatedSprite.Update(elapsed);
+        }
+
         public void Draw(GameTime gameTime)
         {
             _graphicsDevice.Clear(Color.CornflowerBlue);
 
-            _spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, _globalTransform);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, _globalTransform);
 
-            var entities = _entityManager.Get<ISprite>();
+            var spriteEntities = _entityManager.Get<ISprite>();
+            var animatedSpriteEntities = _entityManager.Get<IAnimatedSprite>();
 
-            foreach (var entity in entities)
-            {
-                if (!_textureDictionary.ContainsKey(entity.Sprite))
-                    _textureDictionary.Add(entity.Sprite, _contentManager.Load<Texture2D>(entity.Sprite));
+            foreach (var entity in spriteEntities)
+                _spriteBatch.Draw(entity.Sprite, entity.Position, null, Color.White, 0f, entity.Size / 2, Vector2.One, SpriteEffects.None, 0f);
 
-                _spriteBatch.Draw(
-                    _textureDictionary[entity.Sprite],
-                    entity.Position,
-                    null,
-                    Color.White,
-                    0f,
-                    entity.Size / 2,
-                    Vector2.One,
-                    SpriteEffects.None,
-                    0f
-                );
-            }
+            foreach (var entity in animatedSpriteEntities)
+                _spriteBatch.Draw(entity.AnimatedSprite, entity.Position);
 
             _spriteBatch.End();
         }

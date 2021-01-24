@@ -14,14 +14,5 @@ namespace Cyborg.Core
                 .AddSingleton<TService1>(svc => svc.GetRequiredService<TImplementation>())
                 .AddSingleton<TService2>(svc => svc.GetRequiredService<TImplementation>());
         }
-
-        public static IServiceCollection AddEntity<TEntity>(this IServiceCollection services) where TEntity : class, IEntity, new()
-        {
-            return services.AddTransient(svc =>
-            {
-                var entityManager = svc.GetRequiredService<IEntityManager>();
-                return entityManager.Create<TEntity>();
-            });
-        }
     }
 }

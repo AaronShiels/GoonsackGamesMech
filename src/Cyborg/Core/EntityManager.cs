@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Core
@@ -7,13 +9,18 @@ namespace Cyborg.Core
     public class EntityManager : IEntityManager, IUpdateSystem
     {
         private readonly IList<IEntity> _entities = new List<IEntity>();
+        private readonly IServiceProvider _serviceProvider;
 
-        public TEntity Create<TEntity>() where TEntity : class, IEntity, new()
+        public EntityManager(IServiceProvider serviceProvider)
         {
-            var entity = new TEntity();
-            _entities.Add(entity);
+            _serviceProvider = serviceProvider;
+        }
 
-            return new TEntity();
+        public TEntity Create<TEntity>() where TEntity : class, IEntity
+        {
+            var entity = _serviceProvider.GetRequiredService<TEntity>();
+            _entities.Add(entity);
+            return entity;
         }
 
         public IEnumerable<TEntity> Get<TEntity>() where TEntity : class, IEntity
