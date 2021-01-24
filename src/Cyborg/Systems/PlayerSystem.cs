@@ -2,25 +2,26 @@ using System;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
+using Cyborg.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Cyborg.Systems
 {
-    public class PlayerControlSystem : IUpdateSystem
+    public class PlayerSystem : IUpdateSystem
     {
         private const float _playerForce = 8000f;
 
         private readonly IEntityManager _entityManager;
 
-        public PlayerControlSystem(IEntityManager entityManager)
+        public PlayerSystem(IEntityManager entityManager)
         {
             _entityManager = entityManager;
         }
 
         public void Update(GameTime gameTime)
         {
-            var entities = _entityManager.Get<IPlayerControlled>();
+            var entities = _entityManager.Get<IPlayer>();
             if (!entities.Any())
                 return;
 
@@ -38,18 +39,13 @@ namespace Cyborg.Systems
                 if (direction != Vector2.Zero)
                 {
                     entity.Force = direction * _playerForce;
-                    entity.CurrentAnimation = GetAnimation(direction);
+                    entity.AnimatedSprite.Play(GetAnimation(direction));
                 }
                 else
                 {
                     entity.Force = Vector2.Zero;
                 }
-
-                // Play animation
-                if (entity.CurrentAnimation != null)
-                    entity.AnimatedSprite.Play(entity.CurrentAnimation);
             }
-
         }
 
         private static string GetAnimation(Vector2 direction)
@@ -57,27 +53,27 @@ namespace Cyborg.Systems
             if (direction.X > 0)
             {
                 if (direction.Y > 0)
-                    return "walk_down_right";
+                    return Player.AnimationWalkDownRight;
                 else if (direction.Y < 0)
-                    return "walk_up_right";
+                    return Player.AnimationWalkUpRight;
                 else
-                    return "walk_right";
+                    return Player.AnimationWalkRight;
             }
             else if (direction.X < 0)
             {
                 if (direction.Y > 0)
-                    return "walk_down_left";
+                    return Player.AnimationWalkDownLeft;
                 else if (direction.Y < 0)
-                    return "walk_up_left";
+                    return Player.AnimationWalkUpLeft;
                 else
-                    return "walk_left";
+                    return Player.AnimationWalkLeft;
             }
             else
             {
                 if (direction.Y > 0)
-                    return "walk_down";
+                    return Player.AnimationWalkDown;
                 else if (direction.Y < 0)
-                    return "walk_up";
+                    return Player.AnimationWalkUp;
             }
 
             throw new ArgumentOutOfRangeException(nameof(direction));

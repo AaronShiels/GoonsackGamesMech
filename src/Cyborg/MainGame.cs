@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input;
-using MonoGame.Extended.Serialization;
 
 namespace Cyborg
 {
@@ -76,14 +75,13 @@ namespace Cyborg
             services.AddSingleton(_ => GraphicsDevice);
             services.AddSingleton(_ => Content);
             services.AddSingleton<SpriteBatch>();
-            services.AddSingleton<JsonContentLoader>();
 
             // Core infrastructure
             services.AddSingleton<IWorld, World>();
             services.AddSingleton<IEntityManager, IUpdateSystem, EntityManager>();
 
             // Systems
-            services.AddSingleton<IUpdateSystem, PlayerControlSystem>();
+            services.AddSingleton<IUpdateSystem, PlayerSystem>();
             services.AddSingleton<IUpdateSystem, PhysicsSystem>();
             services.AddSingleton<IUpdateSystem, RenderSystem>();
             services.AddSingleton<IDrawSystem, RenderSystem>();
