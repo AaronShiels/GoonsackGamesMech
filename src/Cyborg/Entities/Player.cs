@@ -20,7 +20,7 @@ namespace Cyborg.Entities
         public Vector2 Force { get; set; } = new Vector2(0, 0);
         public Vector2 Velocity { get; set; } = new Vector2(0, 0);
         public Vector2 Position { get; set; } = new Vector2(0, 0);
-        public Vector2 Size { get; set; } = new Vector2(32, 32);
+        public Vector2 Size { get; set; } = new Vector2(16, 16);
         public AnimatedSprite AnimatedSprite => _animatedSprite;
         public bool Destroyed { get; set; }
 
@@ -36,18 +36,19 @@ namespace Cyborg.Entities
 
         private static AnimatedSprite CreateAnimatedSprite(ContentManager contentManager)
         {
+            var texture = contentManager.Load<Texture2D>("player");
             var animationDefinitions = new Dictionary<string, AnimationDefinition>
             {
-                { AnimationWalkRight,  new AnimationDefinition(32, 32, 0, 2, 12) },
-                { AnimationWalkUpRight,  new AnimationDefinition(32, 32, 1, 2, 12) },
-                { AnimationWalkUp,  new AnimationDefinition(32, 32, 2, 2, 12) },
-                { AnimationWalkUpLeft,  new AnimationDefinition(32, 32, 3, 2, 12) },
-                { AnimationWalkLeft,  new AnimationDefinition(32, 32, 4, 2, 12) },
-                { AnimationWalkDownLeft,  new AnimationDefinition(32, 32, 5, 2, 12) },
-                { AnimationWalkDown,  new AnimationDefinition(32, 32, 6, 2, 12) },
-                { AnimationWalkDownRight,  new AnimationDefinition(32, 32, 7, 2, 12) }
+                { AnimationWalkRight,  new AnimationDefinition(16, 16, 0, 2, 12) },
+                { AnimationWalkUpRight,  new AnimationDefinition(16, 16, 1, 2, 12) },
+                { AnimationWalkUp,  new AnimationDefinition(16, 16, 2, 2, 12) },
+                { AnimationWalkUpLeft,  new AnimationDefinition(16, 16, 3, 2, 12) },
+                { AnimationWalkLeft,  new AnimationDefinition(16, 16, 4, 2, 12) },
+                { AnimationWalkDownLeft,  new AnimationDefinition(16, 16, 5, 2, 12) },
+                { AnimationWalkDown,  new AnimationDefinition(16, 16, 6, 2, 12) },
+                { AnimationWalkDownRight,  new AnimationDefinition(16, 16, 7, 2, 12) }
             };
-            return new AnimatedSprite(contentManager.Load<Texture2D>("player"), animationDefinitions);
+            return new AnimatedSprite(texture, animationDefinitions);
         }
     }
 }

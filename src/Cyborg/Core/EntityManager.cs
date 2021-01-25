@@ -19,6 +19,9 @@ namespace Cyborg.Core
         public TEntity Create<TEntity>() where TEntity : class, IEntity
         {
             var entity = _serviceProvider.GetRequiredService<TEntity>();
+            if (_entities.Contains(entity))
+                throw new InvalidOperationException($"Entity {typeof(TEntity).Name}");
+
             _entities.Add(entity);
             return entity;
         }

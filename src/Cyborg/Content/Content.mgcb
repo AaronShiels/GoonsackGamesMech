@@ -10,6 +10,7 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:..\..\Cyborg.ContentPipeline\bin\Debug\netstandard2.0\Cyborg.ContentPipeline.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -19,6 +20,23 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:debug_font.spritefont
+
+#begin demo_map.tmx
+/importer:MapImporter
+/processor:MapProcessor
+/build:demo_map.tmx
+
+#begin demo_tileset_texture.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:demo_tileset_texture.png
 
 #begin player.png
 /importer:TextureImporter

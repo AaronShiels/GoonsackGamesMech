@@ -21,8 +21,14 @@
         {
             "label": "sprite-factory",
             "command": "C:/Source/SpriteFactory/SpriteFactory.exe",
-            "type": "shell",
+            "type": "process",
             "problemMatcher": "$msCompile"
         },
+        {
+            "label": "tiled",
+            "command": "C:/Program Files/Tiled/Tiled.exe",
+            "type": "process",
+            "problemMatcher": "$msCompile"
+        }
     ]
 }

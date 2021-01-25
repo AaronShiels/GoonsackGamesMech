@@ -9,16 +9,15 @@ namespace Cyborg.Systems
 {
     public class PhysicsSystem : IUpdateSystem
     {
+        // https://www.omnicalculator.com/physics/free-fall-air-resistance#air-resistance-formula
         private const float _dragCoefficient = 0.2f;
         private const float _stoppingThreshold = 10f;
 
         private readonly IEntityManager _entityManager;
-        private readonly GraphicsDevice _graphicsDevice;
 
-        public PhysicsSystem(IEntityManager entityManager, GraphicsDevice graphicsDevice)
+        public PhysicsSystem(IEntityManager entityManager)
         {
             _entityManager = entityManager;
-            _graphicsDevice = graphicsDevice;
         }
 
         public void Update(GameTime gameTime)

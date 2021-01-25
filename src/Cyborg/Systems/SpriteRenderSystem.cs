@@ -37,26 +37,49 @@ namespace Cyborg.Systems
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, _globalTransform);
 
+            DrawMap();
             DrawStatic();
             DrawAnimated();
 
             _spriteBatch.End();
         }
 
+        private void DrawMap()
+        {
+            var spriteMaps = _entityManager.Get<ISpriteMap>();
+
+            foreach (var spriteMap in spriteMaps)
+                foreach (var layer in spriteMap.SpriteMap.Definition.Layers)
+                    for (var x = 0; x < layer.Width; x++)
+                        for (var y = 0; y < layer.Height; y++)
+                        {
+                            var textureIndex = layer.Values[x, y] - 1;
+                            var textureOffsetX = textureIndex % spriteMap.SpriteMap.Definition.TileSet.Columns * spriteMap.SpriteMap.Definition.TileWidth;
+                            var textureOffsetY = textureIndex / spriteMap.SpriteMap.Definition.TileSet.Columns * spriteMap.SpriteMap.Definition.TileHeight;
+                            var textureFrame = new Rectangle(textureOffsetX, textureOffsetY, spriteMap.SpriteMap.Definition.TileWidth, spriteMap.SpriteMap.Definition.TileHeight);
+
+                            var tileOffsetX = spriteMap.Position.X + x * spriteMap.SpriteMap.Definition.TileWidth;
+                            var tileOffsetY = spriteMap.Position.Y + y * spriteMap.SpriteMap.Definition.TileHeight;
+                            var tilePosition = new Vector2(tileOffsetX, tileOffsetY);
+
+                            _spriteBatch.Draw(spriteMap.SpriteMap.Texture, tilePosition, textureFrame, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+                        }
+        }
+
         private void DrawStatic()
         {
-            var entities = _entityManager.Get<ISprite>();
+            var staticSprites = _entityManager.Get<IStaticSprite>();
 
-            foreach (var entity in entities)
-                _spriteBatch.Draw(entity.Sprite, entity.Position, null, Color.White, 0f, entity.Size / 2, Vector2.One, SpriteEffects.None, 0f);
+            foreach (var staticSprite in staticSprites)
+                _spriteBatch.Draw(staticSprite.StaticSprite.Texture, staticSprite.Position, null, Color.White, 0f, staticSprite.Size / 2, Vector2.One, SpriteEffects.None, 0f);
         }
 
         private void DrawAnimated()
         {
-            var entities = _entityManager.Get<IAnimatedSprite>();
+            var animatedSprites = _entityManager.Get<IAnimatedSprite>();
 
-            foreach (var entity in entities)
-                _spriteBatch.Draw(entity.AnimatedSprite.Texture, entity.Position, entity.AnimatedSprite.Frame, Color.White, 0f, entity.Size / 2, Vector2.One, SpriteEffects.None, 0f);
+            foreach (var animatedSprite in animatedSprites)
+                _spriteBatch.Draw(animatedSprite.AnimatedSprite.Texture, animatedSprite.Position, animatedSprite.AnimatedSprite.Frame, Color.White, 0f, animatedSprite.Size / 2, Vector2.One, SpriteEffects.None, 0f);
         }
 
         private static Matrix ComputeScalingTransform(int screenX, int screenY, int baseX, int baseY) => Matrix.CreateScale(new Vector3(screenX / baseX, screenY / baseY, 1));

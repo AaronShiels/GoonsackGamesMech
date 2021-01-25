@@ -18,6 +18,11 @@ namespace Cyborg.Core
 
             var player = entityManager.Create<Player>();
             player.Position = new Vector2(160, 90);
+
+            var area = entityManager.Create<Area>();
+            area.Position = new Vector2(0, 0);
+
+            _ = entityManager.Create<GameController>();
         }
 
         public void Update(GameTime gameTime)
