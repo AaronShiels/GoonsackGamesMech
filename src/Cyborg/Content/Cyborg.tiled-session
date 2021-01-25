@@ -1,0 +1,60 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "demo_map.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "demo.tmx": {
+            "scale": 4.902678571428571,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 151.95774904389,
+                "y": 88.11509743216172
+            }
+        },
+        "demo.tmx#demo": {
+            "scaleInDock": 1
+        },
+        "demo.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "demo_map.tmx": {
+            "scale": 5.1478125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 160.45650458325744,
+                "y": 116.94287622169611
+            }
+        },
+        "demo_map.tmx#demo": {
+            "scaleInDock": 1
+        },
+        "demo_map.tmx#demo_tileset": {
+            "scaleInDock": 1
+        }
+    },
+    "map.height": 11,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 20,
+    "openFiles": [
+        "demo_map.tmx"
+    ],
+    "project": "Cyborg.tiled-project",
+    "recentFiles": [
+        "demo_map.tmx",
+        "demo.tmx",
+        "demo.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

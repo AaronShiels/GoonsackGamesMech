@@ -1,14 +1,12 @@
 ﻿using System;
 using Cyborg.Core;
 using Cyborg.Entities;
-using Cyborg.Input;
 using Cyborg.Systems;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Input;
 
 namespace Cyborg
 {
@@ -31,11 +29,17 @@ namespace Cyborg
             var gameServices = new ServiceCollection();
             ConfigureServices(gameServices);
             _gameServiceProvider = gameServices.BuildServiceProvider();
+
+#if DEBUG
+            Debug.Enabled = true;
+#endif
         }
 
         protected override void LoadContent()
         {
-            _debugFont = _gameServiceProvider.GetRequiredService<ContentManager>().Load<SpriteFont>("debug_font");
+            var contentManager = _gameServiceProvider.GetRequiredService<ContentManager>();
+
+            _debugFont = contentManager.Load<SpriteFont>("debug_font");
             _world = _gameServiceProvider.GetRequiredService<IWorld>();
         }
 
@@ -43,12 +47,9 @@ namespace Cyborg
         {
             Debug.Clear();
 
-            var keyboard = KeyboardExtended.GetState();
+            var keyboard = Keyboard.GetState();
             if (keyboard.IsKeyDown(Keys.Escape))
                 Exit();
-
-            if (keyboard.WasKeyJustUp(Keys.F1))
-                Debug.Toggle();
 
             _world.Update(gameTime);
 
@@ -80,16 +81,17 @@ namespace Cyborg
             // Core infrastructure
             services.AddSingleton<IWorld, World>();
             services.AddSingleton<IEntityManager, IUpdateSystem, EntityManager>();
-            services.AddSingleton<IGameInput, GameInput, GameInput>();
 
             // Systems
-            services.AddSingleton<IUpdateSystem, GameInputSystem>();
+            services.AddSingleton<IUpdateSystem, GameControllerSystem>();
             services.AddSingleton<IUpdateSystem, PlayerSystem>();
             services.AddSingleton<IUpdateSystem, PhysicsSystem>();
             services.AddSingleton<IUpdateSystem, IDrawSystem, SpriteRenderSystem>();
 
             // Entities
+            services.AddSingleton<GameController>();
             services.AddSingleton<Player>();
+            services.AddTransient<Area>();
         }
     }
 }

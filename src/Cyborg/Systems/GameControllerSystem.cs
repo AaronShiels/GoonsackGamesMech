@@ -1,21 +1,26 @@
+using System.Linq;
 using Cyborg.Core;
-using Cyborg.Input;
+using Cyborg.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Cyborg.Systems
 {
-    public class GameInputSystem : IUpdateSystem
+    public class GameControllerSystem : IUpdateSystem
     {
-        private readonly GameInput _gameInput;
+        private readonly IEntityManager _entityManager;
 
-        public GameInputSystem(GameInput gameInput)
+        public GameControllerSystem(IEntityManager entityManager)
         {
-            _gameInput = gameInput;
+            _entityManager = entityManager;
         }
 
         public void Update(GameTime gameTime)
         {
+            var gameController = _entityManager.Get<GameController>().SingleOrDefault();
+            if (gameController == null)
+                return;
+
             var keyboardState = Keyboard.GetState();
 
             // Calculate direction
@@ -24,7 +29,7 @@ namespace Cyborg.Systems
             var combinedInput = new Vector2(horizontalInput, verticalInput);
             var direction = combinedInput != Vector2.Zero ? Vector2.Normalize(combinedInput) : Vector2.Zero;
 
-            _gameInput.Direction = direction;
+            gameController.Direction = direction;
         }
     }
 }
