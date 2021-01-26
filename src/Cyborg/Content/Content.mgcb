@@ -22,8 +22,8 @@
 /build:debug_font.spritefont
 
 #begin demo_map.tmx
-/importer:MapImporter
-/processor:MapProcessor
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
 /build:demo_map.tmx
 
 #begin demo_tileset_texture.png
@@ -38,7 +38,7 @@
 /processorParam:TextureFormat=Color
 /build:demo_tileset_texture.png
 
-#begin player.png
+#begin player_spritesheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -48,5 +48,10 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:player.png
+/build:player_spritesheet.png
+
+#begin player_animations.sf
+/importer:SpriteFactoryImporter
+/processor:SpriteFactoryProcessor
+/build:player_animations.sf
 

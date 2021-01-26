@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace Cyborg.ContentPipeline.Tiled
 {
     [XmlRoot("map")]
-    public class MapXmlRoot
+    public class TiledMapXmlRoot
     {
         [XmlAttribute("renderorder")]
         public string RenderOrder { get; set; }

@@ -19,11 +19,7 @@ namespace Cyborg
 
         public MainGame()
         {
-            _ = new GraphicsDeviceManager(this)
-            {
-                PreferredBackBufferWidth = Constants.BaseWidth * Constants.ScaleFactor,
-                PreferredBackBufferHeight = Constants.BaseHeight * Constants.ScaleFactor
-            };
+            _ = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
             var gameServices = new ServiceCollection();
