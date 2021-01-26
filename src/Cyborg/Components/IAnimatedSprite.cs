@@ -1,9 +1,9 @@
-using Cyborg.Sprites;
-
 namespace Cyborg.Components
 {
     public interface IAnimatedSprite : IBody
     {
-        AnimatedSprite AnimatedSprite { get; }
+        string AnimationSet { get; }
+        string Animation { get; set; }
+        float AnimationElapsed { get; set; }
     }
 }

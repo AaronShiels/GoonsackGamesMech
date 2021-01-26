@@ -29,7 +29,14 @@ namespace Cyborg.Systems
             if (gameController.Direction != Vector2.Zero)
             {
                 player.Force = gameController.Direction * _playerForce;
-                player.AnimatedSprite.Play(GetAnimation(gameController.Direction));
+
+                // Animate
+                var animation = GetAnimation(gameController.Direction);
+                if (animation != player.Animation)
+                {
+                    player.Animation = animation;
+                    player.AnimationElapsed = 0f;
+                }
             }
             else
             {

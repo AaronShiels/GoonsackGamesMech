@@ -3,10 +3,10 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 
 namespace Cyborg.ContentPipeline.Tiled
 {
-    [ContentProcessor(DisplayName = "TMX Processor")]
-    public class MapProcessor : ContentProcessor<MapXmlRoot, MapDefinition>
+    [ContentProcessor(DisplayName = "Tiled Map Processor")]
+    public class TiledMapProcessor : ContentProcessor<TiledMapXmlRoot, SpriteMap>
     {
-        public override MapDefinition Process(MapXmlRoot input, ContentProcessorContext context)
+        public override SpriteMap Process(TiledMapXmlRoot input, ContentProcessorContext context)
         {
             var layers = input.Layers
                 .Select(l =>
@@ -24,7 +24,7 @@ namespace Cyborg.ContentPipeline.Tiled
                         }
                     }
 
-                    return new MapDefinition.LayerDefinition
+                    return new SpriteMap.LayerDefinition
                     {
                         Name = l.Name,
                         Width = l.Width,
@@ -34,14 +34,14 @@ namespace Cyborg.ContentPipeline.Tiled
                 })
                 .ToList();
 
-            var tileSet = new MapDefinition.TileSetDefinition
+            var tileSet = new SpriteMap.TileSetDefinition
             {
                 TileCount = input.TileSet.TileCount,
                 Columns = input.TileSet.Columns,
                 Resource = input.TileSet.Image.Source.Split('.').First()
             };
 
-            return new MapDefinition
+            return new SpriteMap
             {
                 TileWidth = input.TileWidth,
                 TileHeight = input.TileHeight,

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Cyborg.ContentPipeline.Tiled
+namespace Cyborg.ContentPipeline
 {
     [Serializable]
-    public class MapDefinition
+    public class SpriteMap
     {
         public short TileWidth { get; set; }
         public short TileHeight { get; set; }
