@@ -1,6 +1,8 @@
+using Cyborg.Core;
+
 namespace Cyborg.Components
 {
-    public interface IAnimatedSprite : IBody
+    public interface IAnimatedSprite : IEntity
     {
         string AnimationSet { get; }
         string Animation { get; set; }

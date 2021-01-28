@@ -79,13 +79,13 @@ namespace Cyborg
             services.AddSingleton<IEntityManager, IUpdateSystem, EntityManager>();
 
             // Systems
-            services.AddSingleton<IUpdateSystem, GameControllerSystem>();
+            services.AddSingleton<IUpdateSystem, ControllerSystem>();
             services.AddSingleton<IUpdateSystem, PlayerSystem>();
-            services.AddSingleton<IUpdateSystem, PhysicsSystem>();
+            services.AddSingleton<IUpdateSystem, KineticsSystem>();
+            services.AddSingleton<IUpdateSystem, CollisionSystem>();
             services.AddSingleton<IUpdateSystem, IDrawSystem, SpriteRenderSystem>();
 
             // Entities
-            services.AddSingleton<GameController>();
             services.AddSingleton<Player>();
             services.AddTransient<Area>();
         }

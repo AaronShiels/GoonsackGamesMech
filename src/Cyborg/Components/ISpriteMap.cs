@@ -1,6 +1,8 @@
+using Cyborg.Core;
+
 namespace Cyborg.Components
 {
-    public interface ISpriteMap : IBody
+    public interface ISpriteMap : IEntity
     {
         string SpriteMap { get; }
     }

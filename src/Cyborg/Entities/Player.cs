@@ -5,11 +5,12 @@ namespace Cyborg.Entities
 {
     public class Player : IPlayer
     {
+        public Vector2 Direction { get; set; } = new Vector2(1, 0);
         public float Mass => 1;
         public Vector2 Force { get; set; } = new Vector2(0, 0);
         public Vector2 Velocity { get; set; } = new Vector2(0, 0);
         public Vector2 Position { get; set; } = new Vector2(0, 0);
-        public Vector2 Size { get; set; } = new Vector2(16, 16);
+        public Point Size { get; set; } = new Point(16, 16);
         public bool Destroyed { get; set; }
         public string AnimationSet => "player_animations";
         public string Animation { get; set; } = AnimationWalkRight;

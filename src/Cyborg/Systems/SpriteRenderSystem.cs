@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using Cyborg.Components;
 using Cyborg.ContentPipeline;
 using Cyborg.Core;
@@ -16,10 +16,6 @@ namespace Cyborg.Systems
         private readonly SpriteBatch _spriteBatch;
         private readonly IEntityManager _entityManager;
         private readonly Matrix _globalTransform;
-
-        private readonly IDictionary<string, Texture2D> _sprites = new Dictionary<string, Texture2D>();
-        private readonly IDictionary<string, AnimationSet> _animationSets = new Dictionary<string, AnimationSet>();
-        private readonly IDictionary<string, SpriteMap> _spriteMaps = new Dictionary<string, SpriteMap>();
 
         public SpriteRenderSystem(ContentManager contentManager, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, IEntityManager entityManager)
         {
@@ -57,14 +53,26 @@ namespace Cyborg.Systems
 
             foreach (var entity in entities)
             {
-                var spriteMap = GetSpriteMap(entity.SpriteMap);
-                var spriteSheet = GetSprite(spriteMap.SpriteSheet);
-                for (var x = 0; x < spriteMap.Width; x++)
-                    for (var y = 0; y < spriteMap.Height; y++)
+                var spriteMap = _contentManager.Load<SpriteMap>(entity.SpriteMap);
+                var spriteSheet = _contentManager.Load<Texture2D>(spriteMap.SpriteSheet);
+
+                var backgroundMapWidth = spriteMap.BackgroundMap.GetLength(0);
+                var backgroundMapHeight = spriteMap.BackgroundMap.GetLength(1);
+                var collisionMapWidth = spriteMap.CollisionMap.GetLength(0);
+                var collisionMapHeight = spriteMap.CollisionMap.GetLength(1);
+
+                var width = Math.Max(backgroundMapWidth, collisionMapWidth);
+                var height = Math.Max(backgroundMapHeight, collisionMapHeight);
+
+                for (var x = 0; x < width; x++)
+                    for (var y = 0; y < height; y++)
                     {
-                        var tileTextureIndex = spriteMap.BackgroundMap[x, y] - 1;
-                        var textureOffsetX = tileTextureIndex * spriteMap.TileWidth % spriteSheet.Width;
-                        var textureOffsetY = tileTextureIndex * spriteMap.TileWidth / spriteSheet.Width * spriteMap.TileHeight;
+                        // Use collision texture or fallback to background if 0
+                        var tileTextureIndex = x < collisionMapWidth && y < collisionMapHeight && spriteMap.CollisionMap[x, y] > 0
+                            ? spriteMap.CollisionMap[x, y]
+                            : spriteMap.BackgroundMap[x, y];
+                        var textureOffsetX = (tileTextureIndex - 1) * spriteMap.TileWidth % spriteSheet.Width;
+                        var textureOffsetY = (tileTextureIndex - 1) * spriteMap.TileWidth / spriteSheet.Width * spriteMap.TileHeight;
                         var textureFrame = new Rectangle(textureOffsetX, textureOffsetY, spriteMap.TileWidth, spriteMap.TileHeight);
 
                         var tileOffsetX = entity.Position.X + x * spriteMap.TileWidth;
@@ -82,7 +90,7 @@ namespace Cyborg.Systems
 
             foreach (var entity in entities)
             {
-                var sprite = GetSprite(entity.Sprite);
+                var sprite = _contentManager.Load<Texture2D>(entity.Sprite);
                 var origin = new Vector2(sprite.Width, sprite.Height) / 2;
 
                 _spriteBatch.Draw(sprite, entity.Position, null, Color.White, 0f, origin, Vector2.One, SpriteEffects.None, 0f);
@@ -95,8 +103,8 @@ namespace Cyborg.Systems
 
             foreach (var entity in entities)
             {
-                var animationSet = GetAnimationSet(entity.AnimationSet);
-                var spriteSheet = GetSprite(animationSet.SpriteSheet);
+                var animationSet = _contentManager.Load<AnimationSet>(entity.AnimationSet);
+                var spriteSheet = _contentManager.Load<Texture2D>(animationSet.SpriteSheet);
                 var animation = animationSet.Animations[entity.Animation];
                 var currentAnimationFrameIndex = (int)(entity.AnimationElapsed * _frameRate) % animation.Length;
                 var spriteSheetFrameIndex = animation[currentAnimationFrameIndex];
@@ -107,30 +115,6 @@ namespace Cyborg.Systems
 
                 _spriteBatch.Draw(spriteSheet, entity.Position, rectangle, Color.White, 0f, origin, Vector2.One, SpriteEffects.None, 0f);
             }
-        }
-
-        private Texture2D GetSprite(string name)
-        {
-            if (!_sprites.ContainsKey(name))
-                _sprites.Add(name, _contentManager.Load<Texture2D>(name));
-
-            return _sprites[name];
-        }
-
-        private AnimationSet GetAnimationSet(string name)
-        {
-            if (!_animationSets.ContainsKey(name))
-                _animationSets.Add(name, _contentManager.Load<AnimationSet>(name));
-
-            return _animationSets[name];
-        }
-
-        private SpriteMap GetSpriteMap(string name)
-        {
-            if (!_spriteMaps.ContainsKey(name))
-                _spriteMaps.Add(name, _contentManager.Load<SpriteMap>(name));
-
-            return _spriteMaps[name];
         }
 
         private static Matrix ComputeScalingTransform(float screenX, float screenY, float baseX, float baseY) => Matrix.CreateScale(new Vector3(screenX / baseX, screenY / baseY, 1));
