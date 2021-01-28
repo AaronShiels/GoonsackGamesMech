@@ -10,13 +10,13 @@ namespace Cyborg.ContentPipeline.SpriteFactory
         public class TextureAtlasJson
         {
             public string Texture { get; set; }
-            public int RegionWidth { get; set; }
-            public int RegionHeight { get; set; }
+            public short RegionWidth { get; set; }
+            public short RegionHeight { get; set; }
         }
 
         public class CycleJson
         {
-            public int[] Frames { get; set; }
+            public short[] Frames { get; set; }
         }
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Cyborg.Components;
 using Cyborg.ContentPipeline;
 using Cyborg.Core;
@@ -15,21 +14,20 @@ namespace Cyborg.Systems
 
         private readonly ContentManager _contentManager;
         private readonly SpriteBatch _spriteBatch;
-        private readonly GraphicsDevice _graphicsDevice;
         private readonly IEntityManager _entityManager;
         private readonly Matrix _globalTransform;
 
         private readonly IDictionary<string, Texture2D> _sprites = new Dictionary<string, Texture2D>();
-        private readonly IDictionary<string, AnimationSet> _animationSet = new Dictionary<string, AnimationSet>();
+        private readonly IDictionary<string, AnimationSet> _animationSets = new Dictionary<string, AnimationSet>();
+        private readonly IDictionary<string, SpriteMap> _spriteMaps = new Dictionary<string, SpriteMap>();
 
         public SpriteRenderSystem(ContentManager contentManager, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, IEntityManager entityManager)
         {
             _contentManager = contentManager;
             _spriteBatch = spriteBatch;
-            _graphicsDevice = graphicsDevice;
             _entityManager = entityManager;
 
-            _globalTransform = ComputeScalingTransform(_graphicsDevice.PresentationParameters.BackBufferWidth, _graphicsDevice.PresentationParameters.BackBufferHeight, Constants.BaseWidth, Constants.BaseHeight);
+            _globalTransform = ComputeScalingTransform(graphicsDevice.PresentationParameters.BackBufferWidth, graphicsDevice.PresentationParameters.BackBufferHeight, Constants.BaseWidth, Constants.BaseHeight);
         }
 
         public void Update(GameTime gameTime)
@@ -44,39 +42,38 @@ namespace Cyborg.Systems
 
         public void Draw(GameTime gameTime)
         {
-            var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            _graphicsDevice.Clear(Color.CornflowerBlue);
-
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, _globalTransform);
 
             DrawMap();
             DrawStatic();
-            DrawAnimated(elapsed);
+            DrawAnimated();
 
             _spriteBatch.End();
         }
 
         private void DrawMap()
         {
-            var spriteMaps = _entityManager.Get<ISpriteMap>();
+            var entities = _entityManager.Get<ISpriteMap>();
 
-            foreach (var spriteMap in spriteMaps)
-                foreach (var layer in spriteMap.SpriteMapContainer.Definition.Layers)
-                    for (var x = 0; x < layer.Width; x++)
-                        for (var y = 0; y < layer.Height; y++)
-                        {
-                            var textureIndex = layer.Values[x, y] - 1;
-                            var textureOffsetX = textureIndex % spriteMap.SpriteMapContainer.Definition.TileSet.Columns * spriteMap.SpriteMapContainer.Definition.TileWidth;
-                            var textureOffsetY = textureIndex / spriteMap.SpriteMapContainer.Definition.TileSet.Columns * spriteMap.SpriteMapContainer.Definition.TileHeight;
-                            var textureFrame = new Rectangle(textureOffsetX, textureOffsetY, spriteMap.SpriteMapContainer.Definition.TileWidth, spriteMap.SpriteMapContainer.Definition.TileHeight);
+            foreach (var entity in entities)
+            {
+                var spriteMap = GetSpriteMap(entity.SpriteMap);
+                var spriteSheet = GetSprite(spriteMap.SpriteSheet);
+                for (var x = 0; x < spriteMap.Width; x++)
+                    for (var y = 0; y < spriteMap.Height; y++)
+                    {
+                        var tileTextureIndex = spriteMap.BackgroundMap[x, y] - 1;
+                        var textureOffsetX = tileTextureIndex * spriteMap.TileWidth % spriteSheet.Width;
+                        var textureOffsetY = tileTextureIndex * spriteMap.TileWidth / spriteSheet.Width * spriteMap.TileHeight;
+                        var textureFrame = new Rectangle(textureOffsetX, textureOffsetY, spriteMap.TileWidth, spriteMap.TileHeight);
 
-                            var tileOffsetX = spriteMap.Position.X + x * spriteMap.SpriteMapContainer.Definition.TileWidth;
-                            var tileOffsetY = spriteMap.Position.Y + y * spriteMap.SpriteMapContainer.Definition.TileHeight;
-                            var tilePosition = new Vector2(tileOffsetX, tileOffsetY);
+                        var tileOffsetX = entity.Position.X + x * spriteMap.TileWidth;
+                        var tileOffsetY = entity.Position.Y + y * spriteMap.TileHeight;
+                        var tilePosition = new Vector2(tileOffsetX, tileOffsetY);
 
-                            _spriteBatch.Draw(spriteMap.SpriteMapContainer.Texture, tilePosition, textureFrame, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
-                        }
+                        _spriteBatch.Draw(spriteSheet, tilePosition, textureFrame, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+                    }
+            }
         }
 
         private void DrawStatic()
@@ -92,15 +89,14 @@ namespace Cyborg.Systems
             }
         }
 
-        private void DrawAnimated(float elapsed)
+        private void DrawAnimated()
         {
             var entities = _entityManager.Get<IAnimatedSprite>();
 
             foreach (var entity in entities)
             {
                 var animationSet = GetAnimationSet(entity.AnimationSet);
-                var spriteSheetName = animationSet.SpriteSheet.Split('.').First();
-                var spriteSheet = GetSprite(spriteSheetName);
+                var spriteSheet = GetSprite(animationSet.SpriteSheet);
                 var animation = animationSet.Animations[entity.Animation];
                 var currentAnimationFrameIndex = (int)(entity.AnimationElapsed * _frameRate) % animation.Length;
                 var spriteSheetFrameIndex = animation[currentAnimationFrameIndex];
@@ -123,10 +119,18 @@ namespace Cyborg.Systems
 
         private AnimationSet GetAnimationSet(string name)
         {
-            if (!_animationSet.ContainsKey(name))
-                _animationSet.Add(name, _contentManager.Load<AnimationSet>(name));
+            if (!_animationSets.ContainsKey(name))
+                _animationSets.Add(name, _contentManager.Load<AnimationSet>(name));
 
-            return _animationSet[name];
+            return _animationSets[name];
+        }
+
+        private SpriteMap GetSpriteMap(string name)
+        {
+            if (!_spriteMaps.ContainsKey(name))
+                _spriteMaps.Add(name, _contentManager.Load<SpriteMap>(name));
+
+            return _spriteMaps[name];
         }
 
         private static Matrix ComputeScalingTransform(float screenX, float screenY, float baseX, float baseY) => Matrix.CreateScale(new Vector3(screenX / baseX, screenY / baseY, 1));

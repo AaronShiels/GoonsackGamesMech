@@ -13,7 +13,7 @@ namespace Cyborg.ContentPipeline.SpriteFactory
 
             return new AnimationSet
             {
-                SpriteSheet = input.TextureAtlas.Texture,
+                SpriteSheet = input.TextureAtlas.Texture.Split('.').First(),
                 FrameWidth = input.TextureAtlas.RegionWidth,
                 FrameHeight = input.TextureAtlas.RegionHeight,
                 Animations = animations

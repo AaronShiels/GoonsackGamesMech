@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework.Content.Pipeline;
 
 namespace Cyborg.ContentPipeline.Tiled
@@ -6,9 +7,12 @@ namespace Cyborg.ContentPipeline.Tiled
     [ContentProcessor(DisplayName = "Tiled Map Processor")]
     public class TiledMapProcessor : ContentProcessor<TiledMapXmlRoot, SpriteMap>
     {
+        private const string _backgroundKey = "background";
+
         public override SpriteMap Process(TiledMapXmlRoot input, ContentProcessorContext context)
         {
-            var layers = input.Layers
+            var layers = input
+                .Layers
                 .Select(l =>
                 {
                     var values = new short[l.Width, l.Height];
@@ -24,29 +28,18 @@ namespace Cyborg.ContentPipeline.Tiled
                         }
                     }
 
-                    return new SpriteMap.LayerDefinition
-                    {
-                        Name = l.Name,
-                        Width = l.Width,
-                        Height = l.Height,
-                        Values = values
-                    };
+                    return (l.Name, Values: values);
                 })
-                .ToList();
-
-            var tileSet = new SpriteMap.TileSetDefinition
-            {
-                TileCount = input.TileSet.TileCount,
-                Columns = input.TileSet.Columns,
-                Resource = input.TileSet.Image.Source.Split('.').First()
-            };
+                .ToDictionary(x => x.Name, x => x.Values, StringComparer.OrdinalIgnoreCase);
 
             return new SpriteMap
             {
+                SpriteSheet = input.TileSet.Image.Source.Split('.').First(),
+                Width = input.Width,
+                Height = input.Height,
                 TileWidth = input.TileWidth,
                 TileHeight = input.TileHeight,
-                Layers = layers,
-                TileSet = tileSet
+                BackgroundMap = layers.ContainsKey(_backgroundKey) ? layers[_backgroundKey] : null
             };
         }
     }
