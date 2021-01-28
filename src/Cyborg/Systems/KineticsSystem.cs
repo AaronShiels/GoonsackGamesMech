@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Cyborg.Systems
 {
-    public class PhysicsSystem : IUpdateSystem
+    public class KineticsSystem : IUpdateSystem
     {
         // https://www.omnicalculator.com/physics/free-fall-air-resistance#air-resistance-formula
         private const float _dragCoefficient = 0.2f;
@@ -15,14 +15,14 @@ namespace Cyborg.Systems
 
         private readonly IEntityManager _entityManager;
 
-        public PhysicsSystem(IEntityManager entityManager)
+        public KineticsSystem(IEntityManager entityManager)
         {
             _entityManager = entityManager;
         }
 
         public void Update(GameTime gameTime)
         {
-            var entities = _entityManager.Get<IMovingBody>();
+            var entities = _entityManager.Get<IKinetic>();
             if (!entities.Any())
                 return;
 
@@ -68,14 +68,14 @@ namespace Cyborg.Systems
                     Debug.Add(entity, "Position", $"{entity.Position.X:F}, {entity.Position.Y:F}");
 
                 // Apply collision
-                var horizontalCollision = entity.Position.X - entity.Size.X / 2 < 0 || entity.Position.X + entity.Size.X / 2 > Constants.BaseWidth;
-                var verticalCollision = entity.Position.Y - entity.Size.Y / 2 < 0 || entity.Position.Y + entity.Size.Y / 2 > Constants.BaseHeight;
+                // var horizontalCollision = entity.Position.X - entity.Size.X / 2 < 0 || entity.Position.X + entity.Size.X / 2 > Constants.BaseWidth;
+                // var verticalCollision = entity.Position.Y - entity.Size.Y / 2 < 0 || entity.Position.Y + entity.Size.Y / 2 > Constants.BaseHeight;
 
-                if (horizontalCollision || verticalCollision)
-                {
-                    entity.Position = new Vector2(MathHelper.Clamp(entity.Position.X, entity.Size.X / 2, Constants.BaseWidth - entity.Size.X / 2), MathHelper.Clamp(entity.Position.Y, entity.Size.Y / 2, Constants.BaseHeight - entity.Size.Y / 2));
-                    entity.Velocity = new Vector2(horizontalCollision ? 0 : entity.Velocity.X, verticalCollision ? 0 : entity.Velocity.Y);
-                }
+                // if (horizontalCollision || verticalCollision)
+                // {
+                //     entity.Position = new Vector2(MathHelper.Clamp(entity.Position.X, entity.Size.X / 2, Constants.BaseWidth - entity.Size.X / 2), MathHelper.Clamp(entity.Position.Y, entity.Size.Y / 2, Constants.BaseHeight - entity.Size.Y / 2));
+                //     entity.Velocity = new Vector2(horizontalCollision ? 0 : entity.Velocity.X, verticalCollision ? 0 : entity.Velocity.Y);
+                // }
             }
         }
     }

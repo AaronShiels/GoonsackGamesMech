@@ -1,6 +1,8 @@
+using Cyborg.Core;
+
 namespace Cyborg.Components
 {
-    public interface IStaticSprite : IBody
+    public interface IStaticSprite : IEntity
     {
         string Sprite { get; }
     }

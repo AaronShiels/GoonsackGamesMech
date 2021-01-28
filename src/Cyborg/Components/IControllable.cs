@@ -3,8 +3,8 @@ using Microsoft.Xna.Framework;
 
 namespace Cyborg.Components
 {
-    public interface IGameController : IEntity
+    public interface IControllable : IEntity
     {
-        Vector2 Direction { get; }
+        Vector2 Direction { get; set; }
     }
 }

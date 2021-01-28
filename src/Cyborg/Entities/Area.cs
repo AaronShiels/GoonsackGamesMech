@@ -3,11 +3,11 @@ using Microsoft.Xna.Framework;
 
 namespace Cyborg.Entities
 {
-    public class Area : ISpriteMap
+    public class Area : ISpriteMap, ICollisionMap
     {
         public Vector2 Position { get; set; } = Vector2.Zero;
-        public Vector2 Size { get; set; } = new Vector2(320, 176);
         public string SpriteMap => "demo_map";
+        public string CollisionMap => "demo_map";
         public bool Destroyed { get; set; }
     }
 }

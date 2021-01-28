@@ -21,7 +21,7 @@ namespace Cyborg.Systems
         public void Update(GameTime gameTime)
         {
             var player = _entityManager.Get<IPlayer>().SingleOrDefault();
-            var gameController = _entityManager.Get<IGameController>().SingleOrDefault();
+            var gameController = _entityManager.Get<IControllable>().SingleOrDefault();
             if (player == null || player == null)
                 return;
 

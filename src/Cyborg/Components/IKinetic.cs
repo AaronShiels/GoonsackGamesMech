@@ -1,8 +1,9 @@
+using Cyborg.Core;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Components
 {
-    public interface IMovingBody : IBody
+    public interface IKinetic : IEntity
     {
         float Mass { get; }
         Vector2 Force { get; set; }

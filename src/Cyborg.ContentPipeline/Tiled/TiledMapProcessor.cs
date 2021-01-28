@@ -8,6 +8,7 @@ namespace Cyborg.ContentPipeline.Tiled
     public class TiledMapProcessor : ContentProcessor<TiledMapXmlRoot, SpriteMap>
     {
         private const string _backgroundKey = "background";
+        private const string _collisionKey = "collision";
 
         public override SpriteMap Process(TiledMapXmlRoot input, ContentProcessorContext context)
         {
@@ -35,11 +36,10 @@ namespace Cyborg.ContentPipeline.Tiled
             return new SpriteMap
             {
                 SpriteSheet = input.TileSet.Image.Source.Split('.').First(),
-                Width = input.Width,
-                Height = input.Height,
                 TileWidth = input.TileWidth,
                 TileHeight = input.TileHeight,
-                BackgroundMap = layers.ContainsKey(_backgroundKey) ? layers[_backgroundKey] : null
+                CollisionMap = layers.ContainsKey(_collisionKey) ? layers[_collisionKey] : new short[0, 0],
+                BackgroundMap = layers.ContainsKey(_backgroundKey) ? layers[_backgroundKey] : new short[0, 0],
             };
         }
     }
