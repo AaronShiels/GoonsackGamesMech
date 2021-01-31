@@ -1,89 +1,84 @@
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Cyborg.Components;
-using Cyborg.ContentPipeline;
 using Cyborg.Core;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 
 namespace Cyborg.Systems
 {
     public class CollisionSystem : IUpdateSystem
     {
-        private readonly ContentManager _contentManager;
-        private readonly IEntityManager _entityManager;
-
-        public CollisionSystem(ContentManager contentManager, IEntityManager entityManager)
+        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
         {
-            _contentManager = contentManager;
-            _entityManager = entityManager;
-        }
+            var kineticEntities = entities.OfType<IKinetic>();
+            var staticEntities = entities.OfType<IBody>().Where(e => e is not IKinetic);
 
-        public void Update(GameTime gameTime)
-        {
-            var collidableEntities = _entityManager.Get<ICollidable>();
-            var collisionMapEntities = _entityManager.Get<ICollisionMap>();
-
-            foreach (var collidableEntity in collidableEntities)
-            {
-                var colliding = false;
-
-                var collidableOffsetX = (int)collidableEntity.Position.X;
-                var collidableOffsetY = (int)collidableEntity.Position.Y;
-                var collidableBox = new Rectangle(collidableOffsetX, collidableOffsetY, collidableEntity.Size.X, collidableEntity.Size.Y);
-
-                // Other collidables
-                foreach (var otherEntity in collidableEntities)
+            foreach (var kineticEntity in kineticEntities)
+                foreach (var staticEntity in staticEntities)
                 {
-                    if (collidableEntity == otherEntity)
+                    var kineticBoundingBox = GetBoundingBox(kineticEntity);
+                    var staticBoundingBox = GetBoundingBox(staticEntity);
+                    var penetrationVector = GetPenetrationVector(kineticBoundingBox, staticBoundingBox);
+                    if (penetrationVector == Vector2.Zero)
                         continue;
 
-                    //var intersection = Rectangle.Intersection(collidable.BoundingBox, actor.BoundingBox);
+                    var normalVectors = GetNormalVectors(penetrationVector, kineticEntity.Edges, staticEntity.Edges);
+                    if (!normalVectors.Any())
+                        continue;
+
+                    var smallestNormalVector = normalVectors.OrderBy(v => v.Length()).First();
+                    kineticEntity.Position += smallestNormalVector;
                 }
-
-                // Collision map
-                foreach (var collisionEntity in collisionMapEntities)
-                {
-                    var spriteMap = _contentManager.Load<SpriteMap>(collisionEntity.CollisionMap);
-
-                    var collisionMapWidth = spriteMap.CollisionMap.GetLength(0);
-                    var collisionMapHeight = spriteMap.CollisionMap.GetLength(1);
-
-                    for (var x = 0; x < collisionMapWidth; x++)
-                        for (var y = 0; y < collisionMapHeight; y++)
-                        {
-                            // Collidable if value > 0
-                            if (spriteMap.CollisionMap[x, y] <= 0)
-                                continue;
-
-                            var collisionTileOffsetX = (int)collisionEntity.Position.X + x * spriteMap.TileWidth;
-                            var collisionTileOffsetY = (int)collisionEntity.Position.Y + y * spriteMap.TileHeight;
-                            var collisionTileBox = new Rectangle(collisionTileOffsetX, collisionTileOffsetY, spriteMap.TileWidth, spriteMap.TileHeight);
-
-                            var intersection = Intersection(collidableBox, collisionTileBox);
-                            if (!intersection.IsEmpty && !colliding)
-                                colliding = true;
-                        }
-                }
-
-                if (Debug.Enabled)
-                    Debug.Add(collidableEntity, "Colliding", colliding.ToString());
-            }
         }
 
-        private static Rectangle Intersection(Rectangle first, Rectangle second)
+        private static RectangleF GetBoundingBox(IBody bodyEntity) => new(bodyEntity.Position.X, bodyEntity.Position.Y, bodyEntity.Size.X, bodyEntity.Size.Y);
+
+        // Direction of bounding box A penetrating into bounding box B
+        private static Vector2 GetPenetrationVector(RectangleF boxA, RectangleF boxB)
         {
-            var firstMinimum = first.Location;
-            var firstMaximum = first.Location + first.Size;
-            var secondMinimum = second.Location;
-            var secondMaximum = second.Location + second.Size;
+            var halfWidthA = boxA.Width / 2;
+            var halfHeightA = boxA.Height / 2;
+            var halfWidthB = boxB.Width / 2;
+            var halfHeightB = boxB.Height / 2;
 
-            var minimum = new Point(Math.Max(firstMinimum.X, secondMinimum.X), Math.Max(firstMinimum.Y, secondMinimum.Y));
-            var maximum = new Point(Math.Min(firstMaximum.X, secondMaximum.X), Math.Min(firstMaximum.Y, secondMaximum.Y));
+            var centreA = new Vector2(boxA.Left + halfWidthA, boxA.Top + halfHeightA);
+            var centreB = new Vector2(boxB.Left + halfWidthB, boxB.Top + halfHeightB);
 
-            if ((maximum.X < minimum.X) || (maximum.Y < minimum.Y))
-                return Rectangle.Empty;
-            else
-                return new Rectangle(minimum, maximum - minimum);
+            var distanceX = centreB.X - centreA.X;
+            var distanceY = centreB.Y - centreA.Y;
+            var minDistanceX = halfWidthA + halfWidthB;
+            var minDistanceY = halfHeightB + halfHeightB;
+
+            // If we are not intersecting at all, return (0, 0).
+            if (Math.Abs(distanceX) >= minDistanceX || Math.Abs(distanceY) >= minDistanceY)
+                return Vector2.Zero;
+
+            // Calculate and return intersection depths.
+            var depthX = distanceX > 0
+                ? minDistanceX - distanceX
+                : -minDistanceX - distanceX;
+            var depthY = distanceY > 0
+                ? minDistanceY - distanceY
+                : -minDistanceY - distanceY;
+
+            return new Vector2(depthX, depthY);
+        }
+
+        // Get all normal vectors that can be applied to penetration of A into B, based on edge definitions
+        private static IEnumerable<Vector2> GetNormalVectors(Vector2 penetrationVector, Edge edgesA, Edge edgesB)
+        {
+            var rightPenetration = penetrationVector.X > 0 && edgesA.HasFlag(Edge.Right) && edgesB.HasFlag(Edge.Left);
+            var leftPenetration = penetrationVector.X < 0 && edgesA.HasFlag(Edge.Left) && edgesB.HasFlag(Edge.Right);
+            var bottomPenetration = penetrationVector.Y > 0 && edgesA.HasFlag(Edge.Bottom) && edgesB.HasFlag(Edge.Top);
+            var topPenetration = penetrationVector.Y < 0 && edgesA.HasFlag(Edge.Top) && edgesB.HasFlag(Edge.Bottom);
+
+            if (rightPenetration || leftPenetration)
+                yield return new Vector2(-penetrationVector.X, 0);
+
+            if (bottomPenetration || topPenetration)
+                yield return new Vector2(0, -penetrationVector.Y);
         }
     }
 }

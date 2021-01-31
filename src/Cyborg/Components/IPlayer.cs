@@ -1,5 +1,5 @@
 namespace Cyborg.Components
 {
-    public interface IPlayer : IControllable, IKinetic, ICollidable, IAnimatedSprite
+    public interface IPlayer : IControllable, IKinetic, IAnimated
     { }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
@@ -11,36 +12,28 @@ namespace Cyborg.Systems
     {
         private const float _playerForce = 8000f;
 
-        private readonly IEntityManager _entityManager;
-
-        public PlayerSystem(IEntityManager entityManager)
+        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
         {
-            _entityManager = entityManager;
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            var player = _entityManager.Get<IPlayer>().SingleOrDefault();
-            var gameController = _entityManager.Get<IControllable>().SingleOrDefault();
-            if (player == null || player == null)
+            var entity = entities.OfType<IPlayer>().SingleOrDefault();
+            if (entity == null)
                 return;
 
             // Apply force
-            if (gameController.Direction != Vector2.Zero)
+            if (entity.Direction != Vector2.Zero)
             {
-                player.Force = gameController.Direction * _playerForce;
+                entity.Force = entity.Direction * _playerForce;
 
                 // Animate
-                var animation = GetAnimation(gameController.Direction);
-                if (animation != player.Animation)
+                var animation = GetAnimation(entity.Direction);
+                if (animation != entity.Animation)
                 {
-                    player.Animation = animation;
-                    player.AnimationElapsed = 0f;
+                    entity.Animation = animation;
+                    entity.AnimationElapsed = 0f;
                 }
             }
             else
             {
-                player.Force = Vector2.Zero;
+                entity.Force = Vector2.Zero;
             }
         }
 

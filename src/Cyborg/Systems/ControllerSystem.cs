@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
@@ -8,20 +9,8 @@ namespace Cyborg.Systems
 {
     public class ControllerSystem : IUpdateSystem
     {
-        private readonly IEntityManager _entityManager;
-
-        public ControllerSystem(IEntityManager entityManager)
+        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
         {
-            _entityManager = entityManager;
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            var entities = _entityManager.Get<IControllable>();
-
-            if (!entities.Any())
-                return;
-
             var keyboardState = Keyboard.GetState();
 
             // Calculate direction
@@ -30,7 +19,7 @@ namespace Cyborg.Systems
             var combinedInput = new Vector2(horizontalInput, verticalInput);
             var direction = combinedInput != Vector2.Zero ? Vector2.Normalize(combinedInput) : Vector2.Zero;
 
-            foreach (var entity in entities)
+            foreach (var entity in entities.OfType<IControllable>())
                 entity.Direction = direction;
         }
     }
