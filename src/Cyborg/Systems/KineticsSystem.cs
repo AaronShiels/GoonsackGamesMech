@@ -1,9 +1,8 @@
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Cyborg.Systems
 {
@@ -13,22 +12,11 @@ namespace Cyborg.Systems
         private const float _dragCoefficient = 0.2f;
         private const float _stoppingThreshold = 10f;
 
-        private readonly IEntityManager _entityManager;
-
-        public KineticsSystem(IEntityManager entityManager)
+        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
         {
-            _entityManager = entityManager;
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            var entities = _entityManager.Get<IKinetic>();
-            if (!entities.Any())
-                return;
-
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            foreach (var entity in entities)
+            foreach (var entity in entities.OfType<IKinetic>())
             {
                 if (Debug.Enabled)
                     Debug.Add(entity, "DrivingForce", $"{entity.Force.Length():F}");

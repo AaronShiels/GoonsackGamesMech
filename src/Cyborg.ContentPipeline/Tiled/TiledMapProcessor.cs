@@ -5,12 +5,12 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 namespace Cyborg.ContentPipeline.Tiled
 {
     [ContentProcessor(DisplayName = "Tiled Map Processor")]
-    public class TiledMapProcessor : ContentProcessor<TiledMapXmlRoot, SpriteMap>
+    public class TiledMapProcessor : ContentProcessor<TiledMapXmlRoot, TiledMap>
     {
-        private const string _backgroundKey = "background";
-        private const string _collisionKey = "collision";
+        private const string _floorKey = "floor";
+        private const string _wallsKey = "walls";
 
-        public override SpriteMap Process(TiledMapXmlRoot input, ContentProcessorContext context)
+        public override TiledMap Process(TiledMapXmlRoot input, ContentProcessorContext context)
         {
             var layers = input
                 .Layers
@@ -33,13 +33,14 @@ namespace Cyborg.ContentPipeline.Tiled
                 })
                 .ToDictionary(x => x.Name, x => x.Values, StringComparer.OrdinalIgnoreCase);
 
-            return new SpriteMap
+            return new TiledMap
             {
-                SpriteSheet = input.TileSet.Image.Source.Split('.').First(),
+                TileSetSpriteSheet = input.TileSet.Image.Source.Split('.').First(),
+                TileSetColumns = input.TileSet.Columns,
                 TileWidth = input.TileWidth,
                 TileHeight = input.TileHeight,
-                CollisionMap = layers.ContainsKey(_collisionKey) ? layers[_collisionKey] : new short[0, 0],
-                BackgroundMap = layers.ContainsKey(_backgroundKey) ? layers[_backgroundKey] : new short[0, 0],
+                WallTiles = layers.ContainsKey(_wallsKey) ? layers[_wallsKey] : new short[0, 0],
+                FloorTiles = layers.ContainsKey(_floorKey) ? layers[_floorKey] : new short[0, 0],
             };
         }
     }
