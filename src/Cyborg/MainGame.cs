@@ -83,6 +83,7 @@ namespace Cyborg
             services.AddSingleton<IUpdateSystem, KineticsSystem>();
             services.AddSingleton<IUpdateSystem, CollisionSystem>();
             services.AddSingleton<IUpdateSystem, AnimationSystem>();
+            services.AddSingleton<IUpdateSystem, CameraSystem>();
             services.AddSingleton<IDrawSystem, SpriteRenderSystem>();
         }
     }

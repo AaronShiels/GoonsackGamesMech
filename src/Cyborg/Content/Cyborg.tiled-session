@@ -24,11 +24,11 @@
             "scaleInEditor": 1
         },
         "demo_map.tmx": {
-            "scale": 5.1478125,
+            "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 160.45650458325744,
-                "y": 116.94287622169611
+                "x": 343.5,
+                "y": 86
             }
         },
         "demo_map.tmx#demo": {

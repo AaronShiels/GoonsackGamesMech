@@ -29,6 +29,10 @@ namespace Cyborg.Core
             foreach (var wallTile in wallTiles)
                 _entities.Add(wallTile);
 
+            var initialCameraPosition = new Vector2(160, 88);
+            var camera = new Camera(initialCameraPosition);
+            _entities.Add(camera);
+
             // Create Player
             var initialPlayerPosition = new Vector2(16, 16);
             var player = new Player(initialPlayerPosition);

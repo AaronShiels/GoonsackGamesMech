@@ -27,6 +27,9 @@ namespace Cyborg.ContentPipeline.Tiled
         [XmlElement("layer")]
         public List<LayerXmlElement> Layers { get; set; }
 
+        [XmlElement("objectgroup")]
+        public List<ObjectGroupXmlElement> ObjectGroups { get; set; }
+
         public class TileSetXmlElement
         {
             [XmlAttribute("tilewidth")]
@@ -51,6 +54,27 @@ namespace Cyborg.ContentPipeline.Tiled
             }
         }
 
+        public class ObjectGroupXmlElement
+        {
+            [XmlAttribute(AttributeName = "name")]
+            public string Name { get; set; }
+
+            [XmlElement("object")]
+            public List<ObjectXmlElement> Objects { get; set; }
+
+            public class ObjectXmlElement
+            {
+                [XmlAttribute(AttributeName = "x")]
+                public int X { get; set; }
+                [XmlAttribute(AttributeName = "y")]
+                public int Y { get; set; }
+                [XmlAttribute(AttributeName = "width")]
+                public int Width { get; set; }
+                [XmlAttribute(AttributeName = "height")]
+                public int Height { get; set; }
+            }
+        }
+
         public class LayerXmlElement
         {
             [XmlAttribute(AttributeName = "name")]
@@ -64,12 +88,12 @@ namespace Cyborg.ContentPipeline.Tiled
 
             [XmlElement(ElementName = "data")]
             public DataXmlElement Data { get; set; }
-        }
 
-        public class DataXmlElement
-        {
-            [XmlText]
-            public string Value { get; set; }
+            public class DataXmlElement
+            {
+                [XmlText]
+                public string Value { get; set; }
+            }
         }
     }
 }
