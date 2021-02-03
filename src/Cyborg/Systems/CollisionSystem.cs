@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace Cyborg.Systems
 {
+    // TODO Support diagonals!
     public class CollisionSystem : IUpdateSystem
     {
         public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
@@ -20,23 +21,22 @@ namespace Cyborg.Systems
                 {
                     var kineticBoundingBox = GetBoundingBox(kineticEntity);
                     var staticBoundingBox = GetBoundingBox(staticEntity);
-                    var penetrationVector = GetPenetrationVector(kineticBoundingBox, staticBoundingBox);
-                    if (penetrationVector == Vector2.Zero)
+                    var penetrationVectors = GetPenetrationVectors(kineticBoundingBox, kineticEntity.Edges, staticBoundingBox, staticEntity.Edges);
+                    if (!penetrationVectors.Any())
                         continue;
 
-                    var normalVectors = GetNormalVectors(penetrationVector, kineticEntity.Edges, staticEntity.Edges);
-                    if (!normalVectors.Any())
-                        continue;
+                    var smallestPenetratingVector = penetrationVectors.OrderBy(v => v.Length()).First();
+                    kineticEntity.Position -= smallestPenetratingVector;
 
-                    var smallestNormalVector = normalVectors.OrderBy(v => v.Length()).First();
-                    kineticEntity.Position += smallestNormalVector;
+                    var velocityCoefficient = Vector2.Normalize(new Vector2(Math.Abs(smallestPenetratingVector.Y), Math.Abs(smallestPenetratingVector.X)));
+                    kineticEntity.Velocity *= velocityCoefficient;
                 }
         }
 
         private static RectangleF GetBoundingBox(IBody bodyEntity) => new(bodyEntity.Position.X, bodyEntity.Position.Y, bodyEntity.Size.X, bodyEntity.Size.Y);
 
-        // Direction of bounding box A penetrating into bounding box B
-        private static Vector2 GetPenetrationVector(RectangleF boxA, RectangleF boxB)
+        // Direction of bounding box A penetrating into bounding box B, based on supported edges
+        private static IEnumerable<Vector2> GetPenetrationVectors(RectangleF boxA, Edge edgesA, RectangleF boxB, Edge edgesB)
         {
             var halfWidthA = boxA.Width / 2;
             var halfHeightA = boxA.Height / 2;
@@ -51,34 +51,19 @@ namespace Cyborg.Systems
             var minDistanceX = halfWidthA + halfWidthB;
             var minDistanceY = halfHeightB + halfHeightB;
 
-            // If we are not intersecting at all, return (0, 0).
+            // If we are not intersecting at all, return empty.
             if (Math.Abs(distanceX) >= minDistanceX || Math.Abs(distanceY) >= minDistanceY)
-                return Vector2.Zero;
+                yield break;
 
             // Calculate and return intersection depths.
-            var depthX = distanceX > 0
-                ? minDistanceX - distanceX
-                : -minDistanceX - distanceX;
-            var depthY = distanceY > 0
-                ? minDistanceY - distanceY
-                : -minDistanceY - distanceY;
+            var penetrationX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
+            var penetrationY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
 
-            return new Vector2(depthX, depthY);
-        }
+            if ((edgesA.HasFlag(Edge.Right) && edgesB.HasFlag(Edge.Left)) || (edgesA.HasFlag(Edge.Left) && edgesB.HasFlag(Edge.Right)))
+                yield return new Vector2(penetrationX, 0);
 
-        // Get all normal vectors that can be applied to penetration of A into B, based on edge definitions
-        private static IEnumerable<Vector2> GetNormalVectors(Vector2 penetrationVector, Edge edgesA, Edge edgesB)
-        {
-            var rightPenetration = penetrationVector.X > 0 && edgesA.HasFlag(Edge.Right) && edgesB.HasFlag(Edge.Left);
-            var leftPenetration = penetrationVector.X < 0 && edgesA.HasFlag(Edge.Left) && edgesB.HasFlag(Edge.Right);
-            var bottomPenetration = penetrationVector.Y > 0 && edgesA.HasFlag(Edge.Bottom) && edgesB.HasFlag(Edge.Top);
-            var topPenetration = penetrationVector.Y < 0 && edgesA.HasFlag(Edge.Top) && edgesB.HasFlag(Edge.Bottom);
-
-            if (rightPenetration || leftPenetration)
-                yield return new Vector2(-penetrationVector.X, 0);
-
-            if (bottomPenetration || topPenetration)
-                yield return new Vector2(0, -penetrationVector.Y);
+            if ((edgesA.HasFlag(Edge.Bottom) && edgesB.HasFlag(Edge.Top)) || (edgesA.HasFlag(Edge.Top) && edgesB.HasFlag(Edge.Bottom)))
+                yield return new Vector2(0, penetrationY);
         }
     }
 }
