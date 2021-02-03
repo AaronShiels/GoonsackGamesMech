@@ -9,29 +9,37 @@ namespace Cyborg.ContentPipeline.Tiled
     {
         private const string _floorKey = "floor";
         private const string _wallsKey = "walls";
+        private const string _areasKey = "areas";
 
         public override TiledMap Process(TiledMapXmlRoot input, ContentProcessorContext context)
         {
-            var layers = input
+            var tileLayers = input
                 .Layers
-                .Select(l =>
-                {
-                    var values = new short[l.Width, l.Height];
-
-                    var rows = l.Data.Value.Split('\n').Where(s => s.Length > 0).ToArray();
-                    for (var y = 0; y < l.Height; y++)
+                .ToDictionary(l => l.Name,
+                    l =>
                     {
-                        var rowValues = rows[y].Split(',').ToArray();
-                        for (var x = 0; x < l.Width; x++)
-                        {
-                            var value = short.Parse(rowValues[x]);
-                            values[x, y] = value;
-                        }
-                    }
+                        var values = new short[l.Width, l.Height];
 
-                    return (l.Name, Values: values);
-                })
-                .ToDictionary(x => x.Name, x => x.Values, StringComparer.OrdinalIgnoreCase);
+                        var rows = l.Data.Value.Split('\n').Where(s => s.Length > 0).ToArray();
+                        for (var y = 0; y < l.Height; y++)
+                        {
+                            var rowValues = rows[y].Split(',').ToArray();
+                            for (var x = 0; x < l.Width; x++)
+                            {
+                                var value = short.Parse(rowValues[x]);
+                                values[x, y] = value;
+                            }
+                        }
+
+                        return values;
+                    },
+                    StringComparer.OrdinalIgnoreCase);
+
+            var objectGroups = input
+                .ObjectGroups
+                .ToDictionary(og => og.Name,
+                    og => og.Objects.Select(o => (o.X, o.Y, o.Width, o.Height)).ToArray(),
+                    StringComparer.OrdinalIgnoreCase);
 
             return new TiledMap
             {
@@ -39,8 +47,9 @@ namespace Cyborg.ContentPipeline.Tiled
                 TileSetColumns = input.TileSet.Columns,
                 TileWidth = input.TileWidth,
                 TileHeight = input.TileHeight,
-                WallTiles = layers.ContainsKey(_wallsKey) ? layers[_wallsKey] : new short[0, 0],
-                FloorTiles = layers.ContainsKey(_floorKey) ? layers[_floorKey] : new short[0, 0],
+                WallTiles = tileLayers.ContainsKey(_wallsKey) ? tileLayers[_wallsKey] : new short[0, 0],
+                FloorTiles = tileLayers.ContainsKey(_floorKey) ? tileLayers[_floorKey] : new short[0, 0],
+                Areas = objectGroups.ContainsKey(_areasKey) ? objectGroups[_areasKey] : new (int, int, int, int)[0]
             };
         }
     }
