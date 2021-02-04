@@ -12,14 +12,19 @@ namespace Cyborg.Systems
         private const float _dragCoefficient = 0.2f;
         private const float _stoppingThreshold = 10f;
         private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IGameState _gameState;
 
-        public KineticsSystem(IReadOnlyCollection<IEntity> entities)
+        public KineticsSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
         {
             _entities = entities;
+            _gameState = gameState;
         }
 
         public void Update(GameTime gameTime)
         {
+            if (!_gameState.Active)
+                return;
+
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             foreach (var entity in _entities.OfType<IKinetic>())

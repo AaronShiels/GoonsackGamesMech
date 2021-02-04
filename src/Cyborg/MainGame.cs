@@ -56,7 +56,8 @@ namespace Cyborg
 
             // Core infrastructure
             services.AddSingleton<IWorld, World>();
-            services.AddSingleton<IReadOnlyCollection<IEntity>, ICollection<IEntity>, List<IEntity>>();
+            services.AddScoped<IReadOnlyCollection<IEntity>, ICollection<IEntity>, List<IEntity>>();
+            services.AddScoped<IGameState, GameState>();
 
             // Systems
             services.AddScoped<IUpdateSystem, ControllerSystem>();
