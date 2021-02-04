@@ -10,14 +10,20 @@ namespace Cyborg.Systems
     public class ControllerSystem : IUpdateSystem
     {
         private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IGameState _gameState;
 
-        public ControllerSystem(IReadOnlyCollection<IEntity> entities)
+        public ControllerSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
         {
             _entities = entities;
+            _gameState = gameState;
         }
 
         public void Update(GameTime gameTime)
         {
+            // TODO change when pausable
+            if (!_gameState.Active)
+                return;
+
             var keyboardState = Keyboard.GetState();
 
             // Calculate direction

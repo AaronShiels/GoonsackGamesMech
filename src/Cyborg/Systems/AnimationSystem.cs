@@ -13,16 +13,21 @@ namespace Cyborg.Systems
     {
         private const int _frameRate = 4;
         private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IGameState _gameState;
         private readonly ContentManager _contentManager;
 
-        public AnimationSystem(IReadOnlyCollection<IEntity> entities, ContentManager contentManager)
+        public AnimationSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState, ContentManager contentManager)
         {
             _entities = entities;
+            _gameState = gameState;
             _contentManager = contentManager;
         }
 
         public void Update(GameTime gameTime)
         {
+            if (!_gameState.Active)
+                return;
+
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             foreach (var entity in _entities.OfType<IAnimated>())

@@ -33,7 +33,7 @@ namespace Cyborg.Core
 
             // Create camera
             var initialCameraPosition = new Vector2(160, 88);
-            var camera = new Camera(initialCameraPosition);
+            var camera = new Camera(initialCameraPosition, worldMap.Areas.Select(a => new Rectangle(a.X, a.Y, a.Width, a.Height)));
             _entities.Add(camera);
 
             // Create Player

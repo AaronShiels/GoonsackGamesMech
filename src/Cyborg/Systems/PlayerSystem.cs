@@ -12,14 +12,19 @@ namespace Cyborg.Systems
     {
         private const float _playerForce = 8000f;
         private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IGameState _gameState;
 
-        public PlayerSystem(IReadOnlyCollection<IEntity> entities)
+        public PlayerSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
         {
             _entities = entities;
+            _gameState = gameState;
         }
 
         public void Update(GameTime gameTime)
         {
+            if (!_gameState.Active)
+                return;
+
             var entity = _entities.OfType<IPlayer>().SingleOrDefault();
             if (entity == null)
                 return;
