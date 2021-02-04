@@ -10,16 +10,21 @@ namespace Cyborg.Systems
     public class CameraSystem : IUpdateSystem
     {
         private const float _transitionTime = 0.5f;
-
+        private readonly IReadOnlyCollection<IEntity> _entities;
         private Vector2 _lastChangedTo;
         private Vector2 _lastChangedFrom;
         private float _lastChangedAt;
 
-        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
+        public CameraSystem(IReadOnlyCollection<IEntity> entities)
+        {
+            _entities = entities;
+        }
+
+        public void Update(GameTime gameTime)
         {
             var totalSeconds = (float)gameTime.TotalGameTime.TotalSeconds;
-            var camera = entities.OfType<Camera>().Single();
-            var player = entities.OfType<Player>().Single();
+            var camera = _entities.OfType<Camera>().Single();
+            var player = _entities.OfType<Player>().Single();
 
             var desiredCameraX = player.Position.X + player.Size.X / 2 > 320 ? 480 : 160;
             var desiredCameraY = player.Position.Y + player.Size.Y / 2 > 176 ? 264 : 88;

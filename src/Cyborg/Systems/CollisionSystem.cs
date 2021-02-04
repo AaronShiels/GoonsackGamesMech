@@ -13,11 +13,17 @@ namespace Cyborg.Systems
     {
         // TODO Quadtree probs
         private readonly IDictionary<IBody, RectangleF> _boundingBoxes = new Dictionary<IBody, RectangleF>();
+        private readonly IReadOnlyCollection<IEntity> _entities;
 
-        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
+        public CollisionSystem(IReadOnlyCollection<IEntity> entities)
         {
-            var kineticEntities = entities.OfType<IKinetic>();
-            var solidEntities = entities.OfType<IBody>();
+            _entities = entities;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            var kineticEntities = _entities.OfType<IKinetic>();
+            var solidEntities = _entities.OfType<IBody>();
 
             // Calculate bounding boxes
             _boundingBoxes.Clear();

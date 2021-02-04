@@ -9,7 +9,14 @@ namespace Cyborg.Systems
 {
     public class ControllerSystem : IUpdateSystem
     {
-        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
+        private readonly IReadOnlyCollection<IEntity> _entities;
+
+        public ControllerSystem(IReadOnlyCollection<IEntity> entities)
+        {
+            _entities = entities;
+        }
+
+        public void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
 
@@ -19,7 +26,7 @@ namespace Cyborg.Systems
             var combinedInput = new Vector2(horizontalInput, verticalInput);
             var direction = combinedInput != Vector2.Zero ? Vector2.Normalize(combinedInput) : Vector2.Zero;
 
-            foreach (var entity in entities.OfType<IControllable>())
+            foreach (var entity in _entities.OfType<IControllable>())
                 entity.Direction = direction;
         }
     }

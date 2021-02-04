@@ -12,18 +12,20 @@ namespace Cyborg.Systems
     public class AnimationSystem : IUpdateSystem
     {
         private const int _frameRate = 4;
+        private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly ContentManager _contentManager;
 
-        public AnimationSystem(ContentManager contentManager)
+        public AnimationSystem(IReadOnlyCollection<IEntity> entities, ContentManager contentManager)
         {
+            _entities = entities;
             _contentManager = contentManager;
         }
 
-        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            foreach (var entity in entities.OfType<IAnimated>())
+            foreach (var entity in _entities.OfType<IAnimated>())
             {
                 entity.AnimationElapsed += elapsed;
 
