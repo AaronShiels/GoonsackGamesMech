@@ -11,12 +11,18 @@ namespace Cyborg.Systems
         // https://www.omnicalculator.com/physics/free-fall-air-resistance#air-resistance-formula
         private const float _dragCoefficient = 0.2f;
         private const float _stoppingThreshold = 10f;
+        private readonly IReadOnlyCollection<IEntity> _entities;
 
-        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
+        public KineticsSystem(IReadOnlyCollection<IEntity> entities)
+        {
+            _entities = entities;
+        }
+
+        public void Update(GameTime gameTime)
         {
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            foreach (var entity in entities.OfType<IKinetic>())
+            foreach (var entity in _entities.OfType<IKinetic>())
             {
                 // Apply stopping thresholds
                 if (entity.Velocity.Length() < _stoppingThreshold)

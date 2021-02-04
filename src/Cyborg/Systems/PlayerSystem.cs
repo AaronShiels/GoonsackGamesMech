@@ -11,10 +11,16 @@ namespace Cyborg.Systems
     public class PlayerSystem : IUpdateSystem
     {
         private const float _playerForce = 8000f;
+        private readonly IReadOnlyCollection<IEntity> _entities;
 
-        public void Update(IEnumerable<IEntity> entities, GameTime gameTime)
+        public PlayerSystem(IReadOnlyCollection<IEntity> entities)
         {
-            var entity = entities.OfType<IPlayer>().SingleOrDefault();
+            _entities = entities;
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            var entity = _entities.OfType<IPlayer>().SingleOrDefault();
             if (entity == null)
                 return;
 

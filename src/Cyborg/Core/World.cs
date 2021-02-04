@@ -12,11 +12,13 @@ namespace Cyborg.Core
     {
         private readonly IList<IUpdateSystem> _updateSystems;
         private readonly IList<IDrawSystem> _drawSystems;
-        private readonly IList<IEntity> _entities = new List<IEntity>();
-        public World(ContentManager contentManager, IEnumerable<IUpdateSystem> updateSystems, IEnumerable<IDrawSystem> drawSystems)
+        private readonly ICollection<IEntity> _entities;
+
+        public World(ContentManager contentManager, IEnumerable<IUpdateSystem> updateSystems, IEnumerable<IDrawSystem> drawSystems, ICollection<IEntity> entities)
         {
             _updateSystems = updateSystems.ToList();
             _drawSystems = drawSystems.ToList();
+            _entities = entities;
 
             // Load Map
             var worldMap = contentManager.Load<TiledMap>("demo_map");
@@ -29,6 +31,7 @@ namespace Cyborg.Core
             foreach (var wallTile in wallTiles)
                 _entities.Add(wallTile);
 
+            // Create camera
             var initialCameraPosition = new Vector2(160, 88);
             var camera = new Camera(initialCameraPosition);
             _entities.Add(camera);
@@ -42,13 +45,13 @@ namespace Cyborg.Core
         public void Update(GameTime gameTime)
         {
             foreach (var system in _updateSystems)
-                system.Update(_entities, gameTime);
+                system.Update(gameTime);
         }
 
         public void Draw(GameTime gameTime)
         {
             foreach (var system in _drawSystems)
-                system.Draw(_entities, gameTime);
+                system.Draw(gameTime);
         }
 
         private static IEnumerable<FloorTile> GetFloorTiles(TiledMap worldMap)

@@ -11,26 +11,28 @@ namespace Cyborg.Systems
 {
     public class SpriteRenderSystem : IDrawSystem
     {
+        private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly ContentManager _contentManager;
         private readonly SpriteBatch _spriteBatch;
         private readonly Matrix _globalTransform;
 
-        public SpriteRenderSystem(ContentManager contentManager, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
+        public SpriteRenderSystem(IReadOnlyCollection<IEntity> entities, ContentManager contentManager, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
+            _entities = entities;
             _contentManager = contentManager;
             _spriteBatch = spriteBatch;
 
             _globalTransform = ComputeScalingTransform(graphicsDevice.PresentationParameters.BackBufferWidth, graphicsDevice.PresentationParameters.BackBufferHeight, Constants.BaseWidth, Constants.BaseHeight);
         }
 
-        public void Draw(IEnumerable<IEntity> entities, GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, _globalTransform);
 
-            var cameraEntity = entities.OfType<Camera>().Single();
+            var cameraEntity = _entities.OfType<Camera>().Single();
             var cameraFrame = new Rectangle((int)cameraEntity.Position.X - Constants.BaseWidth / 2, (int)cameraEntity.Position.Y - Constants.BaseHeight / 2, Constants.BaseWidth, Constants.BaseHeight);
 
-            foreach (var entity in entities.OfType<ISprite>())
+            foreach (var entity in _entities.OfType<ISprite>())
             {
                 var spriteSheet = _contentManager.Load<Texture2D>(entity.SpriteSheet);
                 var spriteWidth = entity.SpriteFrame?.Width ?? spriteSheet.Width;
