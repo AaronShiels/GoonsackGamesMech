@@ -11,12 +11,12 @@ namespace Cyborg.Systems
     {
         private const float _transitionTime = 0.5f;
         private readonly IReadOnlyCollection<IEntity> _entities;
-        private readonly IGameState _gameState;
+        private readonly GameState _gameState;
 
         private Vector2 _lastPosition;
         private float _lastTransitionedAt;
 
-        public CameraSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
+        public CameraSystem(IReadOnlyCollection<IEntity> entities, GameState gameState)
         {
             _entities = entities;
             _gameState = gameState;

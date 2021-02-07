@@ -8,6 +8,9 @@
         "."
     ],
     "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
         "demo.tmx": {
             "scale": 4.902678571428571,
             "selectedLayer": 0,
@@ -24,11 +27,11 @@
             "scaleInEditor": 1
         },
         "demo_map.tmx": {
-            "scale": 2,
-            "selectedLayer": 0,
+            "scale": 3,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 343.5,
-                "y": 86
+                "x": 150.99999999999997,
+                "y": 43
             }
         },
         "demo_map.tmx#demo": {
@@ -36,6 +39,9 @@
         },
         "demo_map.tmx#demo_tileset": {
             "scaleInDock": 1
+        },
+        "demo_map.tmx#dungeon": {
+            "scaleInDock": 2
         }
     },
     "map.height": 11,
@@ -52,6 +58,7 @@
         "demo.tmx",
         "demo.tsx"
     ],
+    "tileset.embedInMap": true,
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
         "height": 16,

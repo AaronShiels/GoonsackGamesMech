@@ -9,6 +9,7 @@ namespace Cyborg.ContentPipeline.Tiled
     {
         private const string _floorKey = "floor";
         private const string _wallsKey = "walls";
+        private const string _overlayKey = "overlay";
         private const string _areasKey = "areas";
 
         public override TiledMap Process(TiledMapXmlRoot input, ContentProcessorContext context)
@@ -47,8 +48,9 @@ namespace Cyborg.ContentPipeline.Tiled
                 TileSetColumns = input.TileSet.Columns,
                 TileWidth = input.TileWidth,
                 TileHeight = input.TileHeight,
-                WallTiles = tileLayers.ContainsKey(_wallsKey) ? tileLayers[_wallsKey] : new short[0, 0],
                 FloorTiles = tileLayers.ContainsKey(_floorKey) ? tileLayers[_floorKey] : new short[0, 0],
+                WallTiles = tileLayers.ContainsKey(_wallsKey) ? tileLayers[_wallsKey] : new short[0, 0],
+                OverlayTiles = tileLayers.ContainsKey(_overlayKey) ? tileLayers[_overlayKey] : new short[0, 0],
                 Areas = objectGroups.ContainsKey(_areasKey) ? objectGroups[_areasKey] : new (int, int, int, int)[0]
             };
         }

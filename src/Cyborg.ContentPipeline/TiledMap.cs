@@ -11,6 +11,7 @@ namespace Cyborg.ContentPipeline
         public short TileHeight { get; set; }
         public short[,] FloorTiles { get; set; }
         public short[,] WallTiles { get; set; }
+        public short[,] OverlayTiles { get; set; }
         public (int X, int Y, int Width, int Height)[] Areas { get; set; }
     }
 }

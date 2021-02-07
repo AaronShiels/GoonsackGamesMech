@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.Xna.Framework.Content.Pipeline;
 
 namespace Cyborg.ContentPipeline.SpriteFactory
@@ -13,7 +12,6 @@ namespace Cyborg.ContentPipeline.SpriteFactory
 
             return new AnimationSet
             {
-                SpriteSheet = input.TextureAtlas.Texture.Split('.').First(),
                 FrameWidth = input.TextureAtlas.RegionWidth,
                 FrameHeight = input.TextureAtlas.RegionHeight,
                 Animations = animations

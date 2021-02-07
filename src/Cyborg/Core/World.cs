@@ -31,13 +31,17 @@ namespace Cyborg.Core
             foreach (var wallTile in wallTiles)
                 _entities.Add(wallTile);
 
+            var overlayTiles = GetOverlayTiles(worldMap);
+            foreach (var overlayTile in overlayTiles)
+                _entities.Add(overlayTile);
+
             // Create camera
             var initialCameraPosition = new Vector2(160, 88);
             var camera = new Camera(initialCameraPosition, worldMap.Areas.Select(a => new Rectangle(a.X, a.Y, a.Width, a.Height)));
             _entities.Add(camera);
 
             // Create Player
-            var initialPlayerPosition = new Vector2(16, 16);
+            var initialPlayerPosition = new Vector2(64, 64);
             var player = new Player(initialPlayerPosition);
             _entities.Add(player);
         }
@@ -54,7 +58,7 @@ namespace Cyborg.Core
                 system.Draw(gameTime);
         }
 
-        private static IEnumerable<FloorTile> GetFloorTiles(TiledMap worldMap)
+        private static IEnumerable<PassThroughTile> GetFloorTiles(TiledMap worldMap)
         {
             var tiles = worldMap.FloorTiles;
             var tileCountWidth = tiles.GetLength(0);
@@ -71,11 +75,11 @@ namespace Cyborg.Core
                         var spriteFrameOffsetY = tileIndex / worldMap.TileSetColumns * worldMap.TileHeight;
                         var spriteFrame = new Rectangle(spriteFrameOffsetX, spriteFrameOffsetY, worldMap.TileWidth, worldMap.TileHeight);
 
-                        yield return new FloorTile(position, worldMap.TileSetSpriteSheet, spriteFrame);
+                        yield return new PassThroughTile(position, worldMap.TileSetSpriteSheet, spriteFrame, 0);
                     }
         }
 
-        private static IEnumerable<WallTile> GetWallTiles(TiledMap worldMap)
+        private static IEnumerable<ObstacleTile> GetWallTiles(TiledMap worldMap)
         {
             var tiles = worldMap.WallTiles;
             var tileCountWidth = tiles.GetLength(0);
@@ -103,7 +107,28 @@ namespace Cyborg.Core
                         var spriteFrameOffsetY = tileIndex / worldMap.TileSetColumns * worldMap.TileHeight;
                         var spriteFrame = new Rectangle(spriteFrameOffsetX, spriteFrameOffsetY, worldMap.TileWidth, worldMap.TileHeight);
 
-                        yield return new WallTile(position, size, edges, worldMap.TileSetSpriteSheet, spriteFrame);
+                        yield return new ObstacleTile(position, size, edges, worldMap.TileSetSpriteSheet, spriteFrame, 0);
+                    }
+        }
+
+        private static IEnumerable<PassThroughTile> GetOverlayTiles(TiledMap worldMap)
+        {
+            var tiles = worldMap.OverlayTiles;
+            var tileCountWidth = tiles.GetLength(0);
+            var tileCountHeight = tiles.GetLength(1);
+
+            for (var x = 0; x < tileCountWidth; x++)
+                for (var y = 0; y < tileCountHeight; y++)
+                    if (tiles[x, y] > 0)
+                    {
+                        var position = new Vector2(x * worldMap.TileWidth, y * worldMap.TileHeight);
+
+                        var tileIndex = tiles[x, y] - 1;
+                        var spriteFrameOffsetX = tileIndex % worldMap.TileSetColumns * worldMap.TileWidth;
+                        var spriteFrameOffsetY = tileIndex / worldMap.TileSetColumns * worldMap.TileHeight;
+                        var spriteFrame = new Rectangle(spriteFrameOffsetX, spriteFrameOffsetY, worldMap.TileWidth, worldMap.TileHeight);
+
+                        yield return new PassThroughTile(position, worldMap.TileSetSpriteSheet, spriteFrame, 2);
                     }
         }
     }
