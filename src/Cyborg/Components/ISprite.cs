@@ -7,5 +7,7 @@ namespace Cyborg.Components
     {
         string SpriteSheet { get; }
         Rectangle? SpriteFrame { get; set; }
+        Point SpriteOffset { get; }
+        int Order { get; }
     }
 }

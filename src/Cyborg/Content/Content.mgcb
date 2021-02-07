@@ -14,19 +14,29 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin debug_font.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
+#begin cyborg_animations.sf
+/importer:SpriteFactoryImporter
+/processor:SpriteFactoryProcessor
+/build:cyborg_animations.sf
+
+#begin cyborg_spritesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:debug_font.spritefont
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:cyborg_spritesheet.png
 
 #begin demo_map.tmx
 /importer:TiledMapImporter
 /processor:TiledMapProcessor
 /build:demo_map.tmx
 
-#begin demo_tileset_texture.png
+#begin SuperRetroWorld/dungeon_x16.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -36,22 +46,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:demo_tileset_texture.png
-
-#begin player_spritesheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:player_spritesheet.png
-
-#begin player_animations.sf
-/importer:SpriteFactoryImporter
-/processor:SpriteFactoryProcessor
-/build:player_animations.sf
+/build:SuperRetroWorld/dungeon_x16.png
 

@@ -1,0 +1,33 @@
+{
+  "textureAtlas": {
+    "texture": "cyborg_spritesheet.png",
+    "regionWidth": 16,
+    "regionHeight": 16
+  },
+  "cycles": {
+    "stand_left": {
+      "frames": [0]
+    },
+    "stand_right": {
+      "frames": [3]
+    },
+     "stand_down": {
+      "frames": [6]
+    },
+     "stand_up": {
+      "frames": [9]
+    },
+    "walk_left": {
+      "frames": [0,1,0,2]
+    },
+    "walk_right": {
+      "frames": [3,4,3,5]
+    },
+     "walk_down": {
+      "frames": [6,7,6,8]
+    },
+     "walk_up": {
+      "frames": [9,10,9,11]
+    }
+  }
+}

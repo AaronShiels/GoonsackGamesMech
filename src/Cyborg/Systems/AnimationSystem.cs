@@ -11,7 +11,7 @@ namespace Cyborg.Systems
 {
     public class AnimationSystem : IUpdateSystem
     {
-        private const int _frameRate = 4;
+        private const int _frameRate = 8;
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
         private readonly ContentManager _contentManager;
@@ -29,8 +29,9 @@ namespace Cyborg.Systems
                 return;
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            var animatedEntities = _entities.OfType<IAnimated>();
 
-            foreach (var entity in _entities.OfType<IAnimated>())
+            foreach (var entity in animatedEntities)
             {
                 entity.AnimationElapsed += elapsed;
 
