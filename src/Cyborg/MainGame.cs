@@ -13,16 +13,26 @@ namespace Cyborg
 {
     public class MainGame : Game
     {
+        private readonly GraphicsDeviceManager _graphicsDeviceManager;
         private readonly IServiceProvider _gameServiceProvider;
         private IWorld _world;
 
         public MainGame()
         {
-            _ = new GraphicsDeviceManager(this);
+            _graphicsDeviceManager = new GraphicsDeviceManager(this);
 
             var gameServices = new ServiceCollection();
             ConfigureServices(gameServices);
             _gameServiceProvider = gameServices.BuildServiceProvider();
+        }
+
+        protected override void Initialize()
+        {
+            _graphicsDeviceManager.PreferredBackBufferWidth = 960;
+            _graphicsDeviceManager.PreferredBackBufferHeight = 528;
+            _graphicsDeviceManager.ApplyChanges();
+
+            base.Initialize();
         }
 
         protected override void LoadContent()

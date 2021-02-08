@@ -10,7 +10,7 @@ namespace Cyborg.Systems
 {
     public class PlayerSystem : IUpdateSystem
     {
-        private const float _playerForce = 4000f;
+        private const float _playerForce = 3000f;
 
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
