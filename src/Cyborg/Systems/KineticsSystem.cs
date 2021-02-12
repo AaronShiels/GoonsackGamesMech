@@ -31,26 +31,26 @@ namespace Cyborg.Systems
             foreach (var entity in kineticEntities)
             {
                 // Apply stopping thresholds
-                if (entity.Velocity.Length() < _stoppingThreshold)
-                    entity.Velocity = Vector2.Zero;
+                if (entity.Kinetic.Velocity.Length() < _stoppingThreshold)
+                    entity.Kinetic.Velocity = Vector2.Zero;
 
                 // Apply drag to force
                 // Fd = kv²
                 // F2 = 1 - Fd/F1
-                var dragScalar = _dragCoefficient * entity.Velocity.LengthSquared();
+                var dragScalar = _dragCoefficient * entity.Kinetic.Velocity.LengthSquared();
                 var dragForce = dragScalar > 0
-                    ? -dragScalar * Vector2.Normalize(entity.Velocity)
+                    ? -dragScalar * Vector2.Normalize(entity.Kinetic.Velocity)
                     : Vector2.Zero;
 
-                entity.Force += dragForce;
+                entity.Kinetic.Force += dragForce;
 
                 // Apply force to velocity
                 // F = ma, a = F/m
-                var acceleration = entity.Force / entity.Mass;
-                entity.Velocity += acceleration * elapsed;
+                var acceleration = entity.Kinetic.Force / entity.Kinetic.Mass;
+                entity.Kinetic.Velocity += acceleration * elapsed;
 
                 // Apply velocity
-                entity.Position += entity.Velocity * elapsed;
+                entity.Body.Position += entity.Kinetic.Velocity * elapsed;
             }
         }
     }

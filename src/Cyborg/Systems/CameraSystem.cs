@@ -28,21 +28,21 @@ namespace Cyborg.Systems
             var camera = _entities.OfType<Camera>().Single();
             var player = _entities.OfType<Player>().Single();
 
-            var playerCentre = new Point((int)player.Position.X + player.Size.X / 2, (int)player.Position.Y + player.Size.Y);
+            var playerCentre = player.Body.Bounds.Center;
             var activeArea = camera.Areas
                 .Where(a => a.Left <= playerCentre.X && a.Right > playerCentre.X)
                 .Where(a => a.Top <= playerCentre.Y && a.Bottom > playerCentre.Y)
                 .First();
             var desiredCameraPosition = activeArea.Center.ToVector2();
 
-            if (camera.Position != desiredCameraPosition && !_gameState.Transitioning)
+            if (camera.Body.Position != desiredCameraPosition && !_gameState.Transitioning)
             {
                 _gameState.Transitioning = true;
 
-                _lastPosition = camera.Position;
+                _lastPosition = camera.Body.Position;
                 _lastTransitionedAt = totalSeconds;
             }
-            else if (camera.Position == desiredCameraPosition && _gameState.Transitioning)
+            else if (camera.Body.Position == desiredCameraPosition && _gameState.Transitioning)
             {
                 _gameState.Transitioning = false;
             }
@@ -51,7 +51,7 @@ namespace Cyborg.Systems
                 return;
 
             var progress = Math.Min((totalSeconds - _lastTransitionedAt) / _transitionTime, 1f);
-            camera.Position = Vector2.Lerp(_lastPosition, desiredCameraPosition, progress);
+            camera.Body.Position = Vector2.Lerp(_lastPosition, desiredCameraPosition, progress);
         }
     }
 }

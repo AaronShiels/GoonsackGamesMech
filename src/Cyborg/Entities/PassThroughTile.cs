@@ -1,19 +1,17 @@
 using Cyborg.Components;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Cyborg.Entities
 {
     public class PassThroughTile : ISprite
     {
-        public PassThroughTile(SpriteComponent sprite, Vector2 position)
+        public PassThroughTile(SpriteComponent sprite, BodyComponent body)
         {
             Sprite = sprite;
-            Position = position;
+            Body = body;
         }
 
         public SpriteComponent Sprite { get; }
-        public Vector2 Position { get; set; }
+        public BodyComponent Body { get; }
         public bool Destroyed { get; set; }
 
     }
