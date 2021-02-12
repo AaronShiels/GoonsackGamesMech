@@ -4,11 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Cyborg.Components
 {
-    public interface ISprite : IEntity
-    {
-        SpriteComponent Sprite { get; }
-    }
-
     public class SpriteComponent
     {
         public SpriteComponent(Texture2D texture, Rectangle frame = default, Point offset = default, int order = 0)
@@ -20,10 +15,13 @@ namespace Cyborg.Components
         }
 
         public Texture2D Texture { get; }
-        public Rectangle Frame { get; private set; }
+        public Rectangle Frame { get; set; }
         public Point Offset { get; }
         public int Order { get; }
+    }
 
-        public void Update(Rectangle frame) => Frame = frame;
+    public interface ISprite : IBody
+    {
+        SpriteComponent Sprite { get; }
     }
 }

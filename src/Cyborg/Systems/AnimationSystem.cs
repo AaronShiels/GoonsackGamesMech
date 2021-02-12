@@ -30,8 +30,8 @@ namespace Cyborg.Systems
             var animatedEntities = _entities.OfType<IAnimated>();
             foreach (var entity in animatedEntities)
             {
-                entity.Animation.Update(elapsed);
-                entity.Sprite.Update(entity.Animation.Frame);
+                entity.Animation.Elapsed += elapsed;
+                entity.Sprite.Frame = entity.Animation.Frame;
             }
         }
     }

@@ -32,7 +32,7 @@ namespace Cyborg.Systems
             if (entity == null)
                 return;
 
-            entity.Force = _gameController.Direction != Vector2.Zero
+            entity.Kinetic.Force = _gameController.Direction != Vector2.Zero
                 ? _gameController.Direction
                 * _playerForce : Vector2.Zero;
 
@@ -45,31 +45,31 @@ namespace Cyborg.Systems
                 switch (player.Animation.Current)
                 {
                     case Player.AnimationWalkRight:
-                        player.Animation.Update(Player.AnimationStandRight);
+                        player.Animation.UpdateAnimation(Player.AnimationStandRight);
                         return;
                     case Player.AnimationWalkLeft:
-                        player.Animation.Update(Player.AnimationStandLeft);
+                        player.Animation.UpdateAnimation(Player.AnimationStandLeft);
                         return;
                     case Player.AnimationWalkDown:
-                        player.Animation.Update(Player.AnimationStandDown);
+                        player.Animation.UpdateAnimation(Player.AnimationStandDown);
                         return;
                     case Player.AnimationWalkUp:
-                        player.Animation.Update(Player.AnimationStandUp);
+                        player.Animation.UpdateAnimation(Player.AnimationStandUp);
                         return;
                 }
 
             var cardinalDirection = _gameController.Direction.ToCardinal();
             if (cardinalDirection == Vector2.UnitX)
-                player.Animation.Update(Player.AnimationWalkRight);
+                player.Animation.UpdateAnimation(Player.AnimationWalkRight);
 
             if (cardinalDirection == -Vector2.UnitX)
-                player.Animation.Update(Player.AnimationWalkLeft);
+                player.Animation.UpdateAnimation(Player.AnimationWalkLeft);
 
             if (cardinalDirection == Vector2.UnitY)
-                player.Animation.Update(Player.AnimationWalkDown);
+                player.Animation.UpdateAnimation(Player.AnimationWalkDown);
 
             if (cardinalDirection == -Vector2.UnitY)
-                player.Animation.Update(Player.AnimationWalkUp);
+                player.Animation.UpdateAnimation(Player.AnimationWalkUp);
         }
     }
 }

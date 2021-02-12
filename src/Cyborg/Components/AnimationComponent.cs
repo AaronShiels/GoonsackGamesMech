@@ -5,11 +5,6 @@ using Microsoft.Xna.Framework;
 
 namespace Cyborg.Components
 {
-    public interface IAnimated : ISprite
-    {
-        AnimationComponent Animation { get; }
-    }
-
     public class AnimationComponent
     {
         private readonly IDictionary<string, Rectangle[]> _animations;
@@ -23,10 +18,10 @@ namespace Cyborg.Components
         }
 
         public string Current { get; private set; }
-        public float Elapsed { get; private set; }
+        public float Elapsed { get; set; }
         public Rectangle Frame => _animations[Current][(int)(Elapsed * _frameRate) % _animations[Current].Length];
 
-        public void Update(string animation)
+        public void UpdateAnimation(string animation)
         {
             if (Current == animation)
                 return;
@@ -35,12 +30,15 @@ namespace Cyborg.Components
             Elapsed = 0;
         }
 
-        public void Update(float elapsed) => Elapsed += elapsed;
-
         public static AnimationComponent FromDefinition(AnimationSet animationSet, string initialAnimation = null)
         {
             var animations = animationSet.Animations.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(v => new Rectangle(v.X, v.Y, v.Width, v.Height)).ToArray());
             return new(animations, animationSet.FrameRate, initialAnimation);
         }
+    }
+
+    public interface IAnimated : ISprite
+    {
+        AnimationComponent Animation { get; }
     }
 }

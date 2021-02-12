@@ -47,7 +47,7 @@ namespace Cyborg.Systems
         private Rectangle GetCameraFrame()
         {
             var cameraEntity = _entities.OfType<Camera>().Single();
-            var position = Vector2.Round(cameraEntity.Position).ToPoint();
+            var position = Vector2.Round(cameraEntity.Body.Position).ToPoint();
 
             return new Rectangle(position.X - Constants.BaseWidth / 2, position.Y - Constants.BaseHeight / 2, Constants.BaseWidth, Constants.BaseHeight);
         }
@@ -56,7 +56,7 @@ namespace Cyborg.Systems
         {
             foreach (var entity in _entities.OfType<ISprite>().OrderBy(e => e.Sprite.Order))
             {
-                var position = Vector2.Round(entity.Position).ToPoint();
+                var position = Vector2.Round(entity.Body.Position).ToPoint();
                 var frame = new Rectangle(position.X + entity.Sprite.Offset.X, position.Y + entity.Sprite.Offset.Y, entity.Sprite.Frame.Width, entity.Sprite.Frame.Height);
                 if (frame.Right < cameraFrame.Left || frame.Left > cameraFrame.Right || frame.Bottom < cameraFrame.Top || frame.Top > cameraFrame.Bottom)
                     continue;
@@ -72,20 +72,20 @@ namespace Cyborg.Systems
 
             foreach (var entity in _entities.OfType<IBody>())
             {
-                var entityFrame = new Rectangle((int)entity.Position.X, (int)entity.Position.Y, entity.Size.X, entity.Size.Y);
+                var entityFrame = new Rectangle((int)entity.Body.Position.X, (int)entity.Body.Position.Y, entity.Body.Size.X, entity.Body.Size.Y);
                 if (entityFrame.Right < cameraFrame.Left || entityFrame.Left > cameraFrame.Right || entityFrame.Bottom < cameraFrame.Top || entityFrame.Top > cameraFrame.Bottom)
                     continue;
 
-                if (entity.Edges.HasFlag(Edge.Right))
+                if (entity.Body.Edges.HasFlag(Edge.Right))
                     _spriteBatch.Draw(_debugPixel, new Rectangle(entityFrame.Right, entityFrame.Top, 1, entityFrame.Height), Color.White);
 
-                if (entity.Edges.HasFlag(Edge.Left))
+                if (entity.Body.Edges.HasFlag(Edge.Left))
                     _spriteBatch.Draw(_debugPixel, new Rectangle(entityFrame.Left, entityFrame.Top, 1, entityFrame.Height), Color.White);
 
-                if (entity.Edges.HasFlag(Edge.Bottom))
+                if (entity.Body.Edges.HasFlag(Edge.Bottom))
                     _spriteBatch.Draw(_debugPixel, new Rectangle(entityFrame.Left, entityFrame.Bottom, entityFrame.Width, 1), Color.White);
 
-                if (entity.Edges.HasFlag(Edge.Top))
+                if (entity.Body.Edges.HasFlag(Edge.Top))
                     _spriteBatch.Draw(_debugPixel, new Rectangle(entityFrame.Left, entityFrame.Top, entityFrame.Width, 1), Color.White);
             }
         }

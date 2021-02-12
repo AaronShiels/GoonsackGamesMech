@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
@@ -12,7 +11,6 @@ namespace Cyborg.Systems
     public class CollisionSystem : IUpdateSystem
     {
         // TODO Quadtree probs
-        private readonly IDictionary<IBody, RectangleF> _boundingBoxes = new Dictionary<IBody, RectangleF>();
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
 
@@ -28,12 +26,7 @@ namespace Cyborg.Systems
                 return;
 
             var kineticEntities = _entities.OfType<IKinetic>();
-            var solidEntities = _entities.OfType<IBody>().Where(e => e.Edges > 0);
-
-            // Calculate bounding boxes
-            _boundingBoxes.Clear();
-            foreach (var entity in solidEntities)
-                _boundingBoxes[entity] = new(entity.Position.X, entity.Position.Y, entity.Size.X, entity.Size.Y);
+            var solidEntities = _entities.OfType<IBody>().Where(e => !e.Body.Bounds.IsEmpty && e.Body.Edges > 0);
 
             // Resolve collisions
             foreach (var entity in kineticEntities)
@@ -43,29 +36,24 @@ namespace Cyborg.Systems
                         continue;
 
                     // Identify penetrations of faces
-                    var entityBoundingBox = _boundingBoxes[entity];
-                    var otherEntityBoundingBox = _boundingBoxes[otherEntity];
-                    var penetrationVectors = GetPenetrationVectors(entityBoundingBox, entity.Edges, otherEntityBoundingBox, otherEntity.Edges).ToList();
+                    var penetrationVectors = GetPenetrationVectors(entity.Body.Bounds, entity.Body.Edges, otherEntity.Body.Bounds, otherEntity.Body.Edges).ToList();
                     if (!penetrationVectors.Any())
                         continue;
 
                     // Retract position by smallest penetration length
                     var smallestPenetratingVector = penetrationVectors.OrderBy(v => v.Length()).First();
-                    entity.Position -= smallestPenetratingVector;
+                    entity.Body.Position -= smallestPenetratingVector;
 
                     // Reduce velocity based on penetration length
                     var velocityCoefficient = Vector2.Normalize(new Vector2(Math.Abs(smallestPenetratingVector.Y), Math.Abs(smallestPenetratingVector.X)));
-                    entity.Velocity *= velocityCoefficient;
-
-                    // Update bounding box for future calculations
-                    _boundingBoxes[entity] = new(entity.Position.X, entity.Position.Y, entity.Size.X, entity.Size.Y);
+                    entity.Kinetic.Velocity *= velocityCoefficient;
                 }
         }
 
         // Direction of bounding box A penetrating into bounding box B, based on supported edges
-        private static IEnumerable<Vector2> GetPenetrationVectors(RectangleF boxA, Edge edgesA, RectangleF boxB, Edge edgesB)
+        private static IEnumerable<Vector2> GetPenetrationVectors(Rectangle boxA, Edge edgesA, Rectangle boxB, Edge edgesB)
         {
-            var intersection = RectangleF.Intersect(boxA, boxB);
+            var intersection = Rectangle.Intersect(boxA, boxB);
             if (intersection.Width == 0 || intersection.Height == 0)
                 yield break;
 
