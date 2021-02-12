@@ -1,13 +1,16 @@
+using System;
 using Cyborg.Components;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Entities
 {
-    public class Player : IPlayer
+    public class Player : IKinetic, IAnimated
     {
-        public Player(Vector2 initialPosition)
+        public Player(SpriteComponent sprite, AnimationComponent animation, Vector2 position)
         {
-            Position = initialPosition;
+            Sprite = sprite;
+            Animation = animation;
+            Position = position;
         }
 
         public Vector2 Direction { get; set; } = new Vector2(1, 0);
@@ -17,14 +20,9 @@ namespace Cyborg.Entities
         public Vector2 Position { get; set; }
         public Point Size => new(8, 12);
         public bool Destroyed { get; set; }
-        public string AnimationSet => "cyborg_animations";
-        public string Animation { get; set; } = AnimationWalkRight;
-        public float AnimationElapsed { get; set; }
-        public string SpriteSheet => "cyborg_spritesheet";
-        public Rectangle? SpriteFrame { get; set; } = null;
-        public Point SpriteOffset => new(-4, -4);
-        public int Order => 1;
         public Edge Edges => Edge.Left | Edge.Top | Edge.Right | Edge.Bottom;
+        public AnimationComponent Animation { get; }
+        public SpriteComponent Sprite { get; }
 
         // Animations
         public const string AnimationWalkRight = "walk_right";

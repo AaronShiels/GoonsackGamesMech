@@ -3,7 +3,7 @@ using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
 using Cyborg.Entities;
-using Cyborg.Extensions;
+using Cyborg.Utilities;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Systems
@@ -28,7 +28,7 @@ namespace Cyborg.Systems
             if (!_gameState.Active)
                 return;
 
-            var entity = _entities.OfType<IPlayer>().SingleOrDefault();
+            var entity = _entities.OfType<Player>().SingleOrDefault();
             if (entity == null)
                 return;
 
@@ -39,57 +39,37 @@ namespace Cyborg.Systems
             Animate(entity);
         }
 
-        private void Animate(IPlayer playerEntity)
+        private void Animate(Player player)
         {
             if (_gameController.Direction == Vector2.Zero)
-                switch (playerEntity.Animation)
+                switch (player.Animation.Current)
                 {
                     case Player.AnimationWalkRight:
-                        playerEntity.Animation = Player.AnimationStandRight;
-                        playerEntity.AnimationElapsed = 0f;
+                        player.Animation.Update(Player.AnimationStandRight);
                         return;
                     case Player.AnimationWalkLeft:
-                        playerEntity.Animation = Player.AnimationStandLeft;
-                        playerEntity.AnimationElapsed = 0f;
+                        player.Animation.Update(Player.AnimationStandLeft);
                         return;
                     case Player.AnimationWalkDown:
-                        playerEntity.Animation = Player.AnimationStandDown;
-                        playerEntity.AnimationElapsed = 0f;
+                        player.Animation.Update(Player.AnimationStandDown);
                         return;
                     case Player.AnimationWalkUp:
-                        playerEntity.Animation = Player.AnimationStandUp;
-                        playerEntity.AnimationElapsed = 0f;
+                        player.Animation.Update(Player.AnimationStandUp);
                         return;
                 }
 
             var cardinalDirection = _gameController.Direction.ToCardinal();
-            if (cardinalDirection == Vector2.UnitX && playerEntity.Animation != Player.AnimationWalkRight)
-            {
-                playerEntity.Animation = Player.AnimationWalkRight;
-                playerEntity.AnimationElapsed = 0f;
-                return;
-            }
+            if (cardinalDirection == Vector2.UnitX)
+                player.Animation.Update(Player.AnimationWalkRight);
 
-            if (cardinalDirection == -Vector2.UnitX && playerEntity.Animation != Player.AnimationWalkLeft)
-            {
-                playerEntity.Animation = Player.AnimationWalkLeft;
-                playerEntity.AnimationElapsed = 0f;
-                return;
-            }
+            if (cardinalDirection == -Vector2.UnitX)
+                player.Animation.Update(Player.AnimationWalkLeft);
 
-            if (cardinalDirection == Vector2.UnitY && playerEntity.Animation != Player.AnimationWalkDown)
-            {
-                playerEntity.Animation = Player.AnimationWalkDown;
-                playerEntity.AnimationElapsed = 0f;
-                return;
-            }
+            if (cardinalDirection == Vector2.UnitY)
+                player.Animation.Update(Player.AnimationWalkDown);
 
-            if (cardinalDirection == -Vector2.UnitY && playerEntity.Animation != Player.AnimationWalkUp)
-            {
-                playerEntity.Animation = Player.AnimationWalkUp;
-                playerEntity.AnimationElapsed = 0f;
-                return;
-            }
+            if (cardinalDirection == -Vector2.UnitY)
+                player.Animation.Update(Player.AnimationWalkUp);
         }
     }
 }

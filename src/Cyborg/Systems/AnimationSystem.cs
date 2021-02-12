@@ -11,16 +11,13 @@ namespace Cyborg.Systems
 {
     public class AnimationSystem : IUpdateSystem
     {
-        private const int _frameRate = 8;
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
-        private readonly ContentManager _contentManager;
 
-        public AnimationSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState, ContentManager contentManager)
+        public AnimationSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
         {
             _entities = entities;
             _gameState = gameState;
-            _contentManager = contentManager;
         }
 
         public void Update(GameTime gameTime)
@@ -29,23 +26,12 @@ namespace Cyborg.Systems
                 return;
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            var animatedEntities = _entities.OfType<IAnimated>();
 
+            var animatedEntities = _entities.OfType<IAnimated>();
             foreach (var entity in animatedEntities)
             {
-                entity.AnimationElapsed += elapsed;
-
-                var animationSet = _contentManager.Load<AnimationSet>(entity.AnimationSet);
-                var spriteSheet = _contentManager.Load<Texture2D>(entity.SpriteSheet);
-
-                var animation = animationSet.Animations[entity.Animation];
-                var currentAnimationFrameIndex = (int)(entity.AnimationElapsed * _frameRate) % animation.Length;
-                var spriteFrameIndex = animation[currentAnimationFrameIndex];
-                var spriteFrameOffsetX = spriteFrameIndex * animationSet.FrameWidth % spriteSheet.Width;
-                var spriteFrameOffsetY = spriteFrameIndex * animationSet.FrameWidth / spriteSheet.Width * animationSet.FrameHeight;
-                var rectangle = new Rectangle(spriteFrameOffsetX, spriteFrameOffsetY, animationSet.FrameWidth, animationSet.FrameHeight);
-
-                entity.SpriteFrame = rectangle;
+                entity.Animation.Update(elapsed);
+                entity.Sprite.Update(entity.Animation.Frame);
             }
         }
     }

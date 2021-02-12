@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Cyborg.Extensions
+namespace Cyborg.Utilities
 {
     public static class ServiceCollectionExtensions
     {

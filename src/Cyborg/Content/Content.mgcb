@@ -14,10 +14,10 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin cyborg_animations.sf
-/importer:SpriteFactoryImporter
-/processor:SpriteFactoryProcessor
-/build:cyborg_animations.sf
+#begin cyborg_animations.anim
+/importer:AnimationImporter
+/processor:AnimationProcessor
+/build:cyborg_animations.anim
 
 #begin cyborg_spritesheet.png
 /importer:TextureImporter
