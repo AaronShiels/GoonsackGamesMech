@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
@@ -13,17 +14,15 @@ namespace Cyborg.Systems
     {
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
-        private readonly ContentManager _contentManager;
         private readonly SpriteBatch _spriteBatch;
         private readonly GraphicsDevice _graphicsDevice;
         private readonly Matrix _globalTransform;
         private readonly Texture2D _debugPixel;
 
-        public SpriteRenderSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState, ContentManager contentManager, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
+        public SpriteRenderSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
             _entities = entities;
             _gameState = gameState;
-            _contentManager = contentManager;
             _spriteBatch = spriteBatch;
             _graphicsDevice = graphicsDevice;
 
@@ -48,21 +47,21 @@ namespace Cyborg.Systems
         private Rectangle GetCameraFrame()
         {
             var cameraEntity = _entities.OfType<Camera>().Single();
-            return new Rectangle((int)cameraEntity.Position.X - Constants.BaseWidth / 2, (int)cameraEntity.Position.Y - Constants.BaseHeight / 2, Constants.BaseWidth, Constants.BaseHeight);
+            var position = Vector2.Round(cameraEntity.Position).ToPoint();
+
+            return new Rectangle(position.X - Constants.BaseWidth / 2, position.Y - Constants.BaseHeight / 2, Constants.BaseWidth, Constants.BaseHeight);
         }
 
         private void RenderSprites(Rectangle cameraFrame)
         {
-            foreach (var entity in _entities.OfType<ISprite>().OrderBy(e => e.Order))
+            foreach (var entity in _entities.OfType<ISprite>().OrderBy(e => e.Sprite.Order))
             {
-                var spriteSheet = _contentManager.Load<Texture2D>(entity.SpriteSheet);
-                var spriteWidth = entity.SpriteFrame?.Width ?? spriteSheet.Width;
-                var spriteHeight = entity.SpriteFrame?.Height ?? spriteSheet.Height;
-                var entityFrame = new Rectangle((int)entity.Position.X + entity.SpriteOffset.X, (int)entity.Position.Y + entity.SpriteOffset.Y, spriteWidth, spriteHeight);
-                if (entityFrame.Right < cameraFrame.Left || entityFrame.Left > cameraFrame.Right || entityFrame.Bottom < cameraFrame.Top || entityFrame.Top > cameraFrame.Bottom)
+                var position = Vector2.Round(entity.Position).ToPoint();
+                var frame = new Rectangle(position.X + entity.Sprite.Offset.X, position.Y + entity.Sprite.Offset.Y, entity.Sprite.Frame.Width, entity.Sprite.Frame.Height);
+                if (frame.Right < cameraFrame.Left || frame.Left > cameraFrame.Right || frame.Bottom < cameraFrame.Top || frame.Top > cameraFrame.Bottom)
                     continue;
 
-                _spriteBatch.Draw(spriteSheet, (entityFrame.Location - cameraFrame.Location).ToVector2(), entity.SpriteFrame, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+                _spriteBatch.Draw(entity.Sprite.Texture, (frame.Location - cameraFrame.Location).ToVector2(), entity.Sprite.Frame, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
             }
         }
 

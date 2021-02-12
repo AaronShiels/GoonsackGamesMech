@@ -7,9 +7,9 @@ namespace Cyborg.Entities
 {
     public class Camera : IEntity
     {
-        public Camera(Vector2 initialPosition, IEnumerable<Rectangle> areas)
+        public Camera(Vector2 position, IEnumerable<Rectangle> areas)
         {
-            Position = initialPosition;
+            Position = position;
             Areas = areas.OrderBy(a => a.X).ThenBy(a => a.Y).ToList();
         }
 

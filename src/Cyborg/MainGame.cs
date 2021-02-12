@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cyborg.Core;
-using Cyborg.Extensions;
+using Cyborg.Utilities;
 using Cyborg.Systems;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;

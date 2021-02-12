@@ -1,14 +1,14 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace Cyborg.Extensions
+namespace Cyborg.Utilities
 {
-    public static class Vector2Extensions
+    public static class MathsExtensions
     {
-        private const float _directionThreshold = 0.01f;
-
         public static Vector2 ToCardinal(this Vector2 direction)
         {
+            const float _directionThreshold = 0.01f;
+
             if (direction == Vector2.Zero)
                 return direction;
 
