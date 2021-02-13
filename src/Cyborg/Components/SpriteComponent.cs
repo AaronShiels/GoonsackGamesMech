@@ -1,4 +1,3 @@
-using Cyborg.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

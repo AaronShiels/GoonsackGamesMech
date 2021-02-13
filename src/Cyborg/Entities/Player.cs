@@ -2,7 +2,7 @@ using Cyborg.Components;
 
 namespace Cyborg.Entities
 {
-    public class Player : IAnimated, IKinetic
+    public class Player : IControlled, IKinetic, IAnimated
     {
         public Player(SpriteComponent sprite, AnimationComponent animation, BodyComponent body, KineticComponent kinetic)
         {
@@ -11,10 +11,10 @@ namespace Cyborg.Entities
             Body = body;
             Kinetic = kinetic;
         }
-
-        public AnimationComponent Animation { get; }
-        public BodyComponent Body { get; }
+        public ControllerComponent Controller { get; set; }
         public KineticComponent Kinetic { get; }
+        public BodyComponent Body { get; }
+        public AnimationComponent Animation { get; }
         public SpriteComponent Sprite { get; }
         public bool Destroyed { get; set; }
 

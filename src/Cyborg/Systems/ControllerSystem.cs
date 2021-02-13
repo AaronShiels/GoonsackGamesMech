@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cyborg.Components;
 using Cyborg.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -13,14 +14,15 @@ namespace Cyborg.Systems
             {Keys.F12, Button.Debug}
         };
 
-        private readonly GameController _gameController;
-
+        private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly GameState _gameState;
         private IEnumerable<Button> _previousButtons = Enumerable.Empty<Button>();
         private IEnumerable<Button> _currentButtons = Enumerable.Empty<Button>();
 
-        public ControllerSystem(GameController gameController)
+        public ControllerSystem(IReadOnlyCollection<IEntity> entities, GameState gameState)
         {
-            _gameController = gameController;
+            _entities = entities;
+            _gameState = gameState;
         }
 
         public void Update(GameTime gameTime)
@@ -39,9 +41,14 @@ namespace Cyborg.Systems
                 direction.Normalize();
 
             // Apply
-            _gameController.Direction = direction;
-            _gameController.Held = _currentButtons;
-            _gameController.Pressed = _currentButtons.Except(_previousButtons);
+            var controller = new ControllerComponent(direction, _currentButtons.Except(_previousButtons), _currentButtons);
+            var controlledEntities = _entities.OfType<IControlled>();
+            foreach (var entity in controlledEntities)
+                entity.Controller = controller;
+
+            // Debug
+            if (controller.Pressed.Contains(Button.Debug))
+                _gameState.Debug = !_gameState.Debug;
         }
     }
 }
