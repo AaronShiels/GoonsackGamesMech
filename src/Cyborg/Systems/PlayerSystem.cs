@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Cyborg.Components;
 using Cyborg.Core;
 using Cyborg.Entities;
 using Cyborg.Utilities;
@@ -14,13 +13,11 @@ namespace Cyborg.Systems
 
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
-        private readonly IGameController _gameController;
 
-        public PlayerSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState, IGameController gameController)
+        public PlayerSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
         {
             _entities = entities;
             _gameState = gameState;
-            _gameController = gameController;
         }
 
         public void Update(GameTime gameTime)
@@ -32,16 +29,16 @@ namespace Cyborg.Systems
             if (entity == null)
                 return;
 
-            entity.Kinetic.Force = _gameController.Direction != Vector2.Zero
-                ? _gameController.Direction
-                * _playerForce : Vector2.Zero;
+            entity.Kinetic.Force = entity.Controller.Direction != Vector2.Zero
+                ? entity.Controller.Direction * _playerForce
+                : Vector2.Zero;
 
             Animate(entity);
         }
 
         private void Animate(Player player)
         {
-            if (_gameController.Direction == Vector2.Zero)
+            if (player.Controller.Direction == Vector2.Zero)
                 switch (player.Animation.Current)
                 {
                     case Player.AnimationWalkRight:
@@ -58,7 +55,7 @@ namespace Cyborg.Systems
                         return;
                 }
 
-            var cardinalDirection = _gameController.Direction.ToCardinal();
+            var cardinalDirection = player.Controller.Direction.ToCardinal();
             if (cardinalDirection == Vector2.UnitX)
                 player.Animation.UpdateAnimation(Player.AnimationWalkRight);
 
