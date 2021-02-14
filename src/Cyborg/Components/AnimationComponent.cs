@@ -10,6 +10,8 @@ namespace Cyborg.Components
         private readonly IDictionary<string, Rectangle[]> _animations;
         private readonly int _frameRate;
 
+        private string _current;
+
         public AnimationComponent(IDictionary<string, Rectangle[]> animations, int frameRate, string initialAnimation = null)
         {
             _animations = animations;
@@ -17,18 +19,20 @@ namespace Cyborg.Components
             Current = initialAnimation ?? _animations.Keys.First();
         }
 
-        public string Current { get; private set; }
+        public string Current
+        {
+            get => _current;
+            set
+            {
+                if (_current == value)
+                    return;
+
+                _current = value;
+                Elapsed = 0f;
+            }
+        }
         public float Elapsed { get; set; }
         public Rectangle Frame => _animations[Current][(int)(Elapsed * _frameRate) % _animations[Current].Length];
-
-        public void UpdateAnimation(string animation)
-        {
-            if (Current == animation)
-                return;
-
-            Current = animation;
-            Elapsed = 0;
-        }
 
         public static AnimationComponent FromDefinition(AnimationSet animationSet, string initialAnimation = null)
         {

@@ -31,6 +31,13 @@
 /processorParam:TextureFormat=Color
 /build:cyborg_spritesheet.png
 
+#begin debug_font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:debug_font.spritefont
+
 #begin demo_map.tmx
 /importer:TiledMapImporter
 /processor:TiledMapProcessor
