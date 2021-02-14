@@ -1,5 +1,5 @@
 {
-    "frame_rate": 8,
+    "frame_rate": 12,
     "frame_width": 16,
     "frame_height": 16,
     "animations": [
@@ -10,6 +10,10 @@
         { "key": "walk_left", "frames": [ [ 0,0 ], [ 1,0 ], [ 0,0 ], [ 2,0 ] ] },
         { "key": "walk_right", "frames": [ [ 0,1 ], [ 1,1 ], [ 0,1 ], [ 2,1 ] ] },
         { "key": "walk_down", "frames": [ [ 0,2 ], [ 1,2 ], [ 0,2 ], [ 2,2 ] ] },
-        { "key": "walk_up", "frames": [ [ 0,3 ], [ 1,3 ], [ 0,3 ], [ 2,3 ] ] }
+        { "key": "walk_up", "frames": [ [ 0,3 ], [ 1,3 ], [ 0,3 ], [ 2,3 ] ] },
+        { "key": "attack_left", "frames": [ [ 3,0 ] ] },
+        { "key": "attack_right", "frames": [ [ 3,1 ] ] },
+        { "key": "attack_down", "frames": [ [ 3,2 ] ] },
+        { "key": "attack_up", "frames": [ [ 3,3 ] ] }
     ]
 }

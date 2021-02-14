@@ -7,19 +7,21 @@ namespace Cyborg.Components
     {
         public ControllerComponent(Vector2 direction, IEnumerable<Button> pressed, IEnumerable<Button> held)
         {
-            Direction = direction;
+            Joystick = direction;
             Pressed = pressed;
             Held = held;
         }
 
-        public Vector2 Direction { get; }
+        public Vector2 Joystick { get; }
         public IEnumerable<Button> Pressed { get; }
         public IEnumerable<Button> Held { get; }
     }
 
     public enum Button
     {
-        Debug
+        Debug,
+        Attack,
+        Dash
     }
 
     public interface IControlled

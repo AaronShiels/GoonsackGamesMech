@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
@@ -9,13 +10,19 @@ namespace Cyborg.Systems
 {
     public class ControllerSystem : IUpdateSystem
     {
-        private static readonly IDictionary<Keys, Button> _keyMapping = new Dictionary<Keys, Button>
+        private static readonly IDictionary<Keys, Button> _keyboardMapping = new Dictionary<Keys, Button>
         {
-            {Keys.F12, Button.Debug}
+            { Keys.F12, Button.Debug },
+            { Keys.Space, Button.Dash }
+        };
+        private static readonly IDictionary<MouseButton, Button> _mouseMapping = new Dictionary<MouseButton, Button>
+        {
+            { MouseButton.Left, Button.Attack }
         };
 
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly GameState _gameState;
+
         private IEnumerable<Button> _previousButtons = Enumerable.Empty<Button>();
         private IEnumerable<Button> _currentButtons = Enumerable.Empty<Button>();
 
@@ -27,15 +34,19 @@ namespace Cyborg.Systems
 
         public void Update(GameTime gameTime)
         {
-            var currentState = Keyboard.GetState();
+            var currentKeyboardState = Keyboard.GetState();
+            var currentMouseState = Mouse.GetState();
 
             // Calculate buttons
+            var keyboardButtons = _keyboardMapping.Where(kvp => IsKeyDown(currentKeyboardState, kvp.Key)).Select(x => x.Value);
+            var mouseButtons = _mouseMapping.Where(kvp => IsMouseButtonDown(currentMouseState, kvp.Key)).Select(x => x.Value);
+
             _previousButtons = _currentButtons;
-            _currentButtons = _keyMapping.Where(x => currentState.IsKeyDown(x.Key)).Select(x => x.Value).ToList();
+            _currentButtons = keyboardButtons.Concat(mouseButtons).Distinct().ToList();
 
             // Calculate direction
-            var horizontalInput = (currentState.IsKeyDown(Keys.D) ? 1 : 0) + (currentState.IsKeyDown(Keys.A) ? -1 : 0);
-            var verticalInput = (currentState.IsKeyDown(Keys.S) ? 1 : 0) + (currentState.IsKeyDown(Keys.W) ? -1 : 0);
+            var horizontalInput = (currentKeyboardState.IsKeyDown(Keys.D) ? 1 : 0) + (currentKeyboardState.IsKeyDown(Keys.A) ? -1 : 0);
+            var verticalInput = (currentKeyboardState.IsKeyDown(Keys.S) ? 1 : 0) + (currentKeyboardState.IsKeyDown(Keys.W) ? -1 : 0);
             var direction = new Vector2(horizontalInput, verticalInput);
             if (direction != Vector2.Zero)
                 direction.Normalize();
@@ -50,5 +61,20 @@ namespace Cyborg.Systems
             if (controller.Pressed.Contains(Button.Debug))
                 _gameState.Debug = !_gameState.Debug;
         }
+
+        private enum MouseButton
+        {
+            Left,
+            Right
+        }
+
+        private static bool IsMouseButtonDown(MouseState state, MouseButton button) => button switch
+        {
+            MouseButton.Left => state.LeftButton == ButtonState.Pressed,
+            MouseButton.Right => state.RightButton == ButtonState.Pressed,
+            _ => throw new ArgumentOutOfRangeException(nameof(button)),
+        };
+
+        private static bool IsKeyDown(KeyboardState state, Keys key) => state.IsKeyDown(key);
     }
 }
