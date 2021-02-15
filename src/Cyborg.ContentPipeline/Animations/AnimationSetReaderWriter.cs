@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 
-namespace Cyborg.ContentPipeline
+namespace Cyborg.ContentPipeline.Animations
 {
     public class SpriteSpriteSheetReader : ContentTypeReader<AnimationSet>
     {

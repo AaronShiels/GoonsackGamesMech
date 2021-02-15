@@ -4,13 +4,13 @@ namespace Cyborg.Entities
 {
     public class PassThroughTile : ISprite
     {
-        public PassThroughTile(SpriteComponent sprite, BodyComponent body)
+        public PassThroughTile(StaticSpriteComponent sprite, BodyComponent body)
         {
             Sprite = sprite;
             Body = body;
         }
 
-        public SpriteComponent Sprite { get; }
+        public ISpriteComponent Sprite { get; }
         public BodyComponent Body { get; }
         public bool Destroyed { get; set; }
 

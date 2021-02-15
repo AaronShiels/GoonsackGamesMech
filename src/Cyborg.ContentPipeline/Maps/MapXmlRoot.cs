@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Cyborg.ContentPipeline.Tiled
+namespace Cyborg.ContentPipeline.Maps
 {
     [XmlRoot("map")]
-    public class TiledMapXmlRoot
+    public class MapXmlRoot
     {
         [XmlAttribute("renderorder")]
         public string RenderOrder { get; set; }

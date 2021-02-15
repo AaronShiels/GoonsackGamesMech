@@ -2,17 +2,17 @@
 using System.Linq;
 using Microsoft.Xna.Framework.Content.Pipeline;
 
-namespace Cyborg.ContentPipeline.Tiled
+namespace Cyborg.ContentPipeline.Maps
 {
-    [ContentProcessor(DisplayName = "Tiled Map Processor")]
-    public class TiledMapProcessor : ContentProcessor<TiledMapXmlRoot, TiledMap>
+    [ContentProcessor(DisplayName = "Map Processor")]
+    public class MapProcessor : ContentProcessor<MapXmlRoot, Map>
     {
         private const string _floorKey = "floor";
         private const string _wallsKey = "walls";
         private const string _overlayKey = "overlay";
         private const string _areasKey = "areas";
 
-        public override TiledMap Process(TiledMapXmlRoot input, ContentProcessorContext context)
+        public override Map Process(MapXmlRoot input, ContentProcessorContext context)
         {
             var tileLayers = input
                 .Layers
@@ -42,7 +42,7 @@ namespace Cyborg.ContentPipeline.Tiled
                     og => og.Objects.Select(o => (o.X, o.Y, o.Width, o.Height)).ToArray(),
                     StringComparer.OrdinalIgnoreCase);
 
-            return new TiledMap
+            return new Map
             {
                 TileSetSpriteSheet = input.TileSet.Image.Source.Split('.').First(),
                 TileSetColumns = input.TileSet.Columns,

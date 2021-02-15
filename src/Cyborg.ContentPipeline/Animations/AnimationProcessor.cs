@@ -1,21 +1,23 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework.Content.Pipeline;
 
-namespace Cyborg.ContentPipeline.Animation
+namespace Cyborg.ContentPipeline.Animations
 {
     [ContentProcessor(DisplayName = "Animation Processor")]
-    public class AnimationProcessor : ContentProcessor<AnimationSetJson, AnimationSet>
+    public class AnimationProcessor : ContentProcessor<IDictionary<string, AnimationJson>, AnimationSet>
     {
-        public override AnimationSet Process(AnimationSetJson input, ContentProcessorContext context)
+        public override AnimationSet Process(IDictionary<string, AnimationJson> input, ContentProcessorContext context)
         {
-            var animations = input.Animations
-                .ToDictionary(x => x.Key, x => x.Frames.Select(f => (f[0] * input.FrameWidth, f[1] * input.FrameHeight, input.FrameWidth, input.FrameHeight)).ToArray());
-
-            return new AnimationSet
-            {
-                Animations = animations,
-                FrameRate = input.FrameRate
-            };
+            var animations = input.ToDictionary(x => x.Key, x => Map(x.Value));
+            return new AnimationSet(animations);
         }
+
+        private static Animation Map(AnimationJson json) => new()
+        {
+            Repeat = json.Repeat,
+            FrameRate = json.FrameRate,
+            FrameCount = json.FrameCount
+        };
     }
 }

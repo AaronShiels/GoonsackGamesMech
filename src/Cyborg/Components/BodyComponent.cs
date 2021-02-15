@@ -20,7 +20,7 @@ namespace Cyborg.Components
             get
             {
                 var roundedPosition = Vector2.Round(Position).ToPoint();
-                return new(roundedPosition, Size);
+                return new(roundedPosition.X - Size.X / 2, roundedPosition.Y - Size.Y / 2, Size.X, Size.Y);
             }
         }
         public Edge Edges { get; }
