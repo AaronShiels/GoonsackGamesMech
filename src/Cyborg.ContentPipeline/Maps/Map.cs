@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Cyborg.ContentPipeline
+namespace Cyborg.ContentPipeline.Maps
 {
     [Serializable]
-    public class TiledMap
+    public class Map
     {
         public string TileSetSpriteSheet { get; set; }
         public short TileSetColumns { get; set; }

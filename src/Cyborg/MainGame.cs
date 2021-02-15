@@ -75,9 +75,8 @@ namespace Cyborg
             services.AddScoped<IUpdateSystem, PlayerSystem>();
             services.AddScoped<IUpdateSystem, KineticsSystem>();
             services.AddScoped<IUpdateSystem, CollisionSystem>();
-            services.AddScoped<IUpdateSystem, AnimationSystem>();
             services.AddScoped<IUpdateSystem, CameraSystem>();
-            services.AddScoped<IDrawSystem, SpriteRenderSystem>();
+            services.AddScoped<IUpdateSystem, IDrawSystem, SpriteRenderSystem>();
         }
     }
 }

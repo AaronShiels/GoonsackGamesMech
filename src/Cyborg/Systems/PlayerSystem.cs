@@ -12,8 +12,8 @@ namespace Cyborg.Systems
     {
         private const float _playerForce = 800f;
         private const float _attackDuration = 0.2f;
-        private const float _dashDuration = 0.5f;
-        private const int _dashForceCoefficient = 20;
+        private const float _dashDuration = 0.75f;
+        private const int _dashForceCoefficient = 30;
 
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
@@ -56,8 +56,11 @@ namespace Cyborg.Systems
             if (entity.State.Current < PlayerState.Attacking && entity.Controller.Pressed.Contains(Button.Dash))
             {
                 entity.State.Current = PlayerState.Dashing;
+
                 if (entity.Controller.Joystick != Vector2.Zero)
                     entity.Direction = entity.Controller.Joystick;
+
+                entity.Kinetic.Velocity = Vector2.Zero;
                 entity.Kinetic.Force = entity.Direction * _playerForce * _dashForceCoefficient;
             }
 
@@ -90,33 +93,33 @@ namespace Cyborg.Systems
                 case PlayerState.Dashing:
                 case PlayerState.Standing:
                     if (cardinalDirection == Vector2.UnitX)
-                        entity.Animation.Current = Player.AnimationStandRight;
+                        entity.Sprite.Animation = Player.AnimationStandRight;
                     else if (cardinalDirection == -Vector2.UnitX)
-                        entity.Animation.Current = Player.AnimationStandLeft;
+                        entity.Sprite.Animation = Player.AnimationStandLeft;
                     else if (cardinalDirection == Vector2.UnitY)
-                        entity.Animation.Current = Player.AnimationStandDown;
+                        entity.Sprite.Animation = Player.AnimationStandDown;
                     else if (cardinalDirection == -Vector2.UnitY)
-                        entity.Animation.Current = Player.AnimationStandUp;
+                        entity.Sprite.Animation = Player.AnimationStandUp;
                     break;
                 case PlayerState.Walking:
                     if (cardinalDirection == Vector2.UnitX)
-                        entity.Animation.Current = Player.AnimationWalkRight;
+                        entity.Sprite.Animation = Player.AnimationWalkRight;
                     else if (cardinalDirection == -Vector2.UnitX)
-                        entity.Animation.Current = Player.AnimationWalkLeft;
+                        entity.Sprite.Animation = Player.AnimationWalkLeft;
                     else if (cardinalDirection == Vector2.UnitY)
-                        entity.Animation.Current = Player.AnimationWalkDown;
+                        entity.Sprite.Animation = Player.AnimationWalkDown;
                     else if (cardinalDirection == -Vector2.UnitY)
-                        entity.Animation.Current = Player.AnimationWalkUp;
+                        entity.Sprite.Animation = Player.AnimationWalkUp;
                     break;
                 case PlayerState.Attacking:
                     if (cardinalDirection == Vector2.UnitX)
-                        entity.Animation.Current = Player.AnimationAttackRight;
+                        entity.Sprite.Animation = Player.AnimationAttackRight;
                     else if (cardinalDirection == -Vector2.UnitX)
-                        entity.Animation.Current = Player.AnimationAttackLeft;
+                        entity.Sprite.Animation = Player.AnimationAttackLeft;
                     else if (cardinalDirection == Vector2.UnitY)
-                        entity.Animation.Current = Player.AnimationAttackDown;
+                        entity.Sprite.Animation = Player.AnimationAttackDown;
                     else if (cardinalDirection == -Vector2.UnitY)
-                        entity.Animation.Current = Player.AnimationAttackUp;
+                        entity.Sprite.Animation = Player.AnimationAttackUp;
                     break;
                 default:
                     break;

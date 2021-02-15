@@ -3,12 +3,11 @@ using Microsoft.Xna.Framework;
 
 namespace Cyborg.Entities
 {
-    public class Player : IState<PlayerState>, IControlled, IKinetic, IAnimated
+    public class Player : IState<PlayerState>, IControlled, IKinetic, ISprite
     {
-        public Player(SpriteComponent sprite, AnimationComponent animation, BodyComponent body, KineticComponent kinetic)
+        public Player(AnimatedSpriteComponent sprite, BodyComponent body, KineticComponent kinetic)
         {
             Sprite = sprite;
-            Animation = animation;
             Body = body;
             Kinetic = kinetic;
         }
@@ -18,8 +17,7 @@ namespace Cyborg.Entities
         public ControllerComponent Controller { get; set; }
         public KineticComponent Kinetic { get; }
         public BodyComponent Body { get; }
-        public AnimationComponent Animation { get; }
-        public SpriteComponent Sprite { get; }
+        public ISpriteComponent Sprite { get; }
         public bool Destroyed { get; set; }
 
 

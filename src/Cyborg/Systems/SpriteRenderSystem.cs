@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using Cyborg.Components;
 using Cyborg.Core;
 using Cyborg.Entities;
@@ -10,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Cyborg.Systems
 {
-    public class SpriteRenderSystem : IDrawSystem
+    public class SpriteRenderSystem : IUpdateSystem, IDrawSystem
     {
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
@@ -29,6 +28,18 @@ namespace Cyborg.Systems
             _globalTransform = ComputeScalingTransform(graphicsDevice.PresentationParameters.BackBufferWidth, graphicsDevice.PresentationParameters.BackBufferHeight, Constants.BaseWidth, Constants.BaseHeight);
         }
 
+        public void Update(GameTime gameTime)
+        {
+            if (!_gameState.Active)
+                return;
+
+            var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            var spriteEntities = _entities.OfType<ISprite>();
+            foreach (var entity in spriteEntities)
+                entity.Sprite.Elapsed += elapsed;
+        }
+
         public void Draw(GameTime gameTime)
         {
             _graphicsDevice.Clear(new Color(57, 49, 75));
@@ -44,8 +55,8 @@ namespace Cyborg.Systems
 
         private Rectangle GetCameraFrame()
         {
-            var cameraEntity = _entities.OfType<Camera>().Single();
-            var position = Vector2.Round(cameraEntity.Body.Position).ToPoint();
+            var entity = _entities.OfType<Camera>().Single();
+            var position = Vector2.Round(entity.Body.Position).ToPoint();
 
             return new Rectangle(position.X - Constants.BaseWidth / 2, position.Y - Constants.BaseHeight / 2, Constants.BaseWidth, Constants.BaseHeight);
         }
@@ -55,7 +66,7 @@ namespace Cyborg.Systems
             foreach (var entity in _entities.OfType<ISprite>().OrderBy(e => e.Sprite.Order))
             {
                 var position = Vector2.Round(entity.Body.Position).ToPoint();
-                var frame = new Rectangle(position.X + entity.Sprite.Offset.X, position.Y + entity.Sprite.Offset.Y, entity.Sprite.Frame.Width, entity.Sprite.Frame.Height);
+                var frame = new Rectangle(position.X - entity.Sprite.Frame.Width / 2 + entity.Sprite.Offset.X, position.Y - entity.Sprite.Frame.Height / 2 + entity.Sprite.Offset.Y, entity.Sprite.Frame.Width, entity.Sprite.Frame.Height);
                 if (frame.Right < cameraFrame.Left || frame.Left > cameraFrame.Right || frame.Bottom < cameraFrame.Top || frame.Top > cameraFrame.Bottom)
                     continue;
 
@@ -81,7 +92,7 @@ namespace Cyborg.Systems
                 var playerEntity = entity as Player;
                 var pixel = playerEntity != null && playerEntity.State.Current == PlayerState.Attacking ? redPixel : bluePixel;
 
-                var entityFrame = new Rectangle((int)entity.Body.Position.X, (int)entity.Body.Position.Y, entity.Body.Size.X, entity.Body.Size.Y);
+                var entityFrame = entity.Body.Bounds;
                 if (entityFrame.Right < cameraFrame.Left || entityFrame.Left > cameraFrame.Right || entityFrame.Bottom < cameraFrame.Top || entityFrame.Top > cameraFrame.Bottom)
                     continue;
 
@@ -99,11 +110,11 @@ namespace Cyborg.Systems
 
                 if (playerEntity != null)
                 {
-                    debugText = $"{playerEntity.Kinetic.Force.X:F},{playerEntity.Kinetic.Force.Y:F}\n{playerEntity.Kinetic.Velocity.X:F},{playerEntity.Kinetic.Velocity.Y:F}\n{playerEntity.Body.Position.X:F},{playerEntity.Body.Position.Y:F}";
+                    debugText = $"{playerEntity.Kinetic.Force.Length():F}\n{playerEntity.Kinetic.Velocity.Length():F}\n{playerEntity.Body.Position.X:F},{playerEntity.Body.Position.Y:F}";
                 }
             }
 
-            _spriteBatch.DrawString(debugFont, debugText, Vector2.Zero, Color.Black);
+            _spriteBatch.DrawString(debugFont, debugText, Vector2.Zero, Color.White);
         }
 
         private static Matrix ComputeScalingTransform(float screenX, float screenY, float baseX, float baseY) => Matrix.CreateScale(new Vector3(screenX / baseX, screenY / baseY, 1));
