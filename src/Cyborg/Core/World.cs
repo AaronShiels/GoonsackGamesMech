@@ -23,13 +23,15 @@ namespace Cyborg.Core
             var floorTiles = serviceProvider.CreateFloorTiles();
             var wallTiles = serviceProvider.GetWallTiles();
             var overlayTiles = serviceProvider.CreateOverlayTiles();
-            var player = serviceProvider.CreatePlayer(64, 64);
+            var player = serviceProvider.CreatePlayer(56, 88);
+            var enemy = serviceProvider.CreateEnemy(160, 88);
             var camera = serviceProvider.CreateCamera(160, 88);
 
             floorTiles.ForEach(_entities.Add);
             wallTiles.ForEach(_entities.Add);
             overlayTiles.ForEach(_entities.Add);
             _entities.Add(player);
+            _entities.Add(enemy);
             _entities.Add(camera);
         }
 
