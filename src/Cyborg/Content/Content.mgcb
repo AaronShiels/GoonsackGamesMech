@@ -218,12 +218,12 @@
 /processorParam:TextureFormat=Compressed
 /build:debug_font.spritefont
 
-#begin demo_map.tmx
+#begin Maps/demo_map.tmx
 /importer:MapImporter
 /processor:MapProcessor
-/build:demo_map.tmx
+/build:Maps/demo_map.tmx
 
-#begin SuperRetroWorld/dungeon_x16.png
+#begin Maps/dungeon_x16.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -233,5 +233,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:SuperRetroWorld/dungeon_x16.png
+/build:Maps/dungeon_x16.png
 

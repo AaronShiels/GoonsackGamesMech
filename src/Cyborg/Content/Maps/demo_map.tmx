@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="5">
  <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" tilecount="768" columns="48">
-  <image source="SuperRetroWorld/dungeon_x16.png" width="768" height="256"/>
+  <image source="dungeon_x16.png" width="768" height="256"/>
  </tileset>
  <layer id="1" name="floor" width="40" height="22" locked="1">
   <data encoding="csv">

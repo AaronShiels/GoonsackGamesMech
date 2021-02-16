@@ -57,6 +57,17 @@ namespace Cyborg.Systems
                     entity.State.Attacking = false;
             }
 
+            // Enter attack
+            if (!entity.State.Attacking && entity.Controller.Pressed.Contains(Button.Attack))
+            {
+                entity.State.Attacking = true;
+                entity.State.AttackElapsed = 0f;
+                entity.State.AttackCounter++;
+
+                if (entity.Controller.Joystick != Vector2.Zero)
+                    entity.State.Direction = entity.Controller.Joystick;
+            }
+
             // Enter dash
             if (!entity.State.Attacking && !entity.State.Dashing && entity.Controller.Pressed.Contains(Button.Dash))
             {
@@ -67,17 +78,6 @@ namespace Cyborg.Systems
                     entity.State.Direction = entity.Controller.Joystick;
 
                 entity.Kinetic.Velocity = entity.State.Direction * _dashInstantaneousVelocity;
-            }
-
-            // Enter attack
-            if (!entity.State.Attacking && !entity.State.Dashing && entity.Controller.Pressed.Contains(Button.Attack))
-            {
-                entity.State.Attacking = true;
-                entity.State.AttackElapsed = 0f;
-                entity.State.AttackCounter++;
-
-                if (entity.Controller.Joystick != Vector2.Zero)
-                    entity.State.Direction = entity.Controller.Joystick;
             }
 
             // Walking
