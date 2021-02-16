@@ -5,16 +5,16 @@ namespace Cyborg.Components
 {
     public class ControllerComponent
     {
-        public ControllerComponent(Vector2 direction, IEnumerable<Button> pressed, IEnumerable<Button> held)
+        public Vector2 Joystick { get; private set; }
+        public IEnumerable<Button> Pressed { get; private set; }
+        public IEnumerable<Button> Held { get; private set; }
+
+        public void Update(Vector2 joystick, IEnumerable<Button> pressed, IEnumerable<Button> held)
         {
-            Joystick = direction;
+            Joystick = joystick;
             Pressed = pressed;
             Held = held;
         }
-
-        public Vector2 Joystick { get; }
-        public IEnumerable<Button> Pressed { get; }
-        public IEnumerable<Button> Held { get; }
     }
 
     public enum Button
@@ -26,6 +26,6 @@ namespace Cyborg.Components
 
     public interface IControlled
     {
-        ControllerComponent Controller { get; set; }
+        ControllerComponent Controller { get; }
     }
 }

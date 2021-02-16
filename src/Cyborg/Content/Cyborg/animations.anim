@@ -1,4 +1,9 @@
 {
+    "stand_down": {
+        "frame_rate": 12,
+        "frame_count": 1,
+        "repeat": false
+    },
     "stand_left": {
         "frame_rate": 12,
         "frame_count": 1,
@@ -9,15 +14,15 @@
         "frame_count": 1,
         "repeat": false
     },
-    "stand_down": {
-        "frame_rate": 12,
-        "frame_count": 1,
-        "repeat": false
-    },
     "stand_up": {
         "frame_rate": 12,
         "frame_count": 1,
         "repeat": false
+    },
+    "walk_down": {
+        "frame_rate": 12,
+        "frame_count": 4,
+        "repeat": true
     },
     "walk_left": {
         "frame_rate": 12,
@@ -29,24 +34,49 @@
         "frame_count": 4,
         "repeat": true
     },
-    "walk_down": {
-        "frame_rate": 12,
-        "frame_count": 4,
-        "repeat": true
-    },
     "walk_up": {
         "frame_rate": 12,
         "frame_count": 4,
         "repeat": true
     },
+    "attack_down": {
+        "frame_rate": 24,
+        "frame_count": 4,
+        "repeat": false
+    },
     "attack_left": {
-        "frame_rate": 12,
-        "frame_count": 3,
+        "frame_rate": 24,
+        "frame_count": 4,
         "repeat": false
     },
     "attack_right": {
-        "frame_rate": 12,
-        "frame_count": 3,
+        "frame_rate": 24,
+        "frame_count": 4,
+        "repeat": false
+    },
+    "attack_up": {
+        "frame_rate": 24,
+        "frame_count": 4,
+        "repeat": false
+    },
+    "attack_2_down": {
+        "frame_rate": 24,
+        "frame_count": 4,
+        "repeat": false
+    },
+    "attack_2_left": {
+        "frame_rate": 24,
+        "frame_count": 4,
+        "repeat": false
+    },
+    "attack_2_right": {
+        "frame_rate": 24,
+        "frame_count": 4,
+        "repeat": false
+    },
+    "attack_2_up": {
+        "frame_rate": 24,
+        "frame_count": 4,
         "repeat": false
     }
 }
