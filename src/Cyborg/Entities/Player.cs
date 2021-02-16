@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Cyborg.Entities
 {
-    public class Player : IState<PlayerState>, IControlled, IKinetic, ISprite
+    public class Player : IState<PlayerStateComponent>, IControlled, IKinetic, ISprite
     {
         public Player(AnimatedSpriteComponent sprite, BodyComponent body, KineticComponent kinetic)
         {
@@ -12,9 +12,8 @@ namespace Cyborg.Entities
             Kinetic = kinetic;
         }
 
-        public Vector2 Direction { get; set; } = Vector2.UnitX;
-        public StateComponent<PlayerState> State { get; } = new StateComponent<PlayerState>(PlayerState.Standing);
-        public ControllerComponent Controller { get; set; }
+        public PlayerStateComponent State { get; } = new PlayerStateComponent();
+        public ControllerComponent Controller { get; set; } = new ControllerComponent();
         public KineticComponent Kinetic { get; }
         public BodyComponent Body { get; }
         public ISpriteComponent Sprite { get; }
@@ -34,13 +33,23 @@ namespace Cyborg.Entities
         public const string AnimationAttackUp = "attack_up";
         public const string AnimationAttackLeft = "attack_left";
         public const string AnimationAttackDown = "attack_down";
+        public const string AnimationAttack2Right = "attack_2_right";
+        public const string AnimationAttack2Up = "attack_2_up";
+        public const string AnimationAttack2Left = "attack_2_left";
+        public const string AnimationAttack2Down = "attack_2_down";
     }
 
-    public enum PlayerState
+    public class PlayerStateComponent
     {
-        Standing,
-        Walking,
-        Attacking,
-        Dashing
+        public Vector2 Direction { get; set; } = Vector2.UnitX;
+
+        public bool Walking { get; set; }
+
+        public bool Attacking { get; set; }
+        public float AttackElapsed { get; set; }
+        public int AttackCounter { get; set; }
+
+        public bool Dashing { get; set; }
+        public float DashElapsed { get; set; }
     }
 }

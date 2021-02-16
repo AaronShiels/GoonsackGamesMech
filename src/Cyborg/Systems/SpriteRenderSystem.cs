@@ -90,7 +90,7 @@ namespace Cyborg.Systems
             foreach (var entity in _entities.OfType<IBody>())
             {
                 var playerEntity = entity as Player;
-                var pixel = playerEntity != null && playerEntity.State.Current == PlayerState.Attacking ? redPixel : bluePixel;
+                var pixel = playerEntity != null && playerEntity.State.Attacking ? redPixel : bluePixel;
 
                 var entityFrame = entity.Body.Bounds;
                 if (entityFrame.Right < cameraFrame.Left || entityFrame.Left > cameraFrame.Right || entityFrame.Bottom < cameraFrame.Top || entityFrame.Top > cameraFrame.Bottom)

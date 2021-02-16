@@ -23,8 +23,7 @@ namespace Cyborg.Systems
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly GameState _gameState;
 
-        private IEnumerable<Button> _previousButtons = Enumerable.Empty<Button>();
-        private IEnumerable<Button> _currentButtons = Enumerable.Empty<Button>();
+        private IEnumerable<Button> _previousDownButtons = Enumerable.Empty<Button>();
 
         public ControllerSystem(IReadOnlyCollection<IEntity> entities, GameState gameState)
         {
@@ -41,8 +40,9 @@ namespace Cyborg.Systems
             var keyboardButtons = _keyboardMapping.Where(kvp => IsKeyDown(currentKeyboardState, kvp.Key)).Select(x => x.Value);
             var mouseButtons = _mouseMapping.Where(kvp => IsMouseButtonDown(currentMouseState, kvp.Key)).Select(x => x.Value);
 
-            _previousButtons = _currentButtons;
-            _currentButtons = keyboardButtons.Concat(mouseButtons).Distinct().ToList();
+            var downButtons = keyboardButtons.Concat(mouseButtons).Distinct().ToList();
+            var pressedButtons = downButtons.Except(_previousDownButtons).ToList();
+            _previousDownButtons = downButtons;
 
             // Calculate direction
             var horizontalInput = (currentKeyboardState.IsKeyDown(Keys.D) ? 1 : 0) + (currentKeyboardState.IsKeyDown(Keys.A) ? -1 : 0);
@@ -52,13 +52,12 @@ namespace Cyborg.Systems
                 direction.Normalize();
 
             // Apply
-            var controller = new ControllerComponent(direction, _currentButtons.Except(_previousButtons), _currentButtons);
             var controlledEntities = _entities.OfType<IControlled>();
             foreach (var entity in controlledEntities)
-                entity.Controller = controller;
+                entity.Controller.Update(direction, pressedButtons, downButtons);
 
             // Debug
-            if (controller.Pressed.Contains(Button.Debug))
+            if (pressedButtons.Contains(Button.Debug))
                 _gameState.Debug = !_gameState.Debug;
         }
 
