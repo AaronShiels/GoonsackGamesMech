@@ -1,42 +1,42 @@
 {
     "stand_down": {
-        "frame_rate": 12,
-        "frame_count": 1,
-        "repeat": false
+        "frame_rate": 2,
+        "frame_count": 2,
+        "repeat": true
     },
     "stand_left": {
-        "frame_rate": 12,
-        "frame_count": 1,
-        "repeat": false
+        "frame_rate": 2,
+        "frame_count": 2,
+        "repeat": true
     },
     "stand_right": {
-        "frame_rate": 12,
-        "frame_count": 1,
-        "repeat": false
+        "frame_rate": 2,
+        "frame_count": 2,
+        "repeat": true
     },
     "stand_up": {
-        "frame_rate": 12,
-        "frame_count": 1,
-        "repeat": false
+        "frame_rate": 2,
+        "frame_count": 2,
+        "repeat": true
     },
     "walk_down": {
-        "frame_rate": 12,
-        "frame_count": 4,
+        "frame_rate": 24,
+        "frame_count": 8,
         "repeat": true
     },
     "walk_left": {
-        "frame_rate": 12,
-        "frame_count": 4,
+        "frame_rate": 24,
+        "frame_count": 8,
         "repeat": true
     },
     "walk_right": {
-        "frame_rate": 12,
-        "frame_count": 4,
+        "frame_rate": 24,
+        "frame_count": 8,
         "repeat": true
     },
     "walk_up": {
-        "frame_rate": 12,
-        "frame_count": 4,
+        "frame_rate": 24,
+        "frame_count": 8,
         "repeat": true
     },
     "attack_down": {
