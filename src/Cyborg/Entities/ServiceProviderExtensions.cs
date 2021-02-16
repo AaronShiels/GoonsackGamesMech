@@ -24,7 +24,7 @@ namespace Cyborg.Entities
                 var texture = contentManager.Load<Texture2D>($"{animationRoot}{kvp.Key}");
                 return (texture, kvp.Value.FrameCount, kvp.Value.FrameRate, kvp.Value.Repeat);
             });
-            var sprite = new AnimatedSpriteComponent(animations, new(0, -2), 1);
+            var sprite = new AnimatedSpriteComponent(animations, new(0, -2), 3);
 
             var position = new Vector2(initialX, initialY);
             var size = new Point(8, 12);
@@ -32,6 +32,23 @@ namespace Cyborg.Entities
             var kinetic = new KineticComponent(1);
 
             return new Player(sprite, body, kinetic);
+        }
+
+        public static Enemy CreateEnemy(this IServiceProvider serviceProvider, int initialX, int initialY)
+        {
+            var graphicsDevice = serviceProvider.GetRequiredService<GraphicsDevice>();
+
+            var spriteTexture = new Texture2D(graphicsDevice, 16, 16);
+            var colourArray = Enumerable.Range(0, 16 * 16).Select(_ => Color.Maroon).ToArray();
+            spriteTexture.SetData(colourArray);
+            var sprite = new StaticSpriteComponent(spriteTexture, null, default, 2);
+
+            var position = new Vector2(initialX, initialY);
+            var size = new Point(16, 16);
+            var body = new BodyComponent(position, size, Edge.Left | Edge.Top | Edge.Right | Edge.Bottom);
+            var kinetic = new KineticComponent(1);
+
+            return new Enemy(sprite, body, kinetic);
         }
 
         public static Camera CreateCamera(this IServiceProvider serviceProvider, int initialX, int initialY)
@@ -135,7 +152,7 @@ namespace Cyborg.Entities
                         var spriteFrameOffsetX = tileIndex % map.TileSetColumns * map.TileWidth;
                         var spriteFrameOffsetY = tileIndex / map.TileSetColumns * map.TileHeight;
                         var spriteFrame = new Rectangle(spriteFrameOffsetX, spriteFrameOffsetY, map.TileWidth, map.TileHeight);
-                        var sprite = new StaticSpriteComponent(spriteSheet, spriteFrame, default, 2);
+                        var sprite = new StaticSpriteComponent(spriteSheet, spriteFrame, default, 4);
 
                         var position = new Vector2(x * map.TileWidth + map.TileWidth / 2, y * map.TileHeight + map.TileHeight / 2);
                         var body = new BodyComponent(position);

@@ -35,12 +35,12 @@ namespace Cyborg.Systems
             var playerEntities = _entities.OfType<Player>();
             foreach (var entity in playerEntities)
             {
-                ApplyState(entity, elapsed);
-                ApplyAnimation(entity);
+                SetState(entity, elapsed);
+                SetAnimation(entity);
             }
         }
 
-        private void ApplyState(Player entity, float elapsed)
+        private void SetState(Player entity, float elapsed)
         {
             // Reset force
             entity.Kinetic.Force = Vector2.Zero;
@@ -101,7 +101,7 @@ namespace Cyborg.Systems
             }
         }
 
-        private void ApplyAnimation(Player entity)
+        private void SetAnimation(Player entity)
         {
             var cardinalDirection = entity.State.Direction.ToCardinal();
             if (entity.State.Attacking)
