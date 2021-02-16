@@ -10,10 +10,11 @@ namespace Cyborg.Systems
 {
     public class PlayerSystem : IUpdateSystem
     {
-        private const float _walkingForce = 800f;
+        private const float _walkingForce = 600f;
         private const float _attackDuration = 0.25f;
-        private const float _dashDuration = 0.75f;
-        private const int _dashInstantaneousVelocity = 400;
+        private const float _dashTotalDuration = 0.75f;
+        private const float _dashForceDuration = 0.05f;
+        private const int _dashForceCoefficient = 10;
 
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
@@ -41,11 +42,14 @@ namespace Cyborg.Systems
 
         private void ApplyState(Player entity, float elapsed)
         {
+            // Reset force
+            entity.Kinetic.Force = Vector2.Zero;
+
             // Finish dash
             if (entity.State.Dashing)
             {
                 entity.State.DashElapsed += elapsed;
-                if (entity.State.DashElapsed >= _dashDuration)
+                if (entity.State.DashElapsed >= _dashTotalDuration)
                     entity.State.Dashing = false;
             }
 
@@ -76,11 +80,15 @@ namespace Cyborg.Systems
 
                 if (entity.Controller.Joystick != Vector2.Zero)
                     entity.State.Direction = entity.Controller.Joystick;
-
-                entity.Kinetic.Velocity = entity.State.Direction * _dashInstantaneousVelocity;
             }
 
-            // Walking
+            // Dashing
+            if (entity.State.Dashing && entity.State.DashElapsed <= _dashForceDuration)
+            {
+                entity.Kinetic.Force = entity.State.Direction * _walkingForce * _dashForceCoefficient;
+            }
+
+            // Walking            
             if (!entity.State.Attacking && !entity.State.Dashing && entity.Controller.Joystick != Vector2.Zero)
             {
                 entity.State.Walking = true;
@@ -90,7 +98,6 @@ namespace Cyborg.Systems
             else
             {
                 entity.State.Walking = false;
-                entity.Kinetic.Force = Vector2.Zero;
             }
         }
 
