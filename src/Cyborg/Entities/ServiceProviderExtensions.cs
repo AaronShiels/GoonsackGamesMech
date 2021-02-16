@@ -38,7 +38,8 @@ namespace Cyborg.Entities
         {
             var contentManager = serviceProvider.GetRequiredService<ContentManager>();
 
-            var map = contentManager.Load<Map>("demo_map");
+            var mapRoot = "Maps/";
+            var map = contentManager.Load<Map>($"{mapRoot}demo_map");
             var areas = map.Areas.Select(a => new Rectangle(a.X, a.Y, a.Width, a.Height));
 
             var position = new Vector2(initialX, initialY);
@@ -51,11 +52,12 @@ namespace Cyborg.Entities
         {
             var contentManager = serviceProvider.GetRequiredService<ContentManager>();
 
-            var map = contentManager.Load<Map>("demo_map");
+            var mapRoot = "Maps/";
+            var map = contentManager.Load<Map>($"{mapRoot}demo_map");
             var tiles = map.FloorTiles;
             var tileCountWidth = tiles.GetLength(0);
             var tileCountHeight = tiles.GetLength(1);
-            var spriteSheet = contentManager.Load<Texture2D>(map.TileSetSpriteSheet);
+            var spriteSheet = contentManager.Load<Texture2D>($"{mapRoot}{map.TileSetSpriteSheet}");
 
             for (var x = 0; x < tileCountWidth; x++)
                 for (var y = 0; y < tileCountHeight; y++)
@@ -78,11 +80,12 @@ namespace Cyborg.Entities
         {
             var contentManager = serviceProvider.GetRequiredService<ContentManager>();
 
-            var map = contentManager.Load<Map>("demo_map");
+            var mapRoot = "Maps/";
+            var map = contentManager.Load<Map>($"{mapRoot}demo_map");
             var tiles = map.WallTiles;
             var tileCountWidth = tiles.GetLength(0);
             var tileCountHeight = tiles.GetLength(1);
-            var spriteSheet = contentManager.Load<Texture2D>(map.TileSetSpriteSheet);
+            var spriteSheet = contentManager.Load<Texture2D>($"{mapRoot}{map.TileSetSpriteSheet}");
 
             for (var x = 0; x < tileCountWidth; x++)
                 for (var y = 0; y < tileCountHeight; y++)
@@ -117,11 +120,12 @@ namespace Cyborg.Entities
         {
             var contentManager = serviceProvider.GetRequiredService<ContentManager>();
 
-            var map = contentManager.Load<Map>("demo_map");
+            var mapRoot = "Maps/";
+            var map = contentManager.Load<Map>($"{mapRoot}demo_map");
             var tiles = map.OverlayTiles;
             var tileCountWidth = tiles.GetLength(0);
             var tileCountHeight = tiles.GetLength(1);
-            var spriteSheet = contentManager.Load<Texture2D>(map.TileSetSpriteSheet);
+            var spriteSheet = contentManager.Load<Texture2D>($"{mapRoot}{map.TileSetSpriteSheet}");
 
             for (var x = 0; x < tileCountWidth; x++)
                 for (var y = 0; y < tileCountHeight; y++)
