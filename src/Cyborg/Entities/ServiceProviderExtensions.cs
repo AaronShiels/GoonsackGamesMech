@@ -48,21 +48,19 @@ namespace Cyborg.Entities
             var body = new BodyComponent(position, size, Edge.Left | Edge.Top | Edge.Right | Edge.Bottom);
             var kinetic = new KineticComponent(1);
 
-            return new Enemy(sprite, body, kinetic);
+            var damage = new DamageComponent(10, 0.25f);
+
+            return new Enemy(kinetic, damage, body, sprite);
         }
 
-        public static Camera CreateCamera(this IServiceProvider serviceProvider, int initialX, int initialY)
+        public static IEnumerable<Area> CreateAreas(this IServiceProvider serviceProvider)
         {
             var contentManager = serviceProvider.GetRequiredService<ContentManager>();
 
             var mapRoot = "Maps/";
             var map = contentManager.Load<Map>($"{mapRoot}demo_map");
-            var areas = map.Areas.Select(a => new Rectangle(a.X, a.Y, a.Width, a.Height));
-
-            var position = new Vector2(initialX, initialY);
-            var body = new BodyComponent(position);
-
-            return new Camera(body, areas);
+            return map.Areas
+                .Select(a => new Area(new Rectangle(a.X, a.Y, a.Width, a.Height)));
         }
 
         public static IEnumerable<PassThroughTile> CreateFloorTiles(this IServiceProvider serviceProvider)

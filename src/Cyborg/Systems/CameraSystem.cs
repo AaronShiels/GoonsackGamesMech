@@ -10,39 +10,45 @@ namespace Cyborg.Systems
     public class CameraSystem : IUpdateSystem
     {
         private const float _transitionTime = 0.5f;
+
         private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly ICamera _camera;
         private readonly GameState _gameState;
 
-        private Vector2 _lastPosition;
+        private Point _lastPosition;
         private float _lastTransitionedAt;
 
-        public CameraSystem(IReadOnlyCollection<IEntity> entities, GameState gameState)
+        public CameraSystem(IReadOnlyCollection<IEntity> entities, ICamera camera, GameState gameState)
         {
             _entities = entities;
+            _camera = camera;
             _gameState = gameState;
         }
 
         public void Update(GameTime gameTime)
         {
             var totalSeconds = (float)gameTime.TotalGameTime.TotalSeconds;
-            var camera = _entities.OfType<Camera>().Single();
+
+            var areas = _entities.OfType<Area>();
             var player = _entities.OfType<Player>().Single();
 
             var playerCentre = player.Body.Bounds.Center;
-            var activeArea = camera.Areas
-                .Where(a => a.Left <= playerCentre.X && a.Right > playerCentre.X)
-                .Where(a => a.Top <= playerCentre.Y && a.Bottom > playerCentre.Y)
-                .First();
-            var desiredCameraPosition = activeArea.Center.ToVector2();
+            var activeArea = areas
+                .Select(a => a.Bounds)
+                .Where(b => b.Left <= playerCentre.X && b.Right > playerCentre.X)
+                .Where(b => b.Top <= playerCentre.Y && b.Bottom > playerCentre.Y)
+                .Single();
 
-            if (camera.Body.Position != desiredCameraPosition && !_gameState.Transitioning)
+            var desiredCameraPosition = activeArea.Center;
+
+            if (_camera.Position != desiredCameraPosition && !_gameState.Transitioning)
             {
                 _gameState.Transitioning = true;
 
-                _lastPosition = camera.Body.Position;
+                _lastPosition = _camera.Position;
                 _lastTransitionedAt = totalSeconds;
             }
-            else if (camera.Body.Position == desiredCameraPosition && _gameState.Transitioning)
+            else if (_camera.Position == desiredCameraPosition && _gameState.Transitioning)
             {
                 _gameState.Transitioning = false;
             }
@@ -50,8 +56,11 @@ namespace Cyborg.Systems
             if (!_gameState.Transitioning)
                 return;
 
+            var start = _lastPosition.ToVector2();
+            var end = desiredCameraPosition.ToVector2();
             var progress = Math.Min((totalSeconds - _lastTransitionedAt) / _transitionTime, 1f);
-            camera.Body.Position = Vector2.Lerp(_lastPosition, desiredCameraPosition, progress);
+            var current = Vector2.Lerp(start, end, progress);
+            _camera.Position = Vector2.Round(current).ToPoint();
         }
     }
 }

@@ -2,25 +2,20 @@ using Cyborg.Components;
 
 namespace Cyborg.Entities
 {
-    public class Enemy : IState<EnemyStateComponent>, IKinetic, ISprite
+    public class Enemy : IKinetic, IDamageable, ISprite
     {
-        public Enemy(ISpriteComponent sprite, BodyComponent body, KineticComponent kinetic)
+        public Enemy(KineticComponent kinetic, DamageComponent damage, BodyComponent body, ISpriteComponent sprite)
         {
-            Sprite = sprite;
-            Body = body;
             Kinetic = kinetic;
+            Damage = damage;
+            Body = body;
+            Sprite = sprite;
         }
 
-        public EnemyStateComponent State { get; } = new EnemyStateComponent();
         public KineticComponent Kinetic { get; }
+        public DamageComponent Damage { get; }
         public BodyComponent Body { get; }
         public ISpriteComponent Sprite { get; }
         public bool Destroyed { get; set; }
-
-    }
-
-    public class EnemyStateComponent
-    {
-
     }
 }

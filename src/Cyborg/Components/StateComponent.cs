@@ -1,7 +1,7 @@
 namespace Cyborg.Components
 {
-    public interface IState<TStateComponent> where TStateComponent : class
+    public interface IState<TState> where TState : class
     {
-        TStateComponent State { get; }
+        TState State { get; }
     }
 }

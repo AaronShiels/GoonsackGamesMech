@@ -53,6 +53,8 @@ namespace Cyborg
 
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.Clear(new Color(57, 49, 75));
+
             _world.Draw(gameTime);
 
             base.Draw(gameTime);
@@ -63,20 +65,22 @@ namespace Cyborg
             // Framework infrastructure
             services.AddSingleton(_ => GraphicsDevice);
             services.AddScoped(svc => new ContentManager(Services, "Content"));
-            services.AddScoped<SpriteBatch>();
 
             // Core infrastructure
             services.AddSingleton<IWorld, World>();
             services.AddSingleton<IGameState, GameState, GameState>();
+            services.AddSingleton<ICamera, Camera>();
             services.AddScoped<IReadOnlyCollection<IEntity>, ICollection<IEntity>, List<IEntity>>();
 
             // Systems
             services.AddScoped<IUpdateSystem, ControllerSystem>();
             services.AddScoped<IUpdateSystem, PlayerSystem>();
+            services.AddScoped<IUpdateSystem, DamageSystem>();
             services.AddScoped<IUpdateSystem, KineticsSystem>();
             services.AddScoped<IUpdateSystem, CollisionSystem>();
             services.AddScoped<IUpdateSystem, CameraSystem>();
-            services.AddScoped<IUpdateSystem, IDrawSystem, SpriteRenderSystem>();
+            services.AddScoped<IUpdateSystem, IDrawSystem, SpriteSystem>();
+            services.AddScoped<IUpdateSystem, IDrawSystem, DebugSystem>();
         }
     }
 }
