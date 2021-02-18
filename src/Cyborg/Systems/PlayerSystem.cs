@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
@@ -12,9 +13,8 @@ namespace Cyborg.Systems
     {
         private const float _walkingForce = 600f;
         private const float _attackDuration = 0.25f;
-        private const float _dashTotalDuration = 0.75f;
-        private const float _dashForceDuration = 0.05f;
-        private const int _dashForceCoefficient = 10;
+        private const float _dashDuration = 0.75f;
+        private const float _dashInstantaneousVelocity = 400f;
 
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
@@ -35,21 +35,50 @@ namespace Cyborg.Systems
             var playerEntities = _entities.OfType<Player>();
             foreach (var entity in playerEntities)
             {
-                SetState(entity, elapsed);
-                SetAnimation(entity);
+                CalculateState(entity, elapsed);
+                ApplyAnimation(entity);
+
+                if (entity.State.Attacking)
+                {
+                    var cardinalDirection = entity.State.Direction.ToCardinal();
+                    Rectangle attackFrame;
+                    if (cardinalDirection.X == 1)
+                        attackFrame = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(8, -8)).ToPoint(), new(12, 16));
+                    else if (cardinalDirection.X == -1)
+                        attackFrame = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-20, -8)).ToPoint(), new(12, 16));
+                    else if (cardinalDirection.Y == 1)
+                        attackFrame = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-8, 8)).ToPoint(), new(16, 12));
+                    else if (cardinalDirection.Y == -1)
+                        attackFrame = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-8, -20)).ToPoint(), new(16, 12));
+                    else
+                        throw new ArgumentOutOfRangeException(nameof(cardinalDirection));
+
+                    var enemyEntities = _entities.OfType<Enemy>();
+                    foreach (var enemyEntity in enemyEntities)
+                        ApplyAttack(entity, attackFrame, enemyEntity);
+                }
             }
         }
 
-        private void SetState(Player entity, float elapsed)
+        private static void ApplyAttack(Player playerEntity, Rectangle attackFrame, Enemy enemyEntity)
         {
-            // Reset force
-            entity.Kinetic.Force = Vector2.Zero;
+            if (!attackFrame.Intersects(enemyEntity.Body.Bounds))
+                return;
 
+            if (!enemyEntity.Damage.TryApply(1))
+                return;
+
+            var knockbackVector = Vector2.Normalize(enemyEntity.Body.Position - playerEntity.Body.Position);
+            enemyEntity.Kinetic.Velocity += knockbackVector * 200;
+        }
+
+        private static void CalculateState(Player entity, float elapsed)
+        {
             // Finish dash
             if (entity.State.Dashing)
             {
                 entity.State.DashElapsed += elapsed;
-                if (entity.State.DashElapsed >= _dashTotalDuration)
+                if (entity.State.DashElapsed >= _dashDuration)
                     entity.State.Dashing = false;
             }
 
@@ -80,12 +109,8 @@ namespace Cyborg.Systems
 
                 if (entity.Controller.Joystick != Vector2.Zero)
                     entity.State.Direction = entity.Controller.Joystick;
-            }
 
-            // Dashing
-            if (entity.State.Dashing && entity.State.DashElapsed <= _dashForceDuration)
-            {
-                entity.Kinetic.Force = entity.State.Direction * _walkingForce * _dashForceCoefficient;
+                entity.Kinetic.Velocity = entity.State.Direction * _dashInstantaneousVelocity;
             }
 
             // Walking            
@@ -98,43 +123,44 @@ namespace Cyborg.Systems
             else
             {
                 entity.State.Walking = false;
+                entity.Kinetic.Force = Vector2.Zero;
             }
         }
 
-        private void SetAnimation(Player entity)
+        private static void ApplyAnimation(Player entity)
         {
             var cardinalDirection = entity.State.Direction.ToCardinal();
             if (entity.State.Attacking)
             {
-                if (cardinalDirection == Vector2.UnitX)
+                if (cardinalDirection.X == 1)
                     entity.Sprite.Animation = (entity.State.AttackCounter % 2 == 0) ? Player.AnimationAttackRight : Player.AnimationAttack2Right;
-                else if (cardinalDirection == -Vector2.UnitX)
+                else if (cardinalDirection.X == -1)
                     entity.Sprite.Animation = (entity.State.AttackCounter % 2 == 0) ? Player.AnimationAttackLeft : Player.AnimationAttack2Left;
-                else if (cardinalDirection == Vector2.UnitY)
+                else if (cardinalDirection.Y == 1)
                     entity.Sprite.Animation = (entity.State.AttackCounter % 2 == 0) ? Player.AnimationAttackDown : Player.AnimationAttack2Down;
-                else if (cardinalDirection == -Vector2.UnitY)
+                else if (cardinalDirection.Y == -1)
                     entity.Sprite.Animation = (entity.State.AttackCounter % 2 == 0) ? Player.AnimationAttackUp : Player.AnimationAttack2Up;
             }
             else if (entity.State.Walking)
             {
-                if (cardinalDirection == Vector2.UnitX)
+                if (cardinalDirection.X == 1)
                     entity.Sprite.Animation = Player.AnimationWalkRight;
-                else if (cardinalDirection == -Vector2.UnitX)
+                else if (cardinalDirection.X == -1)
                     entity.Sprite.Animation = Player.AnimationWalkLeft;
-                else if (cardinalDirection == Vector2.UnitY)
+                else if (cardinalDirection.Y == 1)
                     entity.Sprite.Animation = Player.AnimationWalkDown;
-                else if (cardinalDirection == -Vector2.UnitY)
+                else if (cardinalDirection.Y == -1)
                     entity.Sprite.Animation = Player.AnimationWalkUp;
             }
             else
             {
-                if (cardinalDirection == Vector2.UnitX)
+                if (cardinalDirection.X == 1)
                     entity.Sprite.Animation = Player.AnimationStandRight;
-                else if (cardinalDirection == -Vector2.UnitX)
+                else if (cardinalDirection.X == -1)
                     entity.Sprite.Animation = Player.AnimationStandLeft;
-                else if (cardinalDirection == Vector2.UnitY)
+                else if (cardinalDirection.Y == 1)
                     entity.Sprite.Animation = Player.AnimationStandDown;
-                else if (cardinalDirection == -Vector2.UnitY)
+                else if (cardinalDirection.Y == -1)
                     entity.Sprite.Animation = Player.AnimationStandUp;
             }
         }

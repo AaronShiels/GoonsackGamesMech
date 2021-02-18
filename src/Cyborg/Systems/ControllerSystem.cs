@@ -21,14 +21,12 @@ namespace Cyborg.Systems
         };
 
         private readonly IReadOnlyCollection<IEntity> _entities;
-        private readonly GameState _gameState;
 
         private IEnumerable<Button> _previousDownButtons = Enumerable.Empty<Button>();
 
-        public ControllerSystem(IReadOnlyCollection<IEntity> entities, GameState gameState)
+        public ControllerSystem(IReadOnlyCollection<IEntity> entities)
         {
             _entities = entities;
-            _gameState = gameState;
         }
 
         public void Update(GameTime gameTime)
@@ -55,10 +53,6 @@ namespace Cyborg.Systems
             var controlledEntities = _entities.OfType<IControlled>();
             foreach (var entity in controlledEntities)
                 entity.Controller.Update(direction, pressedButtons, downButtons);
-
-            // Debug
-            if (pressedButtons.Contains(Button.Debug))
-                _gameState.Debug = !_gameState.Debug;
         }
 
         private enum MouseButton

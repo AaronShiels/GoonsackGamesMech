@@ -7,10 +7,8 @@ using Microsoft.Xna.Framework;
 
 namespace Cyborg.Systems
 {
-    // TODO Support diagonals!
     public class CollisionSystem : IUpdateSystem
     {
-        // TODO Quadtree probs
         private readonly IReadOnlyCollection<IEntity> _entities;
         private readonly IGameState _gameState;
 
