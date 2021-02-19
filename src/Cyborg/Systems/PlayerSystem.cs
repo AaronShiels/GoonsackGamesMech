@@ -41,28 +41,29 @@ namespace Cyborg.Systems
                 if (entity.State.Attacking)
                 {
                     var cardinalDirection = entity.State.Direction.ToCardinal();
-                    Rectangle attackFrame;
+                    Rectangle attackBounds;
                     if (cardinalDirection.X == 1)
-                        attackFrame = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(8, -8)).ToPoint(), new(12, 16));
+                        attackBounds = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(8, -8)).ToPoint(), new(12, 16));
                     else if (cardinalDirection.X == -1)
-                        attackFrame = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-20, -8)).ToPoint(), new(12, 16));
+                        attackBounds = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-20, -8)).ToPoint(), new(12, 16));
                     else if (cardinalDirection.Y == 1)
-                        attackFrame = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-8, 8)).ToPoint(), new(16, 12));
+                        attackBounds = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-8, 8)).ToPoint(), new(16, 12));
                     else if (cardinalDirection.Y == -1)
-                        attackFrame = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-8, -20)).ToPoint(), new(16, 12));
+                        attackBounds = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-8, -20)).ToPoint(), new(16, 12));
                     else
                         throw new ArgumentOutOfRangeException(nameof(cardinalDirection));
 
                     var enemyEntities = _entities.OfType<Enemy>();
                     foreach (var enemyEntity in enemyEntities)
-                        ApplyAttack(entity, attackFrame, enemyEntity);
+                        ApplyAttack(entity, attackBounds, enemyEntity);
                 }
             }
         }
 
-        private static void ApplyAttack(Player playerEntity, Rectangle attackFrame, Enemy enemyEntity)
+        private static void ApplyAttack(Player playerEntity, Rectangle attackBounds, Enemy enemyEntity)
         {
-            if (!attackFrame.Intersects(enemyEntity.Body.Bounds))
+            var enemyBounds = enemyEntity.Body.Position.ToBounds(enemyEntity.Body.Size);
+            if (!attackBounds.Intersects(enemyBounds))
                 return;
 
             if (!enemyEntity.Damage.TryApply(1))

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
+using Cyborg.Utilities;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Systems
@@ -24,7 +25,7 @@ namespace Cyborg.Systems
                 return;
 
             var kineticEntities = _entities.OfType<IKinetic>();
-            var solidEntities = _entities.OfType<IBody>().Where(e => !e.Body.Bounds.IsEmpty && e.Body.Edges > 0);
+            var solidEntities = _entities.OfType<IBody>().Where(e => e.Body.Size != Point.Zero && e.Body.Edges > 0);
 
             // Resolve collisions
             foreach (var entity in kineticEntities)
@@ -34,7 +35,9 @@ namespace Cyborg.Systems
                         continue;
 
                     // Identify penetrations of faces
-                    var penetrationVectors = GetPenetrationVectors(entity.Body.Bounds, entity.Body.Edges, otherEntity.Body.Bounds, otherEntity.Body.Edges).ToList();
+                    var entityBounds = entity.Body.Position.ToBounds(entity.Body.Size);
+                    var otherEntityBounds = otherEntity.Body.Position.ToBounds(otherEntity.Body.Size);
+                    var penetrationVectors = GetPenetrationVectors(entityBounds, entity.Body.Edges, otherEntityBounds, otherEntity.Body.Edges).ToList();
                     if (!penetrationVectors.Any())
                         continue;
 

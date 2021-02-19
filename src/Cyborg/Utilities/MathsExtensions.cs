@@ -7,6 +7,17 @@ namespace Cyborg.Utilities
     {
         public static Vector2 ToVector2(this Point point) => new(point.X, point.Y);
 
+        public static Point ToRoundedPoint(this Vector2 vector) => Vector2.Round(vector).ToPoint();
+
+        public static Rectangle ToBounds(this Vector2 position, Point size) => ToBounds(position, size.X, size.Y);
+
+        public static Rectangle ToBounds(this Vector2 position, int width, int height)
+        {
+            var roundedCentre = position.ToRoundedPoint();
+            var offsetX = roundedCentre.X - width / 2;
+            var offsetY = roundedCentre.Y - height / 2;
+            return new(offsetX, offsetY, width, height);
+        }
 
         public static Point ToCardinal(this Vector2 direction)
         {
