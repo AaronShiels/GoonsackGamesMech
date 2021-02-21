@@ -35,9 +35,7 @@ namespace Cyborg.Systems
                         continue;
 
                     // Identify penetrations of faces
-                    var entityBounds = entity.Body.Position.ToBounds(entity.Body.Size);
-                    var otherEntityBounds = otherEntity.Body.Position.ToBounds(otherEntity.Body.Size);
-                    var penetrationVectors = GetPenetrationVectors(entityBounds, entity.Body.Edges, otherEntityBounds, otherEntity.Body.Edges).ToList();
+                    var penetrationVectors = GetPenetrationVectors(entity.Body.Bounds, entity.Body.Edges, otherEntity.Body.Bounds, otherEntity.Body.Edges).ToList();
                     if (!penetrationVectors.Any())
                         continue;
 

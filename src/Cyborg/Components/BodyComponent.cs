@@ -1,22 +1,47 @@
 using System;
 using Cyborg.Core;
-using Cyborg.Utilities;
 using Microsoft.Xna.Framework;
+using static Cyborg.Utilities.MathsExtensions;
 
 namespace Cyborg.Components
 {
     public class BodyComponent
     {
+        private readonly Point _size;
+        private readonly Edge _edges;
+
+        private Vector2 _position;
+        private Rectangle _bounds;
+
         public BodyComponent(Vector2 position, Point size = default, Edge edges = Edge.None)
         {
-            Position = position;
-            Size = size;
-            Edges = edges;
+            _position = position;
+            _size = size;
+            _edges = edges;
+
+            Recalculate();
         }
 
-        public Vector2 Position { get; set; }
-        public Point Size { get; }
-        public Edge Edges { get; }
+        public Vector2 Position
+        {
+            get => _position;
+            set
+            {
+                if (value == _position)
+                    return;
+
+                _position = value;
+                Recalculate();
+            }
+        }
+        public Point Size => _size;
+        public Rectangle Bounds => _bounds;
+        public Edge Edges => _edges;
+
+        private void Recalculate()
+        {
+            _bounds = CreateRectangleFromCentre(_position.ToRoundedPoint(), Size);
+        }
     }
 
     [Flags]

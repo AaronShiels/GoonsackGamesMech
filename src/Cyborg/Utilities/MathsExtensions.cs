@@ -9,15 +9,7 @@ namespace Cyborg.Utilities
 
         public static Point ToRoundedPoint(this Vector2 vector) => Vector2.Round(vector).ToPoint();
 
-        public static Rectangle ToBounds(this Vector2 position, Point size) => ToBounds(position, size.X, size.Y);
-
-        public static Rectangle ToBounds(this Vector2 position, int width, int height)
-        {
-            var roundedCentre = position.ToRoundedPoint();
-            var offsetX = roundedCentre.X - width / 2;
-            var offsetY = roundedCentre.Y - height / 2;
-            return new(offsetX, offsetY, width, height);
-        }
+        public static Rectangle CreateRectangleFromCentre(Point centre, Point size) => new(centre.X - size.X / 2, centre.Y - size.Y / 2, size.X, size.Y);
 
         public static Point ToCardinal(this Vector2 direction)
         {

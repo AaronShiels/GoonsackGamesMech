@@ -22,12 +22,14 @@ namespace Cyborg.Graphics
             };
         }
 
-        public void Begin(SamplerState samplerState)
+        public void Begin(SamplerState samplerState, Matrix? transform)
         {
             if (_hasBegun)
                 throw new InvalidOperationException("Current batch has already started.");
 
-            _basicEffect.Projection = Matrix.CreateOrthographicOffCenter(0, Constants.BaseWidth, Constants.BaseHeight, 0, 0, 1f);
+            var baseProjection = Matrix.CreateOrthographicOffCenter(0, _graphicsDevice.Viewport.Width, _graphicsDevice.Viewport.Height, 0, 0, 1f);
+            _basicEffect.Projection = (transform ?? Matrix.Identity) * baseProjection;
+
             _graphicsDevice.SamplerStates[0] = samplerState;
 
             _hasBegun = true;
