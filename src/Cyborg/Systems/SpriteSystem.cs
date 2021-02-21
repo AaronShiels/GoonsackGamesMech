@@ -6,6 +6,7 @@ using Cyborg.Core;
 using Cyborg.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using static Cyborg.Utilities.MathsExtensions;
 
 namespace Cyborg.Systems
 {
@@ -40,18 +41,17 @@ namespace Cyborg.Systems
 
         public void Draw(GameTime gameTime)
         {
-            var transform = Matrix.CreateScale(_graphicsDevice.Viewport.Width / Constants.BaseWidth, _graphicsDevice.Viewport.Height / Constants.BaseHeight, 1f);
-            _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, transform);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, _camera.Projection);
 
-            var cameraFrame = _camera.Position.ToBounds(Constants.BaseWidth, Constants.BaseHeight);
+            var cameraFrame = _camera.Bounds;
             foreach (var entity in _entities.OfType<ISprite>().OrderBy(e => e.Sprite.Order))
             {
-                var spriteCentre = entity.Body.Position + entity.Sprite.Offset.ToVector2();
-                var spriteBounds = spriteCentre.ToBounds(entity.Sprite.Frame.Size);
+                var centre = entity.Body.Position.ToRoundedPoint() + entity.Sprite.Offset;
+                var spriteBounds = CreateRectangleFromCentre(centre, entity.Sprite.Frame.Size);
                 if (spriteBounds.Right < cameraFrame.Left || spriteBounds.Left > cameraFrame.Right || spriteBounds.Bottom < cameraFrame.Top || spriteBounds.Top > cameraFrame.Bottom)
                     continue;
 
-                _spriteBatch.Draw(entity.Sprite.Texture, (spriteBounds.Location - cameraFrame.Location).ToVector2(), entity.Sprite.Frame, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+                _spriteBatch.Draw(entity.Sprite.Texture, spriteBounds.Location.ToVector2(), entity.Sprite.Frame, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
             }
 
             _spriteBatch.End();

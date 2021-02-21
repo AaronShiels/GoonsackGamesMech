@@ -62,7 +62,7 @@ namespace Cyborg.Systems
 
         private static void ApplyAttack(Player playerEntity, Rectangle attackBounds, Enemy enemyEntity)
         {
-            var enemyBounds = enemyEntity.Body.Position.ToBounds(enemyEntity.Body.Size);
+            var enemyBounds = enemyEntity.Body.Bounds;
             if (!attackBounds.Intersects(enemyBounds))
                 return;
 

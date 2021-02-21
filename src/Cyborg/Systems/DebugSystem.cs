@@ -47,15 +47,15 @@ namespace Cyborg.Systems
             if (!_gameState.Debug)
                 return;
 
-            _primitiveBatch.Begin(SamplerState.PointClamp);
+            _primitiveBatch.Begin(SamplerState.PointClamp, _camera.Projection);
 
-            var cameraFrame = _camera.Position.ToBounds(Constants.BaseWidth, Constants.BaseHeight);
+            var cameraFrame = _camera.Bounds;
             foreach (var entity in _entities.OfType<IBody>())
             {
                 var playerEntity = entity as Player;
                 var color = playerEntity != null && playerEntity.State.Attacking ? Color.Red : Color.Blue;
 
-                var entityFrame = entity.Body.Position.ToBounds(entity.Body.Size);
+                var entityFrame = entity.Body.Bounds;
                 if (entityFrame.Right < cameraFrame.Left || entityFrame.Left > cameraFrame.Right || entityFrame.Bottom < cameraFrame.Top || entityFrame.Top > cameraFrame.Bottom)
                     continue;
 
@@ -97,9 +97,9 @@ namespace Cyborg.Systems
 
             _primitiveBatch.End();
 
-            var debugText = string.Empty;
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
 
+            var debugText = string.Empty;
             _spriteBatch.DrawString(_debugFont, debugText, Vector2.Zero, Color.White);
 
             _spriteBatch.End();
