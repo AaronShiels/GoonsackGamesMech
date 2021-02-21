@@ -78,20 +78,10 @@ namespace Cyborg.Systems
 
                 if (playerEntity != null && playerEntity.State.Attacking)
                 {
-                    var cardinalDirection = playerEntity.State.Direction.ToCardinal();
-                    Rectangle attackBounds;
-                    if (cardinalDirection.X == 1)
-                        attackBounds = new Rectangle(Vector2.Round(playerEntity.Body.Position + new Vector2(8, -8)).ToPoint(), new(12, 16));
-                    else if (cardinalDirection.X == -1)
-                        attackBounds = new Rectangle(Vector2.Round(playerEntity.Body.Position + new Vector2(-20, -8)).ToPoint(), new(12, 16));
-                    else if (cardinalDirection.Y == 1)
-                        attackBounds = new Rectangle(Vector2.Round(playerEntity.Body.Position + new Vector2(-8, 8)).ToPoint(), new(16, 12));
-                    else if (cardinalDirection.Y == -1)
-                        attackBounds = new Rectangle(Vector2.Round(playerEntity.Body.Position + new Vector2(-8, -20)).ToPoint(), new(16, 12));
-                    else
-                        throw new ArgumentOutOfRangeException(nameof(cardinalDirection));
+                    var circle = new Circle(playerEntity.Body.Position.ToRoundedPoint(), 20);
 
-                    _primitiveBatch.DrawRectangle(attackBounds, Color.Green);
+                    var fullCircle = 2 * Math.PI;
+                    _primitiveBatch.Draw(circle, Color.Green, fullCircle * 0.75, fullCircle);
                 }
             }
 
