@@ -19,26 +19,27 @@ namespace Cyborg.Core
             _drawSystems = drawSystems.ToList();
             _entities = entities;
 
-            // Load
-            var floorTiles = serviceProvider.CreateFloorTiles();
-            var wallTiles = serviceProvider.GetWallTiles();
-            var overlayTiles = serviceProvider.CreateOverlayTiles();
-            var player = serviceProvider.CreatePlayer(56, 88);
-            var enemy = serviceProvider.CreateEnemy(160, 88);
-            var areas = serviceProvider.CreateAreas();
+            // Load map
+            serviceProvider.CreateFloorTiles().ForEach(_entities.Add);
+            serviceProvider.GetWallTiles().ForEach(_entities.Add);
+            serviceProvider.CreateOverlayTiles().ForEach(_entities.Add);
+            serviceProvider.CreateAreas().ForEach(_entities.Add);
 
-            floorTiles.ForEach(_entities.Add);
-            wallTiles.ForEach(_entities.Add);
-            overlayTiles.ForEach(_entities.Add);
-            areas.ForEach(_entities.Add);
-            _entities.Add(player);
-            _entities.Add(enemy);
+            // load actors
+            _entities.Add(serviceProvider.CreatePlayer(160, 88));
+            _entities.Add(serviceProvider.CreateEnemy(56, 48));
+            _entities.Add(serviceProvider.CreateEnemy(264, 128));
+            _entities.Add(serviceProvider.CreateEnemy(160, 168));
         }
 
         public void Update(GameTime gameTime)
         {
             foreach (var system in _updateSystems)
                 system.Update(gameTime);
+
+            var destroyedEntites = _entities.Where(e => e.Destroyed).ToList();
+            foreach (var destroyedEntity in destroyedEntites)
+                _entities.Remove(destroyedEntity);
         }
 
         public void Draw(GameTime gameTime)

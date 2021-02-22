@@ -48,7 +48,7 @@ namespace Cyborg.Entities
             var body = new BodyComponent(position, size, Edge.Left | Edge.Top | Edge.Right | Edge.Bottom);
             var kinetic = new KineticComponent(1);
 
-            var damage = new DamageComponent(10, 0.25f);
+            var damage = new DamageComponent(3, 0.25f);
 
             return new Enemy(kinetic, damage, body, sprite);
         }
