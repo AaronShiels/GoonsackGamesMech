@@ -3,13 +3,12 @@ using System.Linq;
 using Cyborg.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using static Cyborg.Utilities.MathsExtensions;
 
 namespace Cyborg.Graphics
 {
     public class PrimitiveBatch : IDisposable
     {
-        private const double _pointsPerRadiusSquared = 0.5d;
-
         private readonly GraphicsDevice _graphicsDevice;
         private readonly BasicEffect _basicEffect;
         private readonly VertexPositionColor[] _vertexBuffer = new VertexPositionColor[1024];
@@ -57,59 +56,27 @@ namespace Cyborg.Graphics
 
         public void Draw(Rectangle rectangle, Color colour)
         {
-            var topLeft = rectangle.Location.ToVector2();
-            var topRight = topLeft + new Vector2(rectangle.Width, 0);
-            var bottomLeft = topLeft + new Vector2(0, rectangle.Height);
-            var bottomRight = topLeft + new Vector2(rectangle.Width, rectangle.Height);
-
-            DrawLine(topLeft, topRight, colour);
-            DrawLine(topLeft, bottomLeft, colour);
-            DrawLine(topRight, bottomRight, colour);
-            DrawLine(bottomLeft, bottomRight, colour);
+            var vertices = rectangle.ToVertices().Select(v => v.ToVector2()).ToArray();
+            for (var i = 0; i < vertices.Length; i++)
+                DrawLine(vertices[i], vertices[i + 1 % vertices.Length], colour);
         }
 
-        public void Draw(Circle circle, Color colour, double minRadians = 0, double maxRadians = 2 * Math.PI)
+        public void Draw(Circle circle, Color colour)
         {
-            var fullCircleRadians = 2 * Math.PI;
-            var safeMinRadian = fullCircleRadians + minRadians;
-            var safeMaxRadian = fullCircleRadians + maxRadians;
-            var centre = circle.Centre.ToVector2();
-            var vertexCount = (int)Math.Round(circle.Radius * circle.Radius * _pointsPerRadiusSquared);
-            var radianIncrement = fullCircleRadians / vertexCount;
-            var edges = Enumerable.Range(0, vertexCount - 1)
-                .Where(i => radianIncrement * i + fullCircleRadians > safeMinRadian && radianIncrement * i + fullCircleRadians < safeMaxRadian)
-                .Select(i =>
-                {
-                    var startRad = radianIncrement * i;
-                    var endRad = radianIncrement * (i + 1);
-                    var start = centre + circle.Radius * new Vector2((float)Math.Cos(startRad), (float)Math.Sin(startRad));
-                    var end = centre + circle.Radius * new Vector2((float)Math.Cos(endRad), (float)Math.Sin(endRad));
+            var vertices = circle.ToVertices().ToArray();
+            for (var i = 0; i < vertices.Length; i++)
+                DrawLine(vertices[i], vertices[i + 1 % vertices.Length], colour);
+        }
 
-                    return (Start: start, End: end);
-                })
-                .ToList();
+        public void Draw(Sector sector, Color colour)
+        {
+            var vertices = sector.ToVertices().ToArray();
+            for (var i = 0; i < vertices.Length - 1; i++)
+                DrawLine(vertices[i], vertices[i + 1], colour);
 
-            foreach (var (start, end) in edges)
-            {
-                AddVertex(start, colour);
-                AddVertex(end, colour);
-            }
-
-            if (minRadians == 0 && maxRadians == fullCircleRadians)
-            {
-                AddVertex(edges.Last().End, colour);
-                AddVertex(edges.First().Start, colour);
-            }
-            else
-            {
-                AddVertex(edges.Last().End, colour);
-                AddVertex(centre, colour);
-
-                AddVertex(edges.First().Start, colour);
-                AddVertex(centre, colour);
-
-
-            }
+            var centreVector = sector.Centre.ToVector2();
+            DrawLine(vertices[0], centreVector, colour);
+            DrawLine(vertices[^1], centreVector, colour);
         }
 
         public void Dispose() => _basicEffect.Dispose();

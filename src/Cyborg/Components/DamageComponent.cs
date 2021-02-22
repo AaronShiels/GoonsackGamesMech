@@ -1,3 +1,5 @@
+using Cyborg.Core;
+
 namespace Cyborg.Components
 {
     public class DamageComponent
@@ -14,10 +16,11 @@ namespace Cyborg.Components
         public int Maximum { get; }
         public int Remaining => Maximum - Current;
         public float Elapsed { get; set; }
+        public bool Vulnerable => Elapsed > _invincibleDuration;
 
         public bool TryApply(int damage)
         {
-            if (Elapsed < _invincibleDuration)
+            if (!Vulnerable)
                 return false;
 
             Current += damage;
@@ -26,7 +29,7 @@ namespace Cyborg.Components
         }
     }
 
-    public interface IDamageable
+    public interface IDamageable : IEntity
     {
         DamageComponent Damage { get; }
     }

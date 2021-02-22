@@ -52,9 +52,6 @@ namespace Cyborg.Systems
             var cameraFrame = _camera.Bounds;
             foreach (var entity in _entities.OfType<IBody>())
             {
-                var playerEntity = entity as Player;
-                var color = playerEntity != null && playerEntity.State.Attacking ? Color.Red : Color.Blue;
-
                 var entityFrame = entity.Body.Bounds;
                 if (entityFrame.Right < cameraFrame.Left || entityFrame.Left > cameraFrame.Right || entityFrame.Bottom < cameraFrame.Top || entityFrame.Top > cameraFrame.Bottom)
                     continue;
@@ -65,24 +62,23 @@ namespace Cyborg.Systems
                 var bottomRight = topLeft + new Vector2(entityFrame.Width, entityFrame.Height);
 
                 if (entity.Body.Edges.HasFlag(Edge.Right))
-                    _primitiveBatch.DrawLine(topRight, bottomRight, color);
+                    _primitiveBatch.DrawLine(topRight, bottomRight, Color.Blue);
 
                 if (entity.Body.Edges.HasFlag(Edge.Left))
-                    _primitiveBatch.DrawLine(topLeft, bottomLeft, color);
+                    _primitiveBatch.DrawLine(topLeft, bottomLeft, Color.Blue);
 
                 if (entity.Body.Edges.HasFlag(Edge.Bottom))
-                    _primitiveBatch.DrawLine(bottomLeft, bottomRight, color);
+                    _primitiveBatch.DrawLine(bottomLeft, bottomRight, Color.Blue);
 
                 if (entity.Body.Edges.HasFlag(Edge.Top))
-                    _primitiveBatch.DrawLine(topLeft, topRight, color);
+                    _primitiveBatch.DrawLine(topLeft, topRight, Color.Blue);
+            }
 
-                if (playerEntity != null && playerEntity.State.Attacking)
-                {
-                    var circle = new Circle(playerEntity.Body.Position.ToRoundedPoint(), 20);
-
-                    var fullCircle = 2 * Math.PI;
-                    _primitiveBatch.Draw(circle, Color.Green, fullCircle * 0.75, fullCircle);
-                }
+            var playerEntity = _entities.OfType<Player>().SingleOrDefault();
+            if (playerEntity != null && playerEntity.State.Attacking)
+            {
+                var sector = new Sector(playerEntity.Body.Position.ToRoundedPoint(), playerEntity.State.AttackRadius, playerEntity.State.AttackAngles.Minimum, playerEntity.State.AttackAngles.Maximum);
+                _primitiveBatch.Draw(sector, Color.Red);
             }
 
             _primitiveBatch.End();

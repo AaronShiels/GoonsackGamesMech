@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cyborg.Core;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Components
@@ -24,7 +25,7 @@ namespace Cyborg.Components
         Dash
     }
 
-    public interface IControlled
+    public interface IControlled : IEntity
     {
         ControllerComponent Controller { get; }
     }

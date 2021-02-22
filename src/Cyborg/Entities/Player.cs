@@ -1,4 +1,3 @@
-using System;
 using Cyborg.Components;
 using Microsoft.Xna.Framework;
 
@@ -49,8 +48,8 @@ namespace Cyborg.Entities
         public bool Attacking { get; set; }
         public float AttackElapsed { get; set; }
         public int AttackCounter { get; set; }
-        public int AttackRange => 20;
-        public (double minRadian, double maxRadian) AttackSector { get; set; } = (0, Math.PI);
+        public int AttackRadius => 16;
+        public (double Minimum, double Maximum) AttackAngles { get; set; } = (0, 0);
 
         public bool Dashing { get; set; }
         public float DashElapsed { get; set; }

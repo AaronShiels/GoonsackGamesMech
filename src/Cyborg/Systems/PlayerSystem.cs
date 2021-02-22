@@ -13,6 +13,7 @@ namespace Cyborg.Systems
     {
         private const float _walkingForce = 600f;
         private const float _attackDuration = 0.25f;
+        private const float _attackKnockbackVelocity = 400f;
         private const float _dashDuration = 0.75f;
         private const float _dashInstantaneousVelocity = 400f;
 
@@ -41,36 +42,13 @@ namespace Cyborg.Systems
                 if (entity.State.Attacking)
                 {
                     var cardinalDirection = entity.State.Direction.ToCardinal();
-                    Rectangle attackBounds;
-                    if (cardinalDirection.X == 1)
-                        attackBounds = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(8, -8)).ToPoint(), new(12, 16));
-                    else if (cardinalDirection.X == -1)
-                        attackBounds = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-20, -8)).ToPoint(), new(12, 16));
-                    else if (cardinalDirection.Y == 1)
-                        attackBounds = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-8, 8)).ToPoint(), new(16, 12));
-                    else if (cardinalDirection.Y == -1)
-                        attackBounds = new Rectangle(Vector2.Round(entity.Body.Position + new Vector2(-8, -20)).ToPoint(), new(16, 12));
-                    else
-                        throw new ArgumentOutOfRangeException(nameof(cardinalDirection));
+                    var attackBounds = new Sector(entity.Body.Position.ToRoundedPoint(), entity.State.AttackRadius, entity.State.AttackAngles.Minimum, entity.State.AttackAngles.Maximum);
 
                     var enemyEntities = _entities.OfType<Enemy>();
                     foreach (var enemyEntity in enemyEntities)
                         ApplyAttack(entity, attackBounds, enemyEntity);
                 }
             }
-        }
-
-        private static void ApplyAttack(Player playerEntity, Rectangle attackBounds, Enemy enemyEntity)
-        {
-            var enemyBounds = enemyEntity.Body.Bounds;
-            if (!attackBounds.Intersects(enemyBounds))
-                return;
-
-            if (!enemyEntity.Damage.TryApply(1))
-                return;
-
-            var knockbackVector = Vector2.Normalize(enemyEntity.Body.Position - playerEntity.Body.Position);
-            enemyEntity.Kinetic.Velocity += knockbackVector * 200;
         }
 
         private static void CalculateState(Player entity, float elapsed)
@@ -100,6 +78,21 @@ namespace Cyborg.Systems
 
                 if (entity.Controller.Joystick != Vector2.Zero)
                     entity.State.Direction = entity.Controller.Joystick;
+
+                var cardinalDirection = entity.State.Direction.ToCardinal();
+                double baseAttackAngle = 0;
+                if (cardinalDirection.X == 1)
+                    baseAttackAngle = 0;
+                else if (cardinalDirection.X == -1)
+                    baseAttackAngle = Math.PI;
+                else if (cardinalDirection.Y == 1)
+                    baseAttackAngle = 0.5 * Math.PI;
+                else if (cardinalDirection.Y == -1)
+                    baseAttackAngle = 1.5 * Math.PI;
+
+                var adjustedAttackAngle = baseAttackAngle + 0.125 * Math.PI * ((entity.State.AttackCounter % 2 == 0) ? 1 : -1);
+                var attackSector = (adjustedAttackAngle - 0.3125 * Math.PI, adjustedAttackAngle + 0.3125 * Math.PI);
+                entity.State.AttackAngles = attackSector;
             }
 
             // Enter dash
@@ -164,6 +157,19 @@ namespace Cyborg.Systems
                 else if (cardinalDirection.Y == -1)
                     entity.Sprite.Animation = Player.AnimationStandUp;
             }
+        }
+
+        private static void ApplyAttack(Player playerEntity, Sector attackBounds, Enemy enemyEntity)
+        {
+            var enemyBounds = enemyEntity.Body.Bounds;
+            if (!attackBounds.Intersects(enemyBounds))
+                return;
+
+            if (!enemyEntity.Damage.TryApply(1))
+                return;
+
+            var knockbackVector = Vector2.Normalize(enemyEntity.Body.Position - playerEntity.Body.Position);
+            enemyEntity.Kinetic.Velocity = knockbackVector * _attackKnockbackVelocity;
         }
     }
 }
