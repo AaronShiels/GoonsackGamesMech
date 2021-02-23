@@ -43,9 +43,19 @@ namespace Cyborg.Systems
                     var smallestPenetratingVector = penetrationVectors.OrderBy(v => v.Length()).First();
                     entity.Body.Position -= smallestPenetratingVector;
 
-                    // Reduce velocity based on penetration length
-                    var velocityCoefficient = Vector2.Normalize(new Vector2(Math.Abs(smallestPenetratingVector.Y), Math.Abs(smallestPenetratingVector.X)));
-                    entity.Kinetic.Velocity *= velocityCoefficient;
+                    if (otherEntity is IKinetic otherKineticEntity)
+                    {
+                        // Share momentum
+                        var averageVelocity = (entity.Kinetic.Velocity + otherKineticEntity.Kinetic.Velocity) / 2; // TODO mass
+                        entity.Kinetic.Velocity = averageVelocity;
+                        otherKineticEntity.Kinetic.Velocity = averageVelocity;
+                    }
+                    else
+                    {
+                        // Reduce velocity based on penetration length
+                        var velocityCoefficient = Vector2.Normalize(new Vector2(Math.Abs(smallestPenetratingVector.Y), Math.Abs(smallestPenetratingVector.X)));
+                        entity.Kinetic.Velocity *= velocityCoefficient;
+                    }
                 }
         }
 

@@ -5,16 +5,15 @@ namespace Cyborg.Entities
 {
     public class Player : IState<PlayerStateComponent>, IControlled, IKinetic, ISprite
     {
-        public Player(AnimatedSpriteComponent sprite, BodyComponent body, KineticComponent kinetic)
+        public Player(AnimatedSpriteComponent sprite, BodyComponent body)
         {
             Sprite = sprite;
             Body = body;
-            Kinetic = kinetic;
         }
 
-        public PlayerStateComponent State { get; } = new PlayerStateComponent();
-        public ControllerComponent Controller { get; set; } = new ControllerComponent();
-        public KineticComponent Kinetic { get; }
+        public PlayerStateComponent State { get; } = new();
+        public ControllerComponent Controller { get; set; } = new();
+        public KineticComponent Kinetic { get; } = new();
         public BodyComponent Body { get; }
         public ISpriteComponent Sprite { get; }
         public bool Destroyed { get; set; }
@@ -48,7 +47,7 @@ namespace Cyborg.Entities
         public bool Attacking { get; set; }
         public float AttackElapsed { get; set; }
         public int AttackCounter { get; set; }
-        public int AttackRadius => 16;
+        public int AttackRadius => 18;
         public (double Minimum, double Maximum) AttackAngles { get; set; } = (0, 0);
 
         public bool Dashing { get; set; }

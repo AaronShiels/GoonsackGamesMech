@@ -40,7 +40,7 @@ namespace Cyborg.Components
         private readonly IDictionary<string, AnimationDefinition> _animations;
         private string _current;
 
-        public AnimatedSpriteComponent(IDictionary<string, (Texture2D SpriteSheet, int FrameCount, int FrameRate, bool Repeat)> animations, Point offset = default, int order = 0)
+        public AnimatedSpriteComponent(IDictionary<string, (Texture2D SpriteSheet, int FrameCount, int FrameRate, bool Repeat)> animations, Point offset = default, int order = 0, string initialAnimation = null)
         {
             _textures = animations.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.SpriteSheet);
             _animations = animations.ToDictionary(kvp => kvp.Key, kvp =>
@@ -53,7 +53,7 @@ namespace Cyborg.Components
 
                 return new AnimationDefinition(frames, kvp.Value.FrameRate, kvp.Value.Repeat);
             });
-            _current = animations.Keys.First();
+            _current = initialAnimation ?? animations.Keys.First();
 
             Offset = offset;
             Order = order;

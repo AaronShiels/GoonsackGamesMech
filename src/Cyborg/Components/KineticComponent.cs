@@ -4,9 +4,10 @@ namespace Cyborg.Components
 {
     public class KineticComponent
     {
-        public KineticComponent(float mass)
+        public KineticComponent(float mass = 1, Vector2 initialVelocity = default)
         {
             Mass = mass;
+            Velocity = initialVelocity;
         }
 
         public float Mass { get; }

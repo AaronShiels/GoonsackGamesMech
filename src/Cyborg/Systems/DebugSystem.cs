@@ -85,8 +85,7 @@ namespace Cyborg.Systems
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
 
-            var debugText = string.Empty;
-            _spriteBatch.DrawString(_debugFont, debugText, Vector2.Zero, Color.White);
+            _spriteBatch.DrawString(_debugFont, $"Entities: {_entities.Count}", Vector2.Zero, Color.White);
 
             _spriteBatch.End();
         }
