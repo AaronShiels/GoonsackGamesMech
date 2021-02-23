@@ -7,6 +7,7 @@ namespace Cyborg.Utilities
     public static class MathsExtensions
     {
         private const double _verticesPerRadiusSquared = 0.25d;
+        private static readonly Random _random = new();
 
         public const double FullCircleAngle = 2 * Math.PI;
 
@@ -30,7 +31,15 @@ namespace Cyborg.Utilities
             return new Point(0, direction.Y > 0 ? 1 : -1);
         }
 
+        public static Vector2 CreateRandomVector2()
+        {
+            var randomX = (float)_random.NextDouble() * 2 - 1;
+            var randomY = (float)_random.NextDouble() * 2 - 1;
+            return new Vector2(randomX, randomY);
+        }
+
         public static bool Intersects(this Rectangle rectangle, Circle circle) => circle.Intersects(rectangle);
+
         public static bool Intersects(this Rectangle rectangle, Sector sector) => sector.Intersects(rectangle);
 
         public static IEnumerable<Point> ToVertices(this Rectangle rectangle) => new[]

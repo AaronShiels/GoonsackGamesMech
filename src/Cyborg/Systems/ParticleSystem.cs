@@ -2,16 +2,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
+using Cyborg.Entities;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Systems
 {
-    public class DamageSystem : IUpdateSystem
+    public class ParticleSystem : IUpdateSystem
     {
         private readonly IReadOnlyCollection<IEntity> _entities;
-        private readonly GameState _gameState;
+        private readonly IGameState _gameState;
 
-        public DamageSystem(IReadOnlyCollection<IEntity> entities, GameState gameState)
+        public ParticleSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
         {
             _entities = entities;
             _gameState = gameState;
@@ -24,9 +25,14 @@ namespace Cyborg.Systems
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var damageableEntities = _entities.OfType<IDamageable>();
-            foreach (var entity in damageableEntities)
-                entity.Damage.Elapsed += elapsed;
+            var particleEntities = _entities.OfType<IState<ParticleStateComponent>>();
+            foreach (var entity in particleEntities)
+            {
+                entity.State.Elapsed += elapsed;
+
+                if (entity.State.Expired)
+                    entity.Destroyed = true;
+            }
         }
     }
 }

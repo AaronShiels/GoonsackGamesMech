@@ -29,28 +29,52 @@ namespace Cyborg.Entities
             var position = new Vector2(initialX, initialY);
             var size = new Point(8, 12);
             var body = new BodyComponent(position, size, Edge.Left | Edge.Top | Edge.Right | Edge.Bottom);
-            var kinetic = new KineticComponent(1);
 
-            return new Player(sprite, body, kinetic);
+            return new Player(sprite, body);
         }
 
         public static Enemy CreateEnemy(this IServiceProvider serviceProvider, int initialX, int initialY)
         {
-            var graphicsDevice = serviceProvider.GetRequiredService<GraphicsDevice>();
+            var contentManager = serviceProvider.GetRequiredService<ContentManager>();
 
-            var spriteTexture = new Texture2D(graphicsDevice, 16, 16);
-            var colourArray = Enumerable.Range(0, 16 * 16).Select(_ => Color.Maroon).ToArray();
-            spriteTexture.SetData(colourArray);
-            var sprite = new StaticSpriteComponent(spriteTexture, null, default, 2);
+            var animationRoot = "Zombie/";
+            var animationSet = contentManager.Load<AnimationSet>($"{animationRoot}animations");
+            var animations = animationSet.ToDictionary(kvp => kvp.Key, kvp =>
+            {
+                var texture = contentManager.Load<Texture2D>($"{animationRoot}{kvp.Key}");
+                return (texture, kvp.Value.FrameCount, kvp.Value.FrameRate, kvp.Value.Repeat);
+            });
+            var sprite = new AnimatedSpriteComponent(animations, new(0, -2), 3);
+
 
             var position = new Vector2(initialX, initialY);
-            var size = new Point(16, 16);
+            var size = new Point(8, 12);
             var body = new BodyComponent(position, size, Edge.Left | Edge.Top | Edge.Right | Edge.Bottom);
-            var kinetic = new KineticComponent(1);
 
             var damage = new DamageComponent(3, 0.25f);
 
-            return new Enemy(kinetic, damage, body, sprite);
+            return new Enemy(damage, body, sprite);
+        }
+
+        public static Particle CreateExplosion(this IServiceProvider serviceProvider, Vector2 initialPosition, Vector2 initialVelocity = default)
+        {
+            var contentManager = serviceProvider.GetRequiredService<ContentManager>();
+
+            var animationRoot = "Particles/";
+            var animationSet = contentManager.Load<AnimationSet>($"{animationRoot}animations");
+            var animations = animationSet.ToDictionary(kvp => kvp.Key, kvp =>
+            {
+                var texture = contentManager.Load<Texture2D>($"{animationRoot}{kvp.Key}");
+                return (texture, kvp.Value.FrameCount, kvp.Value.FrameRate, kvp.Value.Repeat);
+            });
+            var sprite = new AnimatedSpriteComponent(animations, default, 4, Particle.AnimationExplosion);
+
+            var body = new BodyComponent(initialPosition);
+            var kinetic = new KineticComponent(1, initialVelocity);
+
+            var state = new ParticleStateComponent(0.2f);
+
+            return new Particle(state, kinetic, body, sprite);
         }
 
         public static IEnumerable<Area> CreateAreas(this IServiceProvider serviceProvider)
@@ -150,7 +174,7 @@ namespace Cyborg.Entities
                         var spriteFrameOffsetX = tileIndex % map.TileSetColumns * map.TileWidth;
                         var spriteFrameOffsetY = tileIndex / map.TileSetColumns * map.TileHeight;
                         var spriteFrame = new Rectangle(spriteFrameOffsetX, spriteFrameOffsetY, map.TileWidth, map.TileHeight);
-                        var sprite = new StaticSpriteComponent(spriteSheet, spriteFrame, default, 4);
+                        var sprite = new StaticSpriteComponent(spriteSheet, spriteFrame, default, 5);
 
                         var position = new Vector2(x * map.TileWidth + map.TileWidth / 2, y * map.TileHeight + map.TileHeight / 2);
                         var body = new BodyComponent(position);
