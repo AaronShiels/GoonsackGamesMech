@@ -12,18 +12,16 @@ namespace Cyborg.Systems
 {
     public class SpriteSystem : IUpdateSystem, IDrawSystem, IDisposable
     {
-        private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IEntityManager _entityManager;
         private readonly IGameState _gameState;
         private readonly ICamera _camera;
-        private readonly GraphicsDevice _graphicsDevice;
         private readonly SpriteBatch _spriteBatch;
 
-        public SpriteSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState, ICamera camera, GraphicsDevice graphicsDevice)
+        public SpriteSystem(IEntityManager entityManager, IGameState gameState, ICamera camera, GraphicsDevice graphicsDevice)
         {
-            _entities = entities;
+            _entityManager = entityManager;
             _gameState = gameState;
             _camera = camera;
-            _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
         }
 
@@ -34,8 +32,7 @@ namespace Cyborg.Systems
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var spriteEntities = _entities.OfType<ISprite>();
-            foreach (var entity in spriteEntities)
+            foreach (var entity in _entityManager.Entities<ISprite>())
                 entity.Sprite.Elapsed += elapsed;
         }
 
@@ -44,7 +41,7 @@ namespace Cyborg.Systems
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, _camera.Projection);
 
             var cameraFrame = _camera.Bounds;
-            foreach (var entity in _entities.OfType<ISprite>().OrderBy(e => e.Sprite.Order))
+            foreach (var entity in _entityManager.Entities<ISprite>().OrderBy(e => e.Sprite.Order))
             {
                 var centre = entity.Body.Position.ToRoundedPoint() + entity.Sprite.Offset;
                 var spriteBounds = CreateRectangleFromCentre(centre, entity.Sprite.Frame.Size);

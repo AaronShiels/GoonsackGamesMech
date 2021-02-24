@@ -16,15 +16,13 @@ namespace Cyborg.Systems
         private const float _explosionJitter = 10f;
         private const float _deathDuration = 0.5f;
 
-        private readonly ICollection<IEntity> _entities;
+        private readonly IEntityManager _entityManager;
         private readonly IGameState _gameState;
-        private readonly IServiceProvider _serviceProvider;
 
-        public EnemySystem(ICollection<IEntity> entities, IGameState gameState, IServiceProvider serviceProvider)
+        public EnemySystem(IEntityManager entityManager, IGameState gameState)
         {
-            _entities = entities;
+            _entityManager = entityManager;
             _gameState = gameState;
-            _serviceProvider = serviceProvider;
         }
 
         public void Update(GameTime gameTime)
@@ -34,9 +32,9 @@ namespace Cyborg.Systems
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var playerEntities = _entities.OfType<Player>().ToList();
-            var enemyEntities = _entities.OfType<Enemy>().ToList();
-            foreach (var entity in enemyEntities)
+            var playerEntities = _entityManager.Entities<Player>();
+
+            foreach (var entity in _entityManager.Entities<Enemy>())
             {
                 CalculateState(entity, playerEntities, elapsed);
                 ApplyAnimation(entity);
@@ -55,9 +53,9 @@ namespace Cyborg.Systems
             if (!entity.State.Dying)
             {
                 var enemyToClosestPlayerVector = playerEntities
-                                    .Select(pe => pe.Body.Position - entity.Body.Position)
-                                    .OrderBy(v => v.Length())
-                                    .FirstOrDefault();
+                    .Select(pe => pe.Body.Position - entity.Body.Position)
+                    .OrderBy(v => v.Length())
+                    .FirstOrDefault();
 
                 if (enemyToClosestPlayerVector != default)
                 {
@@ -71,8 +69,7 @@ namespace Cyborg.Systems
                 if (entity.State.DyingElapsed % (1 / _explosionsPerSecond) < 0.0166f)
                 {
                     var randomPosition = entity.Body.Position + CreateRandomVector2() * _explosionJitter;
-                    var explosion = _serviceProvider.CreateExplosion(randomPosition);
-                    _entities.Add(explosion);
+                    _entityManager.Create(Particle.ExplosionConstructor(randomPosition));
                 }
 
                 if (entity.State.DyingElapsed > _deathDuration)

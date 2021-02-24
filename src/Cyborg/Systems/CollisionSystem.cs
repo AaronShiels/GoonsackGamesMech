@@ -10,12 +10,12 @@ namespace Cyborg.Systems
 {
     public class CollisionSystem : IUpdateSystem
     {
-        private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IEntityManager _entityManager;
         private readonly IGameState _gameState;
 
-        public CollisionSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
+        public CollisionSystem(IEntityManager entityManager, IGameState gameState)
         {
-            _entities = entities;
+            _entityManager = entityManager;
             _gameState = gameState;
         }
 
@@ -24,12 +24,11 @@ namespace Cyborg.Systems
             if (!_gameState.Active)
                 return;
 
-            var kineticEntities = _entities.OfType<IKinetic>();
-            var solidEntities = _entities.OfType<IBody>().Where(e => e.Body.Size != Point.Zero && e.Body.Edges > 0);
+            var collidableEntities = _entityManager.Entities<IBody>().Where(e => e.Body.Size != Point.Zero && e.Body.Edges > 0).ToList();
 
             // Resolve collisions
-            foreach (var entity in kineticEntities)
-                foreach (var otherEntity in solidEntities)
+            foreach (var entity in _entityManager.Entities<IKinetic>())
+                foreach (var otherEntity in collidableEntities)
                 {
                     if (entity == otherEntity)
                         continue;

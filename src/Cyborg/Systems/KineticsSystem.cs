@@ -10,13 +10,12 @@ namespace Cyborg.Systems
     {
         private const float _frictionCoefficient = 10f;
         private const float _stoppingThreshold = 1f;
-
-        private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IEntityManager _entityManager;
         private readonly IGameState _gameState;
 
-        public KineticsSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
+        public KineticsSystem(IEntityManager entityManager, IGameState gameState)
         {
-            _entities = entities;
+            _entityManager = entityManager;
             _gameState = gameState;
         }
 
@@ -26,9 +25,8 @@ namespace Cyborg.Systems
                 return;
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            var kineticEntities = _entities.OfType<IKinetic>();
 
-            foreach (var entity in kineticEntities)
+            foreach (var entity in _entityManager.Entities<IKinetic>())
             {
                 // Friction force
                 // F = fv

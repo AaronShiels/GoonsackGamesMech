@@ -9,12 +9,12 @@ namespace Cyborg.Systems
 {
     public class ParticleSystem : IUpdateSystem
     {
-        private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IEntityManager _entityManager;
         private readonly IGameState _gameState;
 
-        public ParticleSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
+        public ParticleSystem(IEntityManager entityManager, IGameState gameState)
         {
-            _entities = entities;
+            _entityManager = entityManager;
             _gameState = gameState;
         }
 
@@ -25,8 +25,7 @@ namespace Cyborg.Systems
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var particleEntities = _entities.OfType<IState<ParticleStateComponent>>();
-            foreach (var entity in particleEntities)
+            foreach (var entity in _entityManager.Entities<IState<ParticleStateComponent>>())
             {
                 entity.State.Elapsed += elapsed;
 

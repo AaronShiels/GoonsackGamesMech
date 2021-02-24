@@ -19,14 +19,12 @@ namespace Cyborg.Systems
         {
             { MouseButton.Left, Button.Attack }
         };
-
-        private readonly IReadOnlyCollection<IEntity> _entities;
-
+        private readonly IEntityManager _entityManager;
         private IEnumerable<Button> _previousDownButtons = Enumerable.Empty<Button>();
 
-        public ControllerSystem(IReadOnlyCollection<IEntity> entities)
+        public ControllerSystem(IEntityManager entityManager)
         {
-            _entities = entities;
+            _entityManager = entityManager;
         }
 
         public void Update(GameTime gameTime)
@@ -50,8 +48,7 @@ namespace Cyborg.Systems
                 direction.Normalize();
 
             // Apply
-            var controlledEntities = _entities.OfType<IControlled>();
-            foreach (var entity in controlledEntities)
+            foreach (var entity in _entityManager.Entities<IControlled>())
                 entity.Controller.Update(direction, pressedButtons, downButtons);
         }
 
