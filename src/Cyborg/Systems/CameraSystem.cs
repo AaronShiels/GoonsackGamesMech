@@ -12,16 +12,16 @@ namespace Cyborg.Systems
     {
         private const float _transitionTime = 0.5f;
 
-        private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IEntityManager _entityManager;
         private readonly ICamera _camera;
         private readonly GameState _gameState;
 
         private Vector2 _lastPosition;
         private float _lastTransitionedAt;
 
-        public CameraSystem(IReadOnlyCollection<IEntity> entities, ICamera camera, GameState gameState)
+        public CameraSystem(IEntityManager entityManager, ICamera camera, GameState gameState)
         {
-            _entities = entities;
+            _entityManager = entityManager;
             _camera = camera;
             _gameState = gameState;
         }
@@ -30,11 +30,10 @@ namespace Cyborg.Systems
         {
             var totalSeconds = (float)gameTime.TotalGameTime.TotalSeconds;
 
-            var areas = _entities.OfType<Area>();
-            var player = _entities.OfType<Player>().Single();
+            var player = _entityManager.Entities<Player>().First();
 
             var playerCentre = player.Body.Position.ToRoundedPoint();
-            var activeArea = areas
+            var activeArea = _entityManager.Entities<Area>()
                 .Select(a => a.Bounds)
                 .Where(b => b.Left <= playerCentre.X && b.Right > playerCentre.X)
                 .Where(b => b.Top <= playerCentre.Y && b.Bottom > playerCentre.Y)

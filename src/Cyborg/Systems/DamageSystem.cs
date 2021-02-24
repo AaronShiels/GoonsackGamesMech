@@ -8,12 +8,12 @@ namespace Cyborg.Systems
 {
     public class DamageSystem : IUpdateSystem
     {
-        private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IEntityManager _entityManager;
         private readonly GameState _gameState;
 
-        public DamageSystem(IReadOnlyCollection<IEntity> entities, GameState gameState)
+        public DamageSystem(IEntityManager entityManager, GameState gameState)
         {
-            _entities = entities;
+            _entityManager = entityManager;
             _gameState = gameState;
         }
 
@@ -24,8 +24,7 @@ namespace Cyborg.Systems
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var damageableEntities = _entities.OfType<IDamageable>();
-            foreach (var entity in damageableEntities)
+            foreach (var entity in _entityManager.Entities<IDamageable>())
                 entity.Damage.Elapsed += elapsed;
         }
     }

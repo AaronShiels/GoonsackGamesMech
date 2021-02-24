@@ -6,12 +6,14 @@ namespace Cyborg.Entities
     // Invert control up to world
     public class Area : IEntity
     {
-        public Area(Rectangle bounds)
+        private Area(Rectangle bounds)
         {
             Bounds = bounds;
         }
 
         public Rectangle Bounds { get; }
         public bool Destroyed { get; set; }
+
+        public static Area FromMapData(Rectangle rectangle) => new(rectangle);
     }
 }

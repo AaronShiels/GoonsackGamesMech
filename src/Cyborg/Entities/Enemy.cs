@@ -1,11 +1,15 @@
+using System.Linq;
 using Cyborg.Components;
+using Cyborg.ContentPipeline.Animations;
+using Cyborg.Core;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Cyborg.Entities
 {
     public class Enemy : IState<EnemyStateComponent>, IKinetic, IDamageable, ISprite
     {
-        public Enemy(DamageComponent damage, BodyComponent body, ISpriteComponent sprite)
+        private Enemy(DamageComponent damage, BodyComponent body, ISpriteComponent sprite)
         {
             Damage = damage;
             Body = body;
@@ -28,6 +32,27 @@ namespace Cyborg.Entities
         public const string AnimationStandUp = "stand_up";
         public const string AnimationStandLeft = "stand_left";
         public const string AnimationStandDown = "stand_down";
+
+        public static EntityConstructor<Enemy> Constructor(int initialX, int initialY)
+            => contentManager =>
+            {
+                var animationRoot = "Zombie/";
+                var animationSet = contentManager.Load<AnimationSet>($"{animationRoot}animations");
+                var animations = animationSet.ToDictionary(kvp => kvp.Key, kvp =>
+                {
+                    var texture = contentManager.Load<Texture2D>($"{animationRoot}{kvp.Key}");
+                    return (texture, kvp.Value.FrameCount, kvp.Value.FrameRate, kvp.Value.Repeat);
+                });
+                var sprite = new AnimatedSpriteComponent(animations, new(0, -2), 3);
+
+                var position = new Vector2(initialX, initialY);
+                var size = new Point(8, 12);
+                var body = new BodyComponent(position, size, Edge.Left | Edge.Top | Edge.Right | Edge.Bottom);
+
+                var damage = new DamageComponent(3, 0.25f);
+
+                return new Enemy(damage, body, sprite);
+            };
     }
 
     public class EnemyStateComponent

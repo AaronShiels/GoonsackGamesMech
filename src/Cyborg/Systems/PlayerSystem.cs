@@ -16,13 +16,12 @@ namespace Cyborg.Systems
         private const float _attackKnockbackVelocity = 400f;
         private const float _dashDuration = 0.75f;
         private const float _dashInstantaneousVelocity = 400f;
-
-        private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IEntityManager _entityManager;
         private readonly IGameState _gameState;
 
-        public PlayerSystem(IReadOnlyCollection<IEntity> entities, IGameState gameState)
+        public PlayerSystem(IEntityManager entityManager, IGameState gameState)
         {
-            _entities = entities;
+            _entityManager = entityManager;
             _gameState = gameState;
         }
 
@@ -33,19 +32,16 @@ namespace Cyborg.Systems
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var playerEntities = _entities.OfType<Player>();
-            foreach (var entity in playerEntities)
+            foreach (var entity in _entityManager.Entities<Player>())
             {
                 CalculateState(entity, elapsed);
                 ApplyAnimation(entity);
 
                 if (entity.State.Attacking)
                 {
-                    var cardinalDirection = entity.State.Direction.ToCardinal();
                     var attackBounds = new Sector(entity.Body.Position.ToRoundedPoint(), entity.State.AttackRadius, entity.State.AttackAngles.Minimum, entity.State.AttackAngles.Maximum);
 
-                    var enemyEntities = _entities.OfType<Enemy>();
-                    foreach (var enemyEntity in enemyEntities)
+                    foreach (var enemyEntity in _entityManager.Entities<Enemy>())
                         ApplyAttack(entity, attackBounds, enemyEntity);
                 }
             }

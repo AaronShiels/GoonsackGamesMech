@@ -1,11 +1,15 @@
+using System.Linq;
 using Cyborg.Components;
+using Cyborg.ContentPipeline.Animations;
+using Cyborg.Core;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Cyborg.Entities
 {
     public class Player : IState<PlayerStateComponent>, IControlled, IKinetic, ISprite
     {
-        public Player(AnimatedSpriteComponent sprite, BodyComponent body)
+        private Player(AnimatedSpriteComponent sprite, BodyComponent body)
         {
             Sprite = sprite;
             Body = body;
@@ -36,6 +40,25 @@ namespace Cyborg.Entities
         public const string AnimationAttack2Up = "attack_2_up";
         public const string AnimationAttack2Left = "attack_2_left";
         public const string AnimationAttack2Down = "attack_2_down";
+
+        public static EntityConstructor<Player> Constructor(int initialX, int initialY)
+            => contentManager =>
+            {
+                var animationRoot = "Cyborg/";
+                var animationSet = contentManager.Load<AnimationSet>($"{animationRoot}animations");
+                var animations = animationSet.ToDictionary(kvp => kvp.Key, kvp =>
+                {
+                    var texture = contentManager.Load<Texture2D>($"{animationRoot}{kvp.Key}");
+                    return (texture, kvp.Value.FrameCount, kvp.Value.FrameRate, kvp.Value.Repeat);
+                });
+                var sprite = new AnimatedSpriteComponent(animations, new(0, -2), 3);
+
+                var position = new Vector2(initialX, initialY);
+                var size = new Point(8, 12);
+                var body = new BodyComponent(position, size, Edge.Left | Edge.Top | Edge.Right | Edge.Bottom);
+
+                return new Player(sprite, body);
+            };
     }
 
     public class PlayerStateComponent

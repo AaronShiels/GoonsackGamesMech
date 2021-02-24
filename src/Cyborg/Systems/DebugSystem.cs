@@ -14,20 +14,18 @@ namespace Cyborg.Systems
 {
     public class DebugSystem : IUpdateSystem, IDrawSystem, IDisposable
     {
-        private readonly IReadOnlyCollection<IEntity> _entities;
+        private readonly IEntityManager _entityManager;
         private readonly GameState _gameState;
         private readonly ICamera _camera;
-        private readonly GraphicsDevice _graphicsDevice;
         private readonly SpriteBatch _spriteBatch;
         private readonly PrimitiveBatch _primitiveBatch;
         private readonly SpriteFont _debugFont;
 
-        public DebugSystem(IReadOnlyCollection<IEntity> entities, GameState gameState, ICamera camera, GraphicsDevice graphicsDevice, ContentManager contentManager)
+        public DebugSystem(IEntityManager entityManager, GameState gameState, ICamera camera, GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
-            _entities = entities;
+            _entityManager = entityManager;
             _gameState = gameState;
             _camera = camera;
-            _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
             _primitiveBatch = new PrimitiveBatch(graphicsDevice);
             _debugFont = contentManager.Load<SpriteFont>("debug_font");
@@ -35,7 +33,7 @@ namespace Cyborg.Systems
 
         public void Update(GameTime gameTime)
         {
-            var playerEntity = _entities.OfType<Player>().SingleOrDefault();
+            var playerEntity = _entityManager.Entities<Player>().SingleOrDefault();
             if (playerEntity == null || !playerEntity.Controller.Pressed.Contains(Button.Debug))
                 return;
 
@@ -50,7 +48,7 @@ namespace Cyborg.Systems
             _primitiveBatch.Begin(SamplerState.PointClamp, _camera.Projection);
 
             var cameraFrame = _camera.Bounds;
-            foreach (var entity in _entities.OfType<IBody>())
+            foreach (var entity in _entityManager.Entities<IBody>())
             {
                 var entityFrame = entity.Body.Bounds;
                 if (entityFrame.Right < cameraFrame.Left || entityFrame.Left > cameraFrame.Right || entityFrame.Bottom < cameraFrame.Top || entityFrame.Top > cameraFrame.Bottom)
@@ -74,7 +72,7 @@ namespace Cyborg.Systems
                     _primitiveBatch.DrawLine(topLeft, topRight, Color.Blue);
             }
 
-            var playerEntity = _entities.OfType<Player>().SingleOrDefault();
+            var playerEntity = _entityManager.Entities<Player>().SingleOrDefault();
             if (playerEntity != null && playerEntity.State.Attacking)
             {
                 var sector = new Sector(playerEntity.Body.Position.ToRoundedPoint(), playerEntity.State.AttackRadius, playerEntity.State.AttackAngles.Minimum, playerEntity.State.AttackAngles.Maximum);
@@ -85,7 +83,7 @@ namespace Cyborg.Systems
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
 
-            _spriteBatch.DrawString(_debugFont, $"Entities: {_entities.Count}", Vector2.Zero, Color.White);
+            _spriteBatch.DrawString(_debugFont, $"Entities: {_entityManager.Entities<IEntity>().Count()}", Vector2.Zero, Color.White);
 
             _spriteBatch.End();
         }
