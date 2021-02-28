@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Utilities;
@@ -16,11 +17,11 @@ namespace Cyborg.Core
             _contentManager = contentManager;
         }
 
-        public void Create<TEntity>(EntityConstructor<TEntity> constructor) where TEntity : IEntity
-            => _entities.Add(constructor(_contentManager));
+        public void Create(Func<ContentManager, IEntity> constructorFunc)
+            => _entities.Add(constructorFunc(_contentManager));
 
-        public void Create<TEntity>(EntityGenerator<TEntity> generator) where TEntity : IEntity
-            => generator(_contentManager).ForEach(e => _entities.Add(e));
+        public void CreateMany(Func<ContentManager, IEnumerable<IEntity>> constructorFunc)
+            => constructorFunc(_contentManager).ForEach(e => _entities.Add(e));
 
         public IEnumerable<TEntity> Entities<TEntity>() where TEntity : IEntity
             => _entities.OfType<TEntity>().ToList();

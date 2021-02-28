@@ -13,7 +13,7 @@ namespace Cyborg.Components
         private Vector2 _position;
         private Rectangle _bounds;
 
-        public BodyComponent(Vector2 position, Point size = default, Edge edges = Edge.None)
+        public BodyComponent(Vector2 position = default, Point size = default, Edge edges = Edge.None)
         {
             _position = position;
             _size = size;

@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using Cyborg.Components;
 using Cyborg.Core;
 using Cyborg.Entities;
 using Cyborg.Utilities;
@@ -30,9 +30,9 @@ namespace Cyborg.Systems
         {
             var totalSeconds = (float)gameTime.TotalGameTime.TotalSeconds;
 
-            var player = _entityManager.Entities<Player>().First();
+            var playerEntity = _entityManager.Entities<IPlayer>().First();
 
-            var playerCentre = player.Body.Position.ToRoundedPoint();
+            var playerCentre = playerEntity.Body.Position.ToRoundedPoint();
             var activeArea = _entityManager.Entities<Area>()
                 .Select(a => a.Bounds)
                 .Where(b => b.Left <= playerCentre.X && b.Right > playerCentre.X)
