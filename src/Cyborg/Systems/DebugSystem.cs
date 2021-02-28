@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
-using Cyborg.Entities;
 using Cyborg.Graphics;
 using Cyborg.Utilities;
 using Microsoft.Xna.Framework;
@@ -33,7 +31,7 @@ namespace Cyborg.Systems
 
         public void Update(GameTime gameTime)
         {
-            var playerEntity = _entityManager.Entities<Player>().SingleOrDefault();
+            var playerEntity = _entityManager.Entities<IPlayer>().SingleOrDefault();
             if (playerEntity == null || !playerEntity.Controller.Pressed.Contains(Button.Debug))
                 return;
 
@@ -72,11 +70,14 @@ namespace Cyborg.Systems
                     _primitiveBatch.DrawLine(topLeft, topRight, Color.Blue);
             }
 
-            var playerEntity = _entityManager.Entities<Player>().SingleOrDefault();
-            if (playerEntity != null && playerEntity.State.Attacking)
+            foreach (var entity in _entityManager.Entities<IPlayer>())
             {
-                var sector = new Sector(playerEntity.Body.Position.ToRoundedPoint(), playerEntity.State.AttackRadius, playerEntity.State.AttackAngles.Minimum, playerEntity.State.AttackAngles.Maximum);
+                if (!entity.Player.Attacking)
+                    return;
+
+                var sector = new Sector(entity.Body.Position.ToRoundedPoint(), entity.Player.AttackRadius, entity.Player.AttackAngles.Minimum, entity.Player.AttackAngles.Maximum);
                 _primitiveBatch.Draw(sector, Color.Red);
+
             }
 
             _primitiveBatch.End();

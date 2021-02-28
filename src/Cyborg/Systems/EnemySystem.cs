@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cyborg.Components;
 using Cyborg.Core;
 using Cyborg.Entities;
 using Cyborg.Utilities;
@@ -32,25 +33,25 @@ namespace Cyborg.Systems
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var playerEntities = _entityManager.Entities<Player>();
+            var playerEntities = _entityManager.Entities<IPlayer>();
 
-            foreach (var entity in _entityManager.Entities<Enemy>())
+            foreach (var entity in _entityManager.Entities<IEnemy>())
             {
                 CalculateState(entity, playerEntities, elapsed);
                 ApplyAnimation(entity);
             }
         }
 
-        private void CalculateState(Enemy entity, IEnumerable<Player> playerEntities, float elapsed)
+        private void CalculateState(IEnemy entity, IEnumerable<IPlayer> playerEntities, float elapsed)
         {
             // Enter dead
-            if (entity.Damage.Remaining <= 0 && !entity.State.Dying)
+            if (entity.Damage.Remaining <= 0 && !entity.Enemy.Dying)
             {
-                entity.State.Dying = true;
+                entity.Enemy.Dying = true;
             }
 
             // Walking
-            if (!entity.State.Dying)
+            if (!entity.Enemy.Dying)
             {
                 var enemyToClosestPlayerVector = playerEntities
                     .Select(pe => pe.Body.Position - entity.Body.Position)
@@ -59,42 +60,42 @@ namespace Cyborg.Systems
 
                 if (enemyToClosestPlayerVector != default)
                 {
-                    entity.State.Direction = Vector2.Normalize(enemyToClosestPlayerVector);
-                    entity.Kinetic.Force = entity.State.Direction * _walkingForce;
+                    entity.Enemy.Direction = Vector2.Normalize(enemyToClosestPlayerVector);
+                    entity.Kinetic.Force = entity.Enemy.Direction * _walkingForce;
                 }
             }
 
-            if (entity.State.Dying)
+            if (entity.Enemy.Dying)
             {
-                if (entity.State.DyingElapsed % (1 / _explosionsPerSecond) < 0.0166f)
+                if (entity.Enemy.DyingElapsed % (1 / _explosionsPerSecond) < 0.0166f)
                 {
                     var randomPosition = entity.Body.Position + CreateRandomVector2() * _explosionJitter;
-                    _entityManager.Create(Particle.ExplosionConstructor(randomPosition));
+                    _entityManager.Create(cm => new Explosion(cm, randomPosition));
                 }
 
-                if (entity.State.DyingElapsed > _deathDuration)
+                if (entity.Enemy.DyingElapsed > _deathDuration)
                 {
                     entity.Destroyed = true;
                 }
                 else
                 {
-                    entity.State.DyingElapsed += elapsed;
+                    entity.Enemy.DyingElapsed += elapsed;
                     entity.Kinetic.Force = Vector2.Zero;
                 }
             }
         }
 
-        private static void ApplyAnimation(Enemy entity)
+        private static void ApplyAnimation(IEnemy entity)
         {
-            var cardinalDirection = entity.State.Direction.ToCardinal();
+            var cardinalDirection = entity.Enemy.Direction.ToCardinal();
             if (cardinalDirection.X == 1)
-                entity.Sprite.Animation = Enemy.AnimationWalkRight;
+                entity.Sprite.Animation = Zombie.AnimationWalkRight;
             else if (cardinalDirection.X == -1)
-                entity.Sprite.Animation = Enemy.AnimationWalkLeft;
+                entity.Sprite.Animation = Zombie.AnimationWalkLeft;
             else if (cardinalDirection.Y == 1)
-                entity.Sprite.Animation = Enemy.AnimationWalkDown;
+                entity.Sprite.Animation = Zombie.AnimationWalkDown;
             else if (cardinalDirection.Y == -1)
-                entity.Sprite.Animation = Enemy.AnimationWalkUp;
+                entity.Sprite.Animation = Zombie.AnimationWalkUp;
         }
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Cyborg.Components;
 using Cyborg.ContentPipeline.Maps;
 using Cyborg.Entities;
@@ -22,13 +21,13 @@ namespace Cyborg.Core
             _drawSystems = drawSystems;
 
             // Load map
-            _entityManager.Create(MapGenerator("demo_map"));
+            _entityManager.CreateMany(cm => LoadMap(cm, "demo_map"));
 
             // load actors
-            _entityManager.Create(Player.Constructor(160, 88));
-            _entityManager.Create(Enemy.Constructor(56, 48));
-            _entityManager.Create(Enemy.Constructor(264, 128));
-            _entityManager.Create(Enemy.Constructor(160, 168));
+            _entityManager.Create(cm => new CyborgHero(cm, new(160, 88)));
+            _entityManager.Create(cm => new Zombie(cm, new(56, 48)));
+            _entityManager.Create(cm => new Zombie(cm, new(264, 128)));
+            _entityManager.Create(cm => new Zombie(cm, new(160, 168)));
         }
 
         public void Update(GameTime gameTime)
@@ -43,13 +42,10 @@ namespace Cyborg.Core
                 system.Draw(gameTime);
         }
 
-        private static EntityGenerator<IEntity> MapGenerator(string name) => contentManager => LoadMap(contentManager, name);
-
         private static IEnumerable<IEntity> LoadMap(ContentManager contentManager, string name)
         {
-            var mapRoot = "Maps/";
-            var map = contentManager.Load<Map>($"{mapRoot}{name}");
-            var spriteSheet = contentManager.Load<Texture2D>($"{mapRoot}{map.TileSetSpriteSheet}");
+            var map = contentManager.Load<Map>($"Maps/{name}");
+            var spriteSheet = contentManager.Load<Texture2D>($"Maps/{map.TileSetSpriteSheet}");
 
             // Floor
             for (var x = 0; x < map.FloorTiles.GetLength(0); x++)
@@ -57,8 +53,9 @@ namespace Cyborg.Core
                     if (map.FloorTiles[x, y] > 0)
                     {
                         var position = GetTilePosition(x, y);
+                        var size = new Point(map.TileWidth, map.TileHeight);
                         var spriteFrame = GetTileSpriteFrame(map.FloorTiles[x, y]);
-                        yield return PassThroughTile.FromMapData(position, spriteSheet, spriteFrame, 1);
+                        yield return new Tile(position, size, Edge.None, spriteSheet, spriteFrame, 1);
                     }
 
             // Walls
@@ -78,7 +75,7 @@ namespace Cyborg.Core
                         if (y < map.WallTiles.GetLength(1) - 1 && map.WallTiles[x, y + 1] == 0)
                             edges |= Edge.Bottom;
                         var spriteFrame = GetTileSpriteFrame(map.WallTiles[x, y]);
-                        yield return ObstacleTile.FromMapData(position, size, edges, spriteSheet, spriteFrame, 2);
+                        yield return new Tile(position, size, edges, spriteSheet, spriteFrame, 2);
                     }
 
             // Overlay
@@ -87,15 +84,16 @@ namespace Cyborg.Core
                     if (map.OverlayTiles[x, y] > 0)
                     {
                         var position = GetTilePosition(x, y);
+                        var size = new Point(map.TileWidth, map.TileHeight);
                         var spriteFrame = GetTileSpriteFrame(map.OverlayTiles[x, y]);
-                        yield return PassThroughTile.FromMapData(position, spriteSheet, spriteFrame, 5);
+                        yield return new Tile(position, size, Edge.None, spriteSheet, spriteFrame, 5);
                     }
 
             // Areas
             foreach (var (x, y, width, height) in map.Areas)
                 yield return Area.FromMapData(new Rectangle(x, y, width, height));
 
-            Point GetTilePosition(int xIndex, int yIndex) => new(xIndex * map.TileWidth + map.TileWidth / 2, yIndex * map.TileHeight + map.TileHeight / 2);
+            Vector2 GetTilePosition(int xIndex, int yIndex) => new(xIndex * map.TileWidth + map.TileWidth / 2, yIndex * map.TileHeight + map.TileHeight / 2);
 
             Rectangle GetTileSpriteFrame(int value)
             {

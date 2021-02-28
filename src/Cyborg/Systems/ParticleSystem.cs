@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
-using Cyborg.Entities;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Systems
@@ -25,11 +22,11 @@ namespace Cyborg.Systems
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            foreach (var entity in _entityManager.Entities<IState<ParticleStateComponent>>())
+            foreach (var entity in _entityManager.Entities<IParticle>())
             {
-                entity.State.Elapsed += elapsed;
+                entity.Particle.Elapsed += elapsed;
 
-                if (entity.State.Expired)
+                if (entity.Particle.Expired)
                     entity.Destroyed = true;
             }
         }

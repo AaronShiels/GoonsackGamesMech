@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
-using Cyborg.Utilities;
 using Microsoft.Xna.Framework;
 
 namespace Cyborg.Systems
