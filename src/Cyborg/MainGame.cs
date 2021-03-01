@@ -15,6 +15,7 @@ namespace Cyborg
     {
         private readonly GraphicsDeviceManager _graphicsDeviceManager;
         private readonly IServiceProvider _gameServiceProvider;
+
         private IWorld _world;
 
         public MainGame()
@@ -38,6 +39,7 @@ namespace Cyborg
         protected override void LoadContent()
         {
             _world = _gameServiceProvider.GetRequiredService<IWorld>();
+            _world.Load();
         }
 
         protected override void Update(GameTime gameTime)
@@ -67,10 +69,11 @@ namespace Cyborg
             services.AddScoped(svc => new ContentManager(Services, "Content"));
 
             // Core infrastructure
-            services.AddSingleton<IWorld, World>();
-            services.AddSingleton<IGameState, GameState, GameState>();
+            services.AddScoped<IWorld, World>();
+            services.AddScoped<IList<IArea>, List<IArea>>();
             services.AddScoped<ICamera, Camera>();
             services.AddScoped<IEntityManager, IUpdateSystem, EntityManager>();
+            services.AddScoped<IGameState, GameState, GameState>();
 
             // Systems
             services.AddScoped<IUpdateSystem, ControllerSystem>();
@@ -79,7 +82,7 @@ namespace Cyborg
             services.AddScoped<IUpdateSystem, DamageSystem>();
             services.AddScoped<IUpdateSystem, KineticsSystem>();
             services.AddScoped<IUpdateSystem, CollisionSystem>();
-            services.AddScoped<IUpdateSystem, CameraSystem>();
+            services.AddScoped<IUpdateSystem, AreaSystem>();
             services.AddScoped<IUpdateSystem, ParticleSystem>();
             services.AddScoped<IUpdateSystem, IDrawSystem, SpriteSystem>();
             services.AddScoped<IUpdateSystem, IDrawSystem, DebugSystem>();

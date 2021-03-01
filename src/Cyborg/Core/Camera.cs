@@ -34,13 +34,12 @@ namespace Cyborg.Core
                 Recalculate();
             }
         }
-        public Point Size => _size;
         public Rectangle Bounds => _bounds;
         public Matrix Projection => _projection;
 
         private void Recalculate()
         {
-            _bounds = CreateRectangleFromCentre(_position.ToRoundedPoint(), Size);
+            _bounds = CreateRectangleFromCentre(_position.ToRoundedPoint(), _size);
 
             var scale = Matrix.CreateScale(_graphicsDevice.Viewport.Width / Constants.BaseWidth, _graphicsDevice.Viewport.Height / Constants.BaseHeight, 1);
             var translate = Matrix.CreateTranslation(-_position.X + Constants.BaseWidth / 2, -_position.Y + Constants.BaseHeight / 2, 0);

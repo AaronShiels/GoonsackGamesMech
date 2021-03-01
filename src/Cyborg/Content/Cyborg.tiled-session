@@ -3,13 +3,25 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "demo_map.tmx",
+    "activeFile": "Maps/demo_map.tmx",
     "expandedProjectPaths": [
+        "Maps",
         "."
     ],
     "fileStates": {
         "": {
             "scaleInDock": 1
+        },
+        "Maps/demo_map.tmx": {
+            "scale": 3,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 208.5,
+                "y": 186
+            }
+        },
+        "Maps/demo_map.tmx#dungeon": {
+            "scaleInDock": 2
         },
         "demo.tmx": {
             "scale": 4.902678571428571,
@@ -50,10 +62,11 @@
     "map.tileWidth": 16,
     "map.width": 20,
     "openFiles": [
-        "demo_map.tmx"
+        "Maps/demo_map.tmx"
     ],
     "project": "Cyborg.tiled-project",
     "recentFiles": [
+        "Maps/demo_map.tmx",
         "demo_map.tmx",
         "demo.tmx",
         "demo.tsx"
