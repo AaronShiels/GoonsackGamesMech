@@ -4,7 +4,12 @@ namespace Cyborg.Components
 {
     public class PlayerComponent
     {
-        public Vector2 Direction { get; set; } = Vector2.UnitX;
+        public PlayerComponent(Vector2 direction = default)
+        {
+            Direction = direction != default ? direction : Vector2.UnitX;
+        }
+
+        public Vector2 Direction { get; set; }
 
         public bool Walking { get; set; }
 

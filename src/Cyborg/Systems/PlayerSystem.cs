@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
@@ -34,38 +33,33 @@ namespace Cyborg.Systems
 
             foreach (var entity in _entityManager.Entities<IPlayer>())
             {
-                CalculateState(entity, elapsed);
+                CheckStateChange(entity);
+                ApplyState(entity, elapsed);
                 ApplyAnimation(entity);
-
-                if (entity.Player.Attacking)
-                {
-                    var attackBounds = new Sector(entity.Body.Position.ToRoundedPoint(), entity.Player.AttackRadius, entity.Player.AttackAngles.Minimum, entity.Player.AttackAngles.Maximum);
-
-                    foreach (var enemyEntity in _entityManager.Entities<Zombie>())
-                        ApplyAttack(entity, attackBounds, enemyEntity);
-                }
             }
         }
 
-        private static void CalculateState(IPlayer entity, float elapsed)
+        private static void CheckStateChange(IPlayer entity)
         {
-            // Finish dash
-            if (entity.Player.Dashing)
+            // Dash
+            if (entity.Player.Dashing && entity.Player.DashElapsed >= _dashDuration)
+                entity.Player.Dashing = false;
+
+            if (!entity.Player.Dashing && !entity.Player.Attacking && entity.Controller.Pressed.Contains(Button.Dash))
             {
-                entity.Player.DashElapsed += elapsed;
-                if (entity.Player.DashElapsed >= _dashDuration)
-                    entity.Player.Dashing = false;
+                entity.Player.Dashing = true;
+                entity.Player.DashElapsed = 0f;
+
+                if (entity.Controller.Joystick != Vector2.Zero)
+                    entity.Player.Direction = entity.Controller.Joystick;
+
+                entity.Kinetic.Velocity = entity.Player.Direction * _dashInstantaneousVelocity;
             }
 
-            // Finish attack
-            if (entity.Player.Attacking)
-            {
-                entity.Player.AttackElapsed += elapsed;
-                if (entity.Player.AttackElapsed >= _attackDuration)
-                    entity.Player.Attacking = false;
-            }
+            // Attack
+            if (entity.Player.Attacking && entity.Player.AttackElapsed >= _attackDuration)
+                entity.Player.Attacking = false;
 
-            // Enter attack
             if (!entity.Player.Attacking && entity.Controller.Pressed.Contains(Button.Attack))
             {
                 entity.Player.Attacking = true;
@@ -91,30 +85,49 @@ namespace Cyborg.Systems
                 entity.Player.AttackAngles = attackSector;
             }
 
-            // Enter dash
-            if (!entity.Player.Attacking && !entity.Player.Dashing && entity.Controller.Pressed.Contains(Button.Dash))
-            {
-                entity.Player.Dashing = true;
-                entity.Player.DashElapsed = 0f;
+            // Walk
+            if (!entity.Player.Walking && !entity.Player.Attacking && !entity.Player.Dashing && entity.Controller.Joystick != Vector2.Zero)
+                entity.Player.Walking = true;
 
+            if (entity.Player.Walking && (entity.Player.Attacking || entity.Player.Dashing || entity.Controller.Joystick == Vector2.Zero))
+                entity.Player.Walking = false;
+        }
+
+        private void ApplyState(IPlayer entity, float elapsed)
+        {
+            // Dash
+            if (entity.Player.Dashing)
+                entity.Player.DashElapsed += elapsed;
+
+            // Attack
+            if (entity.Player.Attacking)
+            {
+                entity.Player.AttackElapsed += elapsed;
+
+                var attackBounds = new Sector(entity.Body.Position.ToRoundedPoint(), entity.Player.AttackRadius, entity.Player.AttackAngles.Minimum, entity.Player.AttackAngles.Maximum);
+                foreach (var enemyEntity in _entityManager.Entities<IEnemy>())
+                {
+                    if (!attackBounds.Intersects(enemyEntity.Body.Bounds))
+                        continue;
+
+                    if (!enemyEntity.Damage.TryApply(1))
+                        continue;
+
+                    var knockbackVector = Vector2.Normalize(enemyEntity.Body.Position - entity.Body.Position);
+                    enemyEntity.Kinetic.Velocity = knockbackVector * _attackKnockbackVelocity;
+                }
+            }
+
+            // Walk
+            if (entity.Player.Walking)
+            {
                 if (entity.Controller.Joystick != Vector2.Zero)
                     entity.Player.Direction = entity.Controller.Joystick;
 
-                entity.Kinetic.Velocity = entity.Player.Direction * _dashInstantaneousVelocity;
-            }
-
-            // Walking            
-            if (!entity.Player.Attacking && !entity.Player.Dashing && entity.Controller.Joystick != Vector2.Zero)
-            {
-                entity.Player.Walking = true;
-                entity.Player.Direction = entity.Controller.Joystick;
                 entity.Kinetic.Force = entity.Player.Direction * _walkingForce;
             }
             else
-            {
-                entity.Player.Walking = false;
                 entity.Kinetic.Force = Vector2.Zero;
-            }
         }
 
         private static void ApplyAnimation(IPlayer entity)
@@ -153,19 +166,6 @@ namespace Cyborg.Systems
                 else if (cardinalDirection.Y == -1)
                     entity.Sprite.Animation = CyborgHero.AnimationStandUp;
             }
-        }
-
-        private static void ApplyAttack(IPlayer playerEntity, Sector attackBounds, Zombie enemyEntity)
-        {
-            var enemyBounds = enemyEntity.Body.Bounds;
-            if (!attackBounds.Intersects(enemyBounds))
-                return;
-
-            if (!enemyEntity.Damage.TryApply(1))
-                return;
-
-            var knockbackVector = Vector2.Normalize(enemyEntity.Body.Position - playerEntity.Body.Position);
-            enemyEntity.Kinetic.Velocity = knockbackVector * _attackKnockbackVelocity;
         }
     }
 }

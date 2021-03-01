@@ -30,9 +30,7 @@ namespace Cyborg.Systems
         {
             var totalSeconds = (float)gameTime.TotalGameTime.TotalSeconds;
 
-            var playerEntity = _entityManager.Entities<IPlayer>().First();
-
-            var playerCentre = playerEntity.Body.Position.ToRoundedPoint();
+            var playerCentre = _entityManager.Entities<IPlayer>().First().Body.Position.ToRoundedPoint();
             var activeArea = _entityManager.Entities<Area>()
                 .Select(a => a.Bounds)
                 .Where(b => b.Left <= playerCentre.X && b.Right > playerCentre.X)

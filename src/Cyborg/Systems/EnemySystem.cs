@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Cyborg.Components;
 using Cyborg.Core;
@@ -12,9 +10,10 @@ namespace Cyborg.Systems
 {
     public class EnemySystem : IUpdateSystem
     {
-        private const float _walkingForce = 200f;
-        private const float _explosionsPerSecond = 12f;
-        private const float _explosionJitter = 10f;
+        private const float _walkingAcquisitionRange = 50;
+        private const float _walkingForce = 200;
+        private const float _explosionsPerSecond = 12;
+        private const float _explosionJitter = 10;
         private const float _deathDuration = 0.5f;
 
         private readonly IEntityManager _entityManager;
@@ -33,54 +32,67 @@ namespace Cyborg.Systems
 
             var elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var playerEntities = _entityManager.Entities<IPlayer>();
-
             foreach (var entity in _entityManager.Entities<IEnemy>())
             {
-                CalculateState(entity, playerEntities, elapsed);
+                CheckStateChange(entity);
+                ApplyState(entity, elapsed);
                 ApplyAnimation(entity);
             }
         }
 
-        private void CalculateState(IEnemy entity, IEnumerable<IPlayer> playerEntities, float elapsed)
+        private void CheckStateChange(IEnemy entity)
         {
-            // Enter dead
-            if (entity.Damage.Remaining <= 0 && !entity.Enemy.Dying)
-            {
+            var playerEntities = _entityManager.Entities<IPlayer>();
+            var targetDistance = playerEntities.Any()
+                ? playerEntities
+                    .Select(pe => (pe.Body.Position - entity.Body.Position).Length())
+                    .OrderBy(d => d)
+                    .First()
+                : (double?)null;
+
+            // Death
+            if (entity.Enemy.Dying && entity.Enemy.DyingElapsed > _deathDuration)
+                entity.Destroyed = true;
+
+            if (!entity.Enemy.Dying && entity.Damage.Remaining <= 0)
                 entity.Enemy.Dying = true;
-            }
 
-            // Walking
-            if (!entity.Enemy.Dying)
+            // Walk
+            if (entity.Enemy.Walking && (entity.Enemy.Dying || !targetDistance.HasValue || targetDistance.Value > _walkingAcquisitionRange * 1.5))
+                entity.Enemy.Walking = false;
+
+            if (!entity.Enemy.Walking && !entity.Enemy.Dying && targetDistance.HasValue && targetDistance.Value < _walkingAcquisitionRange)
+                entity.Enemy.Walking = true;
+        }
+
+        private void ApplyState(IEnemy entity, float elapsed)
+        {
+            var targetDirection = _entityManager
+                .Entities<IPlayer>()
+                .Select(pe => pe.Body.Position - entity.Body.Position)
+                .OrderBy(v => v.Length())
+                .Select(v => Vector2.Normalize(v))
+                .FirstOrDefault();
+
+            // Walk
+            if (entity.Enemy.Walking)
             {
-                var enemyToClosestPlayerVector = playerEntities
-                    .Select(pe => pe.Body.Position - entity.Body.Position)
-                    .OrderBy(v => v.Length())
-                    .FirstOrDefault();
-
-                if (enemyToClosestPlayerVector != default)
-                {
-                    entity.Enemy.Direction = Vector2.Normalize(enemyToClosestPlayerVector);
-                    entity.Kinetic.Force = entity.Enemy.Direction * _walkingForce;
-                }
+                entity.Enemy.Direction = targetDirection;
+                entity.Kinetic.Force = entity.Enemy.Direction * _walkingForce;
             }
+            else
+                entity.Kinetic.Force = Vector2.Zero;
 
+
+            // Death
             if (entity.Enemy.Dying)
             {
+                entity.Enemy.DyingElapsed += elapsed;
+
                 if (entity.Enemy.DyingElapsed % (1 / _explosionsPerSecond) < 0.0166f)
                 {
                     var randomPosition = entity.Body.Position + CreateRandomVector2() * _explosionJitter;
                     _entityManager.Create(cm => new Explosion(cm, randomPosition));
-                }
-
-                if (entity.Enemy.DyingElapsed > _deathDuration)
-                {
-                    entity.Destroyed = true;
-                }
-                else
-                {
-                    entity.Enemy.DyingElapsed += elapsed;
-                    entity.Kinetic.Force = Vector2.Zero;
                 }
             }
         }
@@ -89,13 +101,13 @@ namespace Cyborg.Systems
         {
             var cardinalDirection = entity.Enemy.Direction.ToCardinal();
             if (cardinalDirection.X == 1)
-                entity.Sprite.Animation = Zombie.AnimationWalkRight;
+                entity.Sprite.Animation = entity.Enemy.Walking ? Zombie.AnimationWalkRight : Zombie.AnimationStandRight;
             else if (cardinalDirection.X == -1)
-                entity.Sprite.Animation = Zombie.AnimationWalkLeft;
+                entity.Sprite.Animation = entity.Enemy.Walking ? Zombie.AnimationWalkLeft : Zombie.AnimationStandLeft;
             else if (cardinalDirection.Y == 1)
-                entity.Sprite.Animation = Zombie.AnimationWalkDown;
+                entity.Sprite.Animation = entity.Enemy.Walking ? Zombie.AnimationWalkDown : Zombie.AnimationStandDown;
             else if (cardinalDirection.Y == -1)
-                entity.Sprite.Animation = Zombie.AnimationWalkUp;
+                entity.Sprite.Animation = entity.Enemy.Walking ? Zombie.AnimationWalkUp : Zombie.AnimationStandUp;
         }
     }
 }

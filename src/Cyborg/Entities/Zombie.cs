@@ -4,6 +4,7 @@ using Cyborg.ContentPipeline.Animations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using static Cyborg.Utilities.MathsExtensions;
 
 namespace Cyborg.Entities
 {
@@ -22,7 +23,7 @@ namespace Cyborg.Entities
             Body.Position = position;
         }
 
-        public EnemyComponent Enemy { get; } = new();
+        public EnemyComponent Enemy { get; } = new(CreateRandomVector2());
         public KineticComponent Kinetic { get; } = new();
         public DamageComponent Damage { get; } = new(3, 0.25f);
         public BodyComponent Body { get; } = new(Vector2.Zero, new(8, 12), Edge.Left | Edge.Top | Edge.Right | Edge.Bottom);
