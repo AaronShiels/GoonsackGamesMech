@@ -45,17 +45,17 @@ namespace Cyborg.Systems
 
             _primitiveBatch.Begin(SamplerState.PointClamp, _camera.Projection);
 
-            var cameraFrame = _camera.Bounds;
+            var cameraBounds = _camera.Bounds;
             foreach (var entity in _entityManager.Entities<IBody>())
             {
-                var entityFrame = entity.Body.Bounds;
-                if (entityFrame.Right < cameraFrame.Left || entityFrame.Left > cameraFrame.Right || entityFrame.Bottom < cameraFrame.Top || entityFrame.Top > cameraFrame.Bottom)
+                var entityBounds = entity.Body.Bounds;
+                if (!entityBounds.Intersects(cameraBounds))
                     continue;
 
-                var topLeft = entityFrame.Location.ToVector2();
-                var topRight = topLeft + new Vector2(entityFrame.Width, 0);
-                var bottomLeft = topLeft + new Vector2(0, entityFrame.Height);
-                var bottomRight = topLeft + new Vector2(entityFrame.Width, entityFrame.Height);
+                var topLeft = entityBounds.Location.ToVector2();
+                var topRight = topLeft + new Vector2(entityBounds.Width, 0);
+                var bottomLeft = topLeft + new Vector2(0, entityBounds.Height);
+                var bottomRight = topLeft + new Vector2(entityBounds.Width, entityBounds.Height);
 
                 if (entity.Body.Edges.HasFlag(Edge.Right))
                     _primitiveBatch.DrawLine(topRight, bottomRight, Color.Blue);
@@ -73,7 +73,7 @@ namespace Cyborg.Systems
             foreach (var entity in _entityManager.Entities<IPlayer>())
             {
                 if (!entity.Player.Attacking)
-                    return;
+                    continue;
 
                 var sector = new Sector(entity.Body.Position.ToRoundedPoint(), entity.Player.AttackRadius, entity.Player.AttackAngles.Minimum, entity.Player.AttackAngles.Maximum);
                 _primitiveBatch.Draw(sector, Color.Red);
@@ -83,9 +83,7 @@ namespace Cyborg.Systems
             _primitiveBatch.End();
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-
-            _spriteBatch.DrawString(_debugFont, $"Entities: {_entityManager.Entities<IEntity>().Count()}", Vector2.Zero, Color.White);
-
+            _spriteBatch.DrawString(_debugFont, $"Frame Rate: {1 / gameTime.ElapsedGameTime.TotalSeconds:f}\nEntities: {_entityManager.Entities<IEntity>().Count()}", Vector2.Zero, Color.White);
             _spriteBatch.End();
         }
 

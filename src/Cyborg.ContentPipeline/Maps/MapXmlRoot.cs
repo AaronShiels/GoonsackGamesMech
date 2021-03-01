@@ -72,6 +72,8 @@ namespace Cyborg.ContentPipeline.Maps
                 public int Width { get; set; }
                 [XmlAttribute(AttributeName = "height")]
                 public int Height { get; set; }
+                [XmlAttribute(AttributeName = "type")]
+                public string Type { get; set; }
             }
         }
 

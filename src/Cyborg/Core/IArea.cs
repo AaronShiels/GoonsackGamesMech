@@ -2,10 +2,9 @@ using Microsoft.Xna.Framework;
 
 namespace Cyborg.Core
 {
-    public interface IWorld
+    public interface IArea
     {
-        void Update(GameTime gameTime);
-        void Draw(GameTime gameTime);
+        Rectangle Bounds { get; }
         void Load();
         void Unload();
     }

@@ -40,12 +40,12 @@ namespace Cyborg.Systems
         {
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp, null, null, null, _camera.Projection);
 
-            var cameraFrame = _camera.Bounds;
+            var cameraBounds = _camera.Bounds;
             foreach (var entity in _entityManager.Entities<ISprite>().OrderBy(e => e.Sprite.Order))
             {
                 var centre = entity.Body.Position.ToRoundedPoint() + entity.Sprite.Offset;
                 var spriteBounds = CreateRectangleFromCentre(centre, entity.Sprite.Frame.Size);
-                if (spriteBounds.Right < cameraFrame.Left || spriteBounds.Left > cameraFrame.Right || spriteBounds.Bottom < cameraFrame.Top || spriteBounds.Top > cameraFrame.Bottom)
+                if (!spriteBounds.Intersects(cameraBounds))
                     continue;
 
                 _spriteBatch.Draw(entity.Sprite.Texture, spriteBounds.Location.ToVector2(), entity.Sprite.Frame, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);

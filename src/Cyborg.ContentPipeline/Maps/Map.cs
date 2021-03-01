@@ -1,17 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cyborg.ContentPipeline.Maps
 {
     [Serializable]
     public class Map
     {
-        public string TileSetSpriteSheet { get; set; }
-        public short TileSetColumns { get; set; }
-        public short TileWidth { get; set; }
-        public short TileHeight { get; set; }
-        public short[,] FloorTiles { get; set; }
-        public short[,] WallTiles { get; set; }
-        public short[,] OverlayTiles { get; set; }
-        public (int X, int Y, int Width, int Height)[] Areas { get; set; }
+        public MapTileSet TileSet { get; set; }
+        public Dictionary<string, int[,]> Tiles { get; set; }
+        public Dictionary<string, MapObject[]> Objects { get; set; }
+    }
+
+    [Serializable]
+    public struct MapTileSet
+    {
+        public string SpriteSheet { get; set; }
+        public int TileWidth { get; set; }
+        public int TileHeight { get; set; }
+        public int Columns { get; set; }
+    }
+
+    [Serializable]
+    public struct MapObject
+    {
+        public string Type { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 }

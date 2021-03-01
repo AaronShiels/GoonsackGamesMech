@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cyborg.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
@@ -17,14 +16,24 @@ namespace Cyborg.Core
             _contentManager = contentManager;
         }
 
-        public void Create(Func<ContentManager, IEntity> constructorFunc)
-            => _entities.Add(constructorFunc(_contentManager));
+        public TEntity Create<TEntity>(Func<ContentManager, TEntity> constructorFunc) where TEntity : IEntity
+        {
+            var entity = constructorFunc(_contentManager);
+            _entities.Add(entity);
 
-        public void CreateMany(Func<ContentManager, IEnumerable<IEntity>> constructorFunc)
-            => constructorFunc(_contentManager).ForEach(e => _entities.Add(e));
+            return entity;
+        }
 
-        public IEnumerable<TEntity> Entities<TEntity>() where TEntity : IEntity
-            => _entities.OfType<TEntity>().ToList();
+        public IEnumerable<IEntity> CreateMany(Func<ContentManager, IEnumerable<IEntity>> constructorFunc)
+        {
+            var entities = constructorFunc(_contentManager).ToList();
+            foreach (var entity in entities)
+                _entities.Add(entity);
+
+            return entities;
+        }
+
+        public IEnumerable<TEntity> Entities<TEntity>() where TEntity : IEntity => _entities.OfType<TEntity>().ToList();
 
         public void Update(GameTime gameTime)
         {

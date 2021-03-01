@@ -7,7 +7,7 @@ namespace Cyborg.Core
     public interface IEntityManager
     {
         IEnumerable<TEntity> Entities<TEntity>() where TEntity : IEntity;
-        void Create(Func<ContentManager, IEntity> constructorFunc);
-        void CreateMany(Func<ContentManager, IEnumerable<IEntity>> constructorFunc);
+        TEntity Create<TEntity>(Func<ContentManager, TEntity> constructorFunc) where TEntity : IEntity;
+        IEnumerable<IEntity> CreateMany(Func<ContentManager, IEnumerable<IEntity>> constructorFunc);
     }
 }
