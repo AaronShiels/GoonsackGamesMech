@@ -35,7 +35,7 @@ namespace Cyborg.Utilities
         {
             var randomX = (float)_random.NextDouble() * 2 - 1;
             var randomY = (float)_random.NextDouble() * 2 - 1;
-            return new Vector2(randomX, randomY);
+            return Vector2.Normalize(new Vector2(randomX, randomY));
         }
 
         public static bool Intersects(this Rectangle rectangle, Circle circle) => circle.Intersects(rectangle);
