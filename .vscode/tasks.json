@@ -4,15 +4,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "dotnet: build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
             "label": "mgcb-editor",
             "command": "mgcb-editor",
             "type": "process",
@@ -29,6 +20,25 @@
             "command": "C:/Program Files/Tiled/Tiled.exe",
             "type": "process",
             "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build",
+            "label": "npm: build",
+            "detail": "webpack --mode=production"
+        },
+        {
+            "type": "npm",
+            "script": "debug",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "label": "npm: debug",
+            "detail": "webpack-dev-server --mode=development --open"
         }
     ]
 }

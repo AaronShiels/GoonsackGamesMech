@@ -5,15 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Cyborg",
-            "type": "coreclr",
+            "type": "pwa-chrome",
             "request": "launch",
-            "preLaunchTask": "dotnet: build",
-            "program": "${workspaceFolder}/src/Cyborg/bin/Debug/netcoreapp3.1/Cyborg.dll",
-            "args": [],
-            "console": "internalConsole",
-            "stopAtEntry": false,
-            "justMyCode": false
+            "name": "Launch",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}/dist"
         }
     ]
 }
