@@ -23,22 +23,29 @@
         },
         {
             "type": "npm",
-            "script": "build",
+            "script": "build: production",
             "problemMatcher": [
                 "$tsc"
             ],
             "group": "build",
-            "label": "npm: build",
-            "detail": "webpack --mode=production"
+            "label": "npm: build: production"
         },
         {
             "type": "npm",
-            "script": "debug",
+            "script": "build: development",
             "problemMatcher": [
                 "$tsc"
             ],
-            "label": "npm: debug",
-            "detail": "webpack-dev-server --mode=development --open"
+            "group": "build",
+            "label": "npm: build: development"
+        },
+        {
+            "type": "npm",
+            "script": "debug: development",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "label": "npm: debug: development"
         }
     ]
 }
