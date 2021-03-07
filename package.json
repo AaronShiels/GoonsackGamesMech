@@ -2,8 +2,9 @@
   "name": "cyborg",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack --mode=production",
-    "debug": "webpack serve --mode=development --open --config webpack.config.js --progress --profile --content-base dist/"
+    "build: development": "webpack",
+    "build: production": "webpack --mode=production",
+    "debug: development": "webpack serve --mode=development --config webpack.config.js --progress --profile --content-base dist/"
   },
   "repository": {
     "type": "git",

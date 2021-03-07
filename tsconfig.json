@@ -1,11 +1,13 @@
 {
     "compilerOptions": {
         "jsx": "react",
-        "moduleResolution": "Node",
+        "moduleResolution": "node",
         "noImplicitAny": true,
         "outDir": "./dist/",
         "sourceMap": true,
         "strict": true,
         "target": "es6",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true
     }
 }
