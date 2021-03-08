@@ -1,51 +1,40 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "mgcb-editor",
-            "command": "mgcb-editor",
-            "type": "process",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "sprite-factory",
-            "command": "C:/Source/SpriteFactory/SpriteFactory.exe",
-            "type": "process",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "tiled",
-            "command": "C:/Program Files/Tiled/Tiled.exe",
-            "type": "process",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "type": "npm",
-            "script": "build: production",
-            "problemMatcher": [
-                "$tsc"
-            ],
-            "group": "build",
-            "label": "npm: build: production"
-        },
-        {
-            "type": "npm",
-            "script": "build: development",
-            "problemMatcher": [
-                "$tsc"
-            ],
-            "group": "build",
-            "label": "npm: build: development"
-        },
-        {
-            "type": "npm",
-            "script": "debug: development",
-            "problemMatcher": [
-                "$tsc"
-            ],
-            "label": "npm: debug: development"
-        }
-    ]
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "tiled",
+			"command": "C:/Program Files/Tiled/Tiled.exe",
+			"type": "process",
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"type": "npm",
+			"script": "build: production",
+			"problemMatcher": ["$tsc"],
+			"group": "build",
+			"label": "npm: build: production"
+		},
+		{
+			"type": "npm",
+			"script": "build: development",
+			"problemMatcher": ["$tsc"],
+			"group": "build",
+			"label": "npm: build: development"
+		},
+		{
+			"type": "npm",
+			"script": "debug: development",
+			"problemMatcher": ["$tsc"],
+			"label": "npm: debug: development"
+		},
+		{
+			"type": "shell",
+			"command": "terraform",
+			"args": ["apply"],
+			"label": "terraform: apply",
+			"problemMatcher": []
+		}
+	]
 }
