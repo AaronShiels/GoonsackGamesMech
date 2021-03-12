@@ -1,4 +1,4 @@
-import { Application, Container } from "pixi.js";
+import { Container, Application } from "pixi.js";
 import { Entity } from "../components";
 import Cyborg from "../entities/Cyborg";
 import { runSystems } from "../systems";
@@ -12,6 +12,8 @@ class World extends Container {
 		this.scale.y = game.screen.height / gameHeight;
 
 		const cyborg = new Cyborg();
+		cyborg.x = 80;
+		cyborg.y = 90;
 		this.addChild(cyborg);
 
 		game.ticker.add((d) => this.update(d));
@@ -21,9 +23,7 @@ class World extends Container {
 		runSystems(this, delta);
 	}
 
-	entities<TEntity extends Entity = Entity>(
-		filter?: (entity: Entity) => entity is TEntity
-	): TEntity[] {
+	entities<TEntity extends Entity = Entity>(filter?: (entity: Entity) => entity is TEntity): TEntity[] {
 		return this.children
 			.map((e) => e as Entity)
 			.filter((e) => (filter ? filter(e) : true))

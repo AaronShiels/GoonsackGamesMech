@@ -1,16 +1,19 @@
-import { Sprite } from "pixi.js";
+import { AnimatedSprite, Texture } from "pixi.js";
 import { MovingBody } from "../components";
-import { assets, getTexture } from "../framework/assets";
 import Vector from "../framework/Vector";
 
-class Cyborg extends Sprite implements MovingBody {
+class Cyborg extends AnimatedSprite implements MovingBody {
 	constructor() {
-		const texture = getTexture(assets.cyborg_stand_down);
-		super(texture);
+		const standDownTextures = standDownAnimationFrames.map((f) => Texture.from(f));
 
+		super(standDownTextures);
+
+		this.anchor.set(0.5);
 		this.size = { x: 0, y: 0 };
-		this.velocity = { x: 1, y: 0 };
+		this.velocity = { x: 0.2, y: 0 };
 		this.acceleration = { x: 0, y: 0 };
+		this.animationSpeed = 0.05;
+		this.play();
 	}
 
 	size: Vector;
@@ -18,4 +21,8 @@ class Cyborg extends Sprite implements MovingBody {
 	acceleration: Vector;
 }
 
+const standDownAnimationFrames: string[] = ["assets/cyborg/stand_down_1.png", "assets/cyborg/stand_down_2.png"];
+const assets = standDownAnimationFrames;
+
 export default Cyborg;
+export { assets };
