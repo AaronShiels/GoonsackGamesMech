@@ -1,4 +1,4 @@
-import { Application, Loader, SCALE_MODES, settings } from "pixi.js";
+import { settings, SCALE_MODES, Application } from "pixi.js";
 import { loadAssets } from "./framework/assets";
 import World from "./framework/World";
 
@@ -11,9 +11,8 @@ const loadGame = async (): Promise<void> => {
 		autoDensity: true,
 		resolution: window.devicePixelRatio || 1
 	});
-	const gameElement = document.getElementById(
-		"game"
-	) as HTMLDivElement | null;
+
+	const gameElement = document.getElementById("game") as HTMLDivElement | null;
 	if (!gameElement) throw new Error("Game element not found!");
 
 	gameElement.appendChild(game.view);

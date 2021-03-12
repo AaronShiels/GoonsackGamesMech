@@ -18,13 +18,6 @@
 		},
 		{
 			"type": "npm",
-			"script": "build: development",
-			"problemMatcher": ["$tsc"],
-			"group": "build",
-			"label": "npm: build: development"
-		},
-		{
-			"type": "npm",
 			"script": "debug: development",
 			"problemMatcher": ["$tsc"],
 			"label": "npm: debug: development"
@@ -34,6 +27,13 @@
 			"command": "terraform",
 			"args": ["apply"],
 			"label": "terraform: apply",
+			"problemMatcher": []
+		},
+		{
+			"type": "shell",
+			"command": "aws",
+			"args": ["s3", "sync", "./dist", "s3://goonsackgames.com"],
+			"label": "aws: sync",
 			"problemMatcher": []
 		}
 	]
