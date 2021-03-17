@@ -1,0 +1,7 @@
+{
+    "explosion": {
+        "frame_rate": 24,
+        "frame_count": 5,
+        "repeat": false
+    }
+}

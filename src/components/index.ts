@@ -1,19 +1,29 @@
-import Vector from "../framework/Vector";
+import BaseComponent, { isEntity } from "./BaseComponent";
+import BodyComponent, { createBodyComponent, hasBody } from "./BodyComponent";
+import PhysicsComponent, { createPhysicsComponent, hasPhysics } from "./PhysicsComponent";
+import SpriteComponent, {
+	AnimatedSpriteSet,
+	hasSprite,
+	createSprite,
+	createAnimatedSprite,
+	createAnimatedSpriteSet,
+	createSpriteComponent
+} from "./SpriteComponent";
 
-interface Entity extends Vector {}
-
-interface Body extends Entity {
-	size: Vector;
-}
-
-const isBody = (object: Entity): object is Body => "size" in object;
-
-interface MovingBody extends Body {
-	velocity: Vector;
-	acceleration: Vector;
-}
-
-const isMovingBody = (object: Entity): object is MovingBody =>
-	"velocity" in object && "acceleration" in object;
-
-export { Entity, Body, isBody, MovingBody, isMovingBody };
+export {
+	BaseComponent,
+	isEntity,
+	BodyComponent,
+	hasBody,
+	createBodyComponent,
+	PhysicsComponent,
+	hasPhysics,
+	createPhysicsComponent,
+	SpriteComponent,
+	AnimatedSpriteSet,
+	hasSprite,
+	createSprite,
+	createAnimatedSprite,
+	createAnimatedSpriteSet,
+	createSpriteComponent
+};
