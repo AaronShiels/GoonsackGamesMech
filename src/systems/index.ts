@@ -1,10 +1,10 @@
-import World from "../framework/World";
+import World from "../framework/world";
 import physicsSystem from "./physicsSystem";
+import spriteSystem from "./spriteSystem";
 
 type System = (world: World, delta: number) => void;
 
-const systems = [physicsSystem];
-const runSystems = (world: World, delta: number): void =>
-	systems.forEach((system) => system(world, delta));
+const systems = [physicsSystem, spriteSystem];
 
-export { System, runSystems };
+export default systems;
+export { System };

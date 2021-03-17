@@ -1,6 +1,7 @@
-import { settings, SCALE_MODES, Application } from "pixi.js";
-import { loadAssets } from "./framework/assets";
-import World from "./framework/World";
+import { settings, SCALE_MODES, Application, Loader } from "pixi.js";
+import { cyborgSpriteSheetResource } from "./entities/cyborg";
+import { gameWidth, gameHeight } from "./framework/constants";
+import { createWorld } from "./framework/world";
 
 const loadGame = async (): Promise<void> => {
 	settings.SCALE_MODE = SCALE_MODES.NEAREST;
@@ -19,8 +20,13 @@ const loadGame = async (): Promise<void> => {
 
 	await loadAssets();
 
-	const world = new World(game);
-	game.stage.addChild(world);
+	game.stage.scale.x = game.screen.width / gameWidth;
+	game.stage.scale.y = game.screen.height / gameHeight;
+
+	const world = createWorld(game);
 };
+
+const assets = [cyborgSpriteSheetResource];
+const loadAssets = (): Promise<void> => new Promise<void>((res) => Loader.shared.add(assets).load((_) => res()));
 
 loadGame();
