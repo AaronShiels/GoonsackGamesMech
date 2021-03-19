@@ -8,6 +8,7 @@ import {
 	PhysicsComponent,
 	SpriteComponent
 } from "../components";
+import PlayerComponent, { createPlayerComponent } from "../components/PlayerComponent";
 import Vector from "../framework/Vector";
 
 enum Animation {
@@ -49,15 +50,16 @@ const animations: { [key in Animation]: number } = {
 	walkup: 0.4
 };
 
-type Cyborg = BodyComponent & PhysicsComponent & SpriteComponent;
+type Cyborg = BodyComponent & PhysicsComponent & SpriteComponent & PlayerComponent;
 
 const createCyborg = (position: Vector): Cyborg => {
 	const bodyComponent: BodyComponent = createBodyComponent();
 	const physicsComponent: PhysicsComponent = createPhysicsComponent();
 	const animatedSpriteSet: AnimatedSpriteSet = createAnimatedSpriteSet(cyborgSpriteSheetResource, animations, "attackdown");
 	const spriteComponent: SpriteComponent = createSpriteComponent(animatedSpriteSet);
+	const playerComponent: PlayerComponent = createPlayerComponent();
 
-	return { ...bodyComponent, ...physicsComponent, ...spriteComponent, ...{ position } };
+	return { ...bodyComponent, ...physicsComponent, ...spriteComponent, ...{ position }, ...playerComponent };
 };
 
 export { cyborgSpriteSheetResource, createCyborg };
