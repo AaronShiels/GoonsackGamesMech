@@ -23,7 +23,7 @@ const createWorld = (game: Application): World => {
 	const getEntities = (): BaseComponent[] => entities;
 
 	const world = { addEntity, getEntities };
-	game.ticker.add((delta) => systems.forEach((system) => system(world, delta)));
+	game.ticker.add((delta) => systems.forEach((system) => system(world, delta / 60)));
 
 	const cyborg = createCyborg({ x: 80, y: 90 });
 	world.addEntity(cyborg);
