@@ -57,7 +57,7 @@ const createCyborg = (position: Vector): Cyborg => {
 	return {
 		position,
 		size: { x: 8, y: 12 },
-		edges: { down: true, left: true, right: true, up: true },
+		edges: { bottom: true, left: true, right: true, top: true },
 		velocity: { x: 0, y: 0 },
 		acceleration: { x: 0, y: 0 },
 		direction: { x: 0, y: 0 },

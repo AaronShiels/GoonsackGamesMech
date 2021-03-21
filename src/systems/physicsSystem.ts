@@ -1,7 +1,7 @@
 import { System } from ".";
 import { hasBody, hasPhysics } from "../components";
 import gameState from "../framework/gameState";
-import { add, multiply, subtract } from "../shapes/Vector";
+import { add, multiply, subtract } from "../shapes";
 
 const frictionCoefficient = 10;
 

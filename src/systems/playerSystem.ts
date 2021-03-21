@@ -2,7 +2,7 @@ import { System } from ".";
 import { AnimatedSpriteSet, hasPhysics, hasSprite, isPlayer } from "../components";
 import gameState from "../framework/gameState";
 import input from "../framework/input";
-import Vector, { cardinalise, hasValue, multiply, normalise } from "../shapes/Vector";
+import { Vector, cardinalise, hasValue, multiply, normalise } from "../shapes";
 
 const walkForce = 600;
 
