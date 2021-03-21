@@ -101,7 +101,7 @@ const createTiles = (area: Rectangle, layer: string, solid: boolean, zIndex: num
 
 			const index = xIndex + yIndex * tilesLayer.width;
 			const tileValue = tilesLayer.data[index];
-			if (tileValue === 0) continue;
+			if (!tileValue) continue;
 
 			const textureAtlasIndex = tileValue - 1;
 			const textureAtlasX = (textureAtlasIndex % tileSet.columns) * tileSet.tilewidth;
@@ -113,7 +113,11 @@ const createTiles = (area: Rectangle, layer: string, solid: boolean, zIndex: num
 				height: tileSet.tileheight
 			};
 
-			const edges: Edges = { down: false, left: false, right: false, up: false };
+			const edges: Edges = { bottom: true, left: true, right: true, top: true };
+			if (!solid || (yIndex < tilesLayer.height - 1 && tilesLayer.data[xIndex + (yIndex + 1) * tilesLayer.width])) edges.bottom = false;
+			if (!solid || (xIndex > 0 && tilesLayer.data[xIndex - 1 + yIndex * tilesLayer.width])) edges.left = false;
+			if (!solid || (xIndex < tilesLayer.width - 1 && tilesLayer.data[xIndex + 1 + yIndex * tilesLayer.width])) edges.right = false;
+			if (!solid || (yIndex > 0 && tilesLayer.data[xIndex + (yIndex - 1) * tilesLayer.width])) edges.top = false;
 
 			const tile: Tile = createTile(textureAtlas, textureAtlasFrame, tileBounds, edges, zIndex);
 			tiles.push(tile);

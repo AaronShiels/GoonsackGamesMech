@@ -1,6 +1,6 @@
 import { Rectangle as PRectangle, Texture } from "pixi.js";
 import { BodyComponent, createSpriteComponent, SpriteComponent, createSprite, Edges } from "../components";
-import { Rectangle, Vector } from "../shapes";
+import { centre, Rectangle, Vector } from "../shapes";
 
 type Tile = BodyComponent & SpriteComponent;
 
@@ -8,7 +8,7 @@ const createTile = (textureAtlas: Texture, frame: Rectangle, bounds: Rectangle, 
 	const pFrame = new PRectangle(frame.x, frame.y, frame.width, frame.height);
 	const tileTexture: Texture = new Texture(textureAtlas.baseTexture, pFrame);
 
-	const position: Vector = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
+	const position: Vector = centre(bounds);
 	const size: Vector = { x: bounds.width, y: bounds.height };
 	const sprite: SpriteComponent = createSpriteComponent(createSprite(tileTexture, zIndex));
 

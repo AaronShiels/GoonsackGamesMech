@@ -1,5 +1,5 @@
 import BaseComponent, { isEntity } from "./BaseComponent";
-import BodyComponent, { hasBody, getBounds, Edges } from "./BodyComponent";
+import BodyComponent, { hasBody, getBounds, Edges, hasEdges } from "./BodyComponent";
 import PhysicsComponent, { hasPhysics } from "./PhysicsComponent";
 import PlayerComponent, { isPlayer } from "./PlayerComponent";
 import SpriteComponent, {
@@ -17,6 +17,7 @@ export {
 	BodyComponent,
 	Edges,
 	hasBody,
+	hasEdges,
 	getBounds,
 	PhysicsComponent,
 	hasPhysics,
