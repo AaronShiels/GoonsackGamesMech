@@ -1,6 +1,7 @@
 import BaseComponent, { isEntity } from "./BaseComponent";
-import BodyComponent, { createBodyComponent, hasBody } from "./BodyComponent";
-import PhysicsComponent, { createPhysicsComponent, hasPhysics } from "./PhysicsComponent";
+import BodyComponent, { hasBody, getBounds, Edges } from "./BodyComponent";
+import PhysicsComponent, { hasPhysics } from "./PhysicsComponent";
+import PlayerComponent, { isPlayer } from "./PlayerComponent";
 import SpriteComponent, {
 	AnimatedSpriteSet,
 	hasSprite,
@@ -14,16 +15,18 @@ export {
 	BaseComponent,
 	isEntity,
 	BodyComponent,
+	Edges,
 	hasBody,
-	createBodyComponent,
+	getBounds,
 	PhysicsComponent,
 	hasPhysics,
-	createPhysicsComponent,
 	SpriteComponent,
 	AnimatedSpriteSet,
 	hasSprite,
 	createSprite,
 	createAnimatedSprite,
 	createAnimatedSpriteSet,
-	createSpriteComponent
+	createSpriteComponent,
+	PlayerComponent,
+	isPlayer
 };

@@ -1,4 +1,4 @@
-import Vector from "../framework/Vector";
+import { Vector } from "../shapes";
 
 interface PlayerComponent {
 	direction: Vector;
@@ -6,12 +6,6 @@ interface PlayerComponent {
 }
 
 const isPlayer = (object: any): object is PlayerComponent => "direction" in object;
-const createPlayerComponent = (): PlayerComponent => {
-	return {
-		direction: { x: 0, y: 0 },
-		walking: false
-	};
-};
 
 export default PlayerComponent;
-export { isPlayer, createPlayerComponent };
+export { isPlayer };
