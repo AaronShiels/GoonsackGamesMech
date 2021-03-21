@@ -1,4 +1,4 @@
-import { AnimatedSprite, Loader, Sprite, Texture } from "pixi.js";
+import { AnimatedSprite, Loader, Sprite, Spritesheet, Texture } from "pixi.js";
 import BaseComponent from "./BaseComponent";
 
 interface SpriteComponent extends BaseComponent {
@@ -36,34 +36,43 @@ class AnimatedSpriteSet extends AnimatedSprite {
 	}
 }
 
-const createSprite = (textureResource: string): Sprite => new Sprite(Loader.shared.resources[textureResource].texture);
+const createSprite = (texture: Texture, zIndex: number = 0): Sprite => {
+	const sprite = new Sprite(texture);
+	sprite.anchor.set(0.5);
+	sprite.zIndex = zIndex;
 
-const createAnimatedSprite = (spriteSheetResource: string, animationName: string, animationSpeed: number): AnimatedSprite => {
-	const spriteSheet = Loader.shared.resources[spriteSheetResource].spritesheet;
-	if (!spriteSheet || !spriteSheet.animations) throw new Error(`Invalid sprite sheet ${spriteSheetResource}.`);
+	return sprite;
+};
+
+const createAnimatedSprite = (spriteSheet: Spritesheet | undefined, animationName: string, animationSpeed: number, zIndex: number = 0): AnimatedSprite => {
+	if (!spriteSheet || !spriteSheet.animations) throw new Error(`Invalid sprite sheet ${spriteSheet}.`);
 
 	const textures: Texture[] = spriteSheet.animations[animationName];
-	if (!textures) throw new Error(`Invalid animation ${animationName} in ${spriteSheetResource}.`);
+	if (!textures) throw new Error(`Invalid animation ${animationName} in ${spriteSheet}.`);
 
 	const animatedSprite = new AnimatedSprite(textures);
 	animatedSprite.animationSpeed = animationSpeed;
 	animatedSprite.play();
 
+	animatedSprite.anchor.set(0.5);
+	animatedSprite.autoUpdate = false;
+	animatedSprite.zIndex = zIndex;
+
 	return animatedSprite;
 };
 
 const createAnimatedSpriteSet = (
-	spriteSheetResource: string,
+	spriteSheet: Spritesheet | undefined,
 	animationDefinitions: { [key: string]: number },
-	defaultAnimationName?: string
+	defaultAnimationName?: string,
+	zIndex: number = 0
 ): AnimatedSpriteSet => {
-	const spriteSheet = Loader.shared.resources[spriteSheetResource].spritesheet;
-	if (!spriteSheet || !spriteSheet.animations) throw new Error(`Invalid sprite sheet ${spriteSheetResource}.`);
+	if (!spriteSheet || !spriteSheet.animations) throw new Error(`Invalid sprite sheet ${spriteSheet}.`);
 
 	const animations: { [key: string]: Texture[] } = spriteSheet.animations;
 	const animatedSpriteDefinitions = Object.entries(animations).reduce<Record<string, AnimatedSpriteDefinition>>((cumm, [animationName, textures]) => {
 		const animationSpeed = animationDefinitions[animationName];
-		if (!animationSpeed) throw new Error(`Invalid speed for animation ${animationName}`);
+		if (!animationSpeed) throw new Error(`Invalid speed for animation ${animationName}.`);
 
 		cumm[animationName] = { textures, animationSpeed };
 		return cumm;
@@ -71,6 +80,10 @@ const createAnimatedSpriteSet = (
 
 	const animatedSpriteSet = new AnimatedSpriteSet(animatedSpriteDefinitions);
 	animatedSpriteSet.play(defaultAnimationName);
+
+	animatedSpriteSet.anchor.set(0.5);
+	animatedSpriteSet.autoUpdate = false;
+	animatedSpriteSet.zIndex = zIndex;
 
 	return animatedSpriteSet;
 };

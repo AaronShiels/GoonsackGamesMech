@@ -1,4 +1,4 @@
-import Vector from "../framework/Vector";
+import { Vector } from "../shapes";
 import BaseComponent from "./BaseComponent";
 
 interface PhysicsComponent extends BaseComponent {
@@ -7,13 +7,5 @@ interface PhysicsComponent extends BaseComponent {
 }
 
 const hasPhysics = (object: any): object is PhysicsComponent => "velocity" in object && "acceleration" in object;
-const createPhysicsComponent = (): PhysicsComponent => {
-	return {
-		velocity: { x: 0, y: 0 },
-		acceleration: { x: 0, y: 0 },
-		destroyed: false
-	};
-};
-
 export default PhysicsComponent;
-export { hasPhysics, createPhysicsComponent };
+export { hasPhysics };

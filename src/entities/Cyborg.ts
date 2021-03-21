@@ -2,14 +2,15 @@ import {
 	AnimatedSpriteSet,
 	BodyComponent,
 	createAnimatedSpriteSet,
-	createBodyComponent,
-	createPhysicsComponent,
 	createSpriteComponent,
 	PhysicsComponent,
-	SpriteComponent
+	SpriteComponent,
+	PlayerComponent
 } from "../components";
-import PlayerComponent, { createPlayerComponent } from "../components/PlayerComponent";
-import Vector from "../framework/Vector";
+import { getResource, Resource } from "../framework/resources";
+import { Vector } from "../shapes";
+
+type Cyborg = BodyComponent & PhysicsComponent & SpriteComponent & PlayerComponent;
 
 enum Animation {
 	AttackDown = "attackdown",
@@ -30,7 +31,6 @@ enum Animation {
 	WalkUp = "walkup"
 }
 
-const cyborgSpriteSheetResource = "assets/cyborg/cyborg.json";
 const animations: { [key in Animation]: number } = {
 	attackdown: 0.4,
 	attackdownalt: 0.4,
@@ -50,16 +50,21 @@ const animations: { [key in Animation]: number } = {
 	walkup: 0.4
 };
 
-type Cyborg = BodyComponent & PhysicsComponent & SpriteComponent & PlayerComponent;
-
 const createCyborg = (position: Vector): Cyborg => {
-	const bodyComponent: BodyComponent = createBodyComponent();
-	const physicsComponent: PhysicsComponent = createPhysicsComponent();
-	const animatedSpriteSet: AnimatedSpriteSet = createAnimatedSpriteSet(cyborgSpriteSheetResource, animations, "attackdown");
-	const spriteComponent: SpriteComponent = createSpriteComponent(animatedSpriteSet);
-	const playerComponent: PlayerComponent = createPlayerComponent();
+	const animatedSpriteSet: AnimatedSpriteSet = createAnimatedSpriteSet(getResource(Resource.Cyborg).spritesheet, animations, "attackdown", 2);
+	const sprite: SpriteComponent = createSpriteComponent(animatedSpriteSet);
 
-	return { ...bodyComponent, ...physicsComponent, ...spriteComponent, ...{ position }, ...playerComponent };
+	return {
+		position,
+		size: { x: 8, y: 12 },
+		edges: { down: true, left: true, right: true, up: true },
+		velocity: { x: 0, y: 0 },
+		acceleration: { x: 0, y: 0 },
+		direction: { x: 0, y: 0 },
+		walking: false,
+		...sprite
+	};
 };
 
-export { cyborgSpriteSheetResource, createCyborg };
+export default Cyborg;
+export { createCyborg };

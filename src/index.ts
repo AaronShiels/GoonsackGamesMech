@@ -1,32 +1,29 @@
-import { settings, SCALE_MODES, Application, Loader } from "pixi.js";
-import { cyborgSpriteSheetResource } from "./entities/cyborg";
-import { gameWidth, gameHeight } from "./framework/constants";
+import { settings, SCALE_MODES, Application } from "pixi.js";
+import camera from "./framework/camera";
+import { loadResources } from "./framework/resources";
 import { createWorld } from "./framework/world";
 
 const loadGame = async (): Promise<void> => {
 	settings.SCALE_MODE = SCALE_MODES.NEAREST;
+	settings.SORTABLE_CHILDREN = true;
 
-	const game = new Application({
+	const app = new Application({
 		width: 1280,
-		height: 720,
+		height: 704,
 		autoDensity: true,
 		resolution: window.devicePixelRatio || 1
 	});
+	app.stage.scale.x = app.screen.width / camera.width;
+	app.stage.scale.y = app.screen.height / camera.height;
 
 	const gameElement = document.getElementById("game") as HTMLDivElement | null;
-	if (!gameElement) throw new Error("Game element not found!");
+	if (!gameElement) throw new Error("Game element not found.");
 
-	gameElement.appendChild(game.view);
+	gameElement.appendChild(app.view);
 
-	await loadAssets();
+	await loadResources();
 
-	game.stage.scale.x = game.screen.width / gameWidth;
-	game.stage.scale.y = game.screen.height / gameHeight;
-
-	const world = createWorld(game);
+	const world = createWorld(app);
 };
-
-const assets = [cyborgSpriteSheetResource];
-const loadAssets = (): Promise<void> => new Promise<void>((res) => Loader.shared.add(assets).load((_) => res()));
 
 loadGame();

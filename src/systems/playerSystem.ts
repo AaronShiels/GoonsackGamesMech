@@ -1,21 +1,22 @@
 import { System } from ".";
-import { AnimatedSpriteSet, hasPhysics, hasSprite } from "../components";
-import { isPlayer } from "../components/PlayerComponent";
+import { AnimatedSpriteSet, hasPhysics, hasSprite, isPlayer } from "../components";
+import gameState from "../framework/gameState";
 import input from "../framework/input";
-import Vector, { cardinalise, hasValue, multiply, normalise } from "../framework/Vector";
+import Vector, { cardinalise, hasValue, multiply, normalise } from "../shapes/Vector";
 
 const walkForce = 600;
 
 const playerSystem: System = (world) => {
-	const inputVector: Vector = { x: 0, y: 0 };
+	if (!gameState.active()) return;
 
+	const inputVector: Vector = { x: 0, y: 0 };
 	if (input.right) inputVector.x++;
 	if (input.left) inputVector.x--;
 	if (input.down) inputVector.y++;
 	if (input.up) inputVector.y--;
 	const inputDirection = hasValue(inputVector) ? normalise(inputVector) : { x: 0, y: 0 };
 
-	for (const entity of world.getEntities()) {
+	for (const entity of world.entities) {
 		if (!isPlayer(entity)) continue;
 
 		// Check state

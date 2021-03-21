@@ -1,32 +1,48 @@
-import { Container, Application } from "pixi.js";
+import { Application, Container } from "pixi.js";
 import { BaseComponent, hasSprite } from "../components";
-import { createCyborg } from "../entities/cyborg";
+import { createCyborg } from "../entities";
+import { Vector } from "../shapes";
 import systems from "../systems";
 
 interface World {
-	addEntity<TEntity extends BaseComponent>(entity: TEntity): void;
-	getEntities(): BaseComponent[];
+	camera: Vector;
+	addEntities<TEntity extends BaseComponent>(entity: TEntity | TEntity[]): void;
+	readonly entities: ReadonlyArray<BaseComponent>;
+	readonly stage: Container;
 }
 
-const createWorld = (game: Application): World => {
-	const worldContainer = new Container();
-	game.stage.addChild(worldContainer);
-
+const createWorld = (app: Application): World => {
+	const stage: Container = app.stage;
 	const entities: BaseComponent[] = [];
+	const camera: Vector = { x: 180, y: 88 };
 
-	const addEntity = <TEntity extends BaseComponent>(entity: TEntity): void => {
-		entities.push(entity);
+	const addEntities = <TEntity extends BaseComponent>(newEntities: TEntity | TEntity[]): void => {
+		if (!Array.isArray(newEntities)) newEntities = [newEntities];
 
-		if (hasSprite(entity)) worldContainer.addChild(entity.sprite);
+		for (const entity of newEntities) {
+			entities.push(entity);
+			if (hasSprite(entity)) stage.addChild(entity.sprite);
+		}
 	};
 
-	const getEntities = (): BaseComponent[] => entities;
-
-	const world = { addEntity, getEntities };
-	game.ticker.add((delta) => systems.forEach((system) => system(world, delta / 60)));
-
+	const world: World = { camera, addEntities, entities, stage };
 	const cyborg = createCyborg({ x: 80, y: 90 });
-	world.addEntity(cyborg);
+	world.addEntities(cyborg);
+
+	const gameLoop = (deltaSeconds: number): void => {
+		// Run all systems
+		systems.forEach((system) => system(world, deltaSeconds));
+
+		// Garbage collect destroyed
+		for (let i = entities.length - 1; i >= 0; i--) {
+			if (!entities[i].destroyed) continue;
+
+			const entity = entities[i];
+			if (hasSprite(entity)) stage.removeChild(entity.sprite);
+			entities.splice(i, 1);
+		}
+	};
+	app.ticker.add((delta): void => gameLoop(delta / 60));
 
 	return world;
 };
