@@ -4,29 +4,30 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Goonsack Games - Cyborg</title>
+    <title>Goonsack Games</title>
     <meta name="author" content="Aaron Shiels" />
     <style>
-        body,
         html {
-            width: 100%;
+            height: 100%;
+        }
+
+        body{
+            display: block;
+            background-color: black;
             height: 100%;
             margin: 0;
-            padding: 0;
         }
 
         #game {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            display: flex;
             align-items: center;
+            display: flex;            
+            height: 100%;
             justify-content: center;
         }
 
-        #game canvas {
-            margin: auto;
-            overflow: hidden;
+        #game canvas {            
+            max-width: 1280px;
+            max-height: 704px;
         }
     </style>
 </head>
