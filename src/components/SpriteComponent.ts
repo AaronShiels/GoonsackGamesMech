@@ -1,4 +1,5 @@
 import { AnimatedSprite, Loader, Sprite, Spritesheet, Texture } from "pixi.js";
+import { add, divide, subtract, Vector } from "../shapes";
 import BaseComponent from "./BaseComponent";
 
 interface SpriteComponent extends BaseComponent {
@@ -36,15 +37,31 @@ class AnimatedSpriteSet extends AnimatedSprite {
 	}
 }
 
-const createSprite = (texture: Texture, zIndex: number = 0): Sprite => {
+const getAnchor = (textureDimensions: Vector, centreOffset: Vector): Vector => {
+	const textureCentre = divide(textureDimensions, 2);
+	const adjustedTextureCentre = add(textureCentre, centreOffset);
+	const anchor = divide(adjustedTextureCentre, textureDimensions);
+
+	return anchor;
+};
+
+const createSprite = (texture: Texture, zIndex: number = 0, centreOffset: Vector = { x: 0, y: 0 }): Sprite => {
 	const sprite = new Sprite(texture);
-	sprite.anchor.set(0.5);
+
+	const anchor = getAnchor({ x: texture.width, y: texture.height }, centreOffset);
+	sprite.anchor.set(anchor.x, anchor.y);
 	sprite.zIndex = zIndex;
 
 	return sprite;
 };
 
-const createAnimatedSprite = (spriteSheet: Spritesheet | undefined, animationName: string, animationSpeed: number, zIndex: number = 0): AnimatedSprite => {
+const createAnimatedSprite = (
+	spriteSheet: Spritesheet | undefined,
+	animationName: string,
+	animationSpeed: number,
+	zIndex: number = 0,
+	centreOffset: Vector = { x: 0, y: 0 }
+): AnimatedSprite => {
 	if (!spriteSheet || !spriteSheet.animations) throw new Error(`Invalid sprite sheet ${spriteSheet}.`);
 
 	const textures: Texture[] = spriteSheet.animations[animationName];
@@ -54,7 +71,8 @@ const createAnimatedSprite = (spriteSheet: Spritesheet | undefined, animationNam
 	animatedSprite.animationSpeed = animationSpeed;
 	animatedSprite.play();
 
-	animatedSprite.anchor.set(0.5);
+	const anchor = getAnchor({ x: textures[0].width, y: textures[0].height }, centreOffset);
+	animatedSprite.anchor.set(anchor.x, anchor.y);
 	animatedSprite.autoUpdate = false;
 	animatedSprite.zIndex = zIndex;
 
@@ -65,7 +83,8 @@ const createAnimatedSpriteSet = (
 	spriteSheet: Spritesheet | undefined,
 	animationDefinitions: { [key: string]: number },
 	defaultAnimationName?: string,
-	zIndex: number = 0
+	zIndex: number = 0,
+	centreOffset: Vector = { x: 0, y: 0 }
 ): AnimatedSpriteSet => {
 	if (!spriteSheet || !spriteSheet.animations) throw new Error(`Invalid sprite sheet ${spriteSheet}.`);
 
@@ -81,7 +100,12 @@ const createAnimatedSpriteSet = (
 	const animatedSpriteSet = new AnimatedSpriteSet(animatedSpriteDefinitions);
 	animatedSpriteSet.play(defaultAnimationName);
 
-	animatedSpriteSet.anchor.set(0.5);
+	if (animatedSpriteSet.textures[0] instanceof Texture) {
+		const anchor = getAnchor({ x: animatedSpriteSet.textures[0].width, y: animatedSpriteSet.textures[0].height }, centreOffset);
+		animatedSpriteSet.anchor.set(anchor.x, anchor.y);
+	} else {
+		animatedSpriteSet.anchor.set(0.5);
+	}
 	animatedSpriteSet.autoUpdate = false;
 	animatedSpriteSet.zIndex = zIndex;
 

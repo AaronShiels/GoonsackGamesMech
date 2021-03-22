@@ -51,7 +51,9 @@ const animations: { [key in Animation]: number } = {
 };
 
 const createCyborg = (position: Vector): Cyborg => {
-	const animatedSpriteSet: AnimatedSpriteSet = createAnimatedSpriteSet(getResource(Resource.Cyborg).spritesheet, animations, "attackdown", 2);
+	const spriteSheet = getResource(Resource.Cyborg).spritesheet;
+	const offset = { x: 0, y: 2 };
+	const animatedSpriteSet: AnimatedSpriteSet = createAnimatedSpriteSet(spriteSheet, animations, "attackdown", 2, offset);
 	const sprite: SpriteComponent = createSpriteComponent(animatedSpriteSet);
 
 	return {

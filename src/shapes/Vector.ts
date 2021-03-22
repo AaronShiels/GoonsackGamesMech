@@ -3,22 +3,30 @@ interface Vector {
 	y: number;
 }
 
-const add = (base: Vector, delta: Vector): Vector => ({
-	x: base.x + delta.x,
-	y: base.y + delta.y
+const add = (a: Vector, b: Vector): Vector => ({
+	x: a.x + b.x,
+	y: a.y + b.y
 });
-const subtract = (base: Vector, delta: Vector): Vector => ({
-	x: base.x - delta.x,
-	y: base.y - delta.y
+const subtract = (a: Vector, b: Vector): Vector => ({
+	x: a.x - b.x,
+	y: a.y - b.y
 });
-const multiply = (base: Vector, delta: number): Vector => ({
-	x: base.x * delta,
-	y: base.y * delta
-});
-const divide = (base: Vector, delta: number): Vector => ({
-	x: base.x / delta,
-	y: base.y / delta
-});
+const multiply = (a: Vector, b: Vector | number): Vector => {
+	if (typeof b === "number") b = { x: b, y: b };
+
+	return {
+		x: a.x * b.x,
+		y: a.y * b.y
+	};
+};
+const divide = (a: Vector, b: Vector | number): Vector => {
+	if (typeof b === "number") b = { x: b, y: b };
+
+	return {
+		x: a.x / b.x,
+		y: a.y / b.y
+	};
+};
 const length = (vector: Vector): number => {
 	if (!hasValue(vector)) throw new Error("Vector is empty.");
 	return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
