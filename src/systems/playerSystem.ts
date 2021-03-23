@@ -1,7 +1,8 @@
 import { System } from ".";
-import { AnimatedSpriteSet, hasPhysics, hasSprite, isPlayer } from "../components";
+import { AnimatedSpriteSet, hasBody, hasPhysics, hasSprite, isPlayer } from "../components";
+import camera from "../framework/camera";
 import gameState from "../framework/gameState";
-import input from "../framework/input";
+import { getInput } from "../framework/input";
 import { Vector, cardinalise, hasValue, multiply, normalise } from "../shapes";
 
 const walkForce = 600;
@@ -9,23 +10,19 @@ const walkForce = 600;
 const playerSystem: System = (entities) => {
 	if (!gameState.active()) return;
 
-	const inputVector: Vector = { x: 0, y: 0 };
-	if (input.right) inputVector.x++;
-	if (input.left) inputVector.x--;
-	if (input.down) inputVector.y++;
-	if (input.up) inputVector.y--;
-	const inputDirection = hasValue(inputVector) ? normalise(inputVector) : { x: 0, y: 0 };
-
 	for (const entity of entities) {
 		if (!isPlayer(entity)) continue;
 
+		const playerPosition = hasBody(entity) ? entity.position : { x: camera.width / 2, y: camera.height / 2 };
+		const input = getInput(playerPosition);
+
 		// Check state
-		if (!entity.walking && hasValue(inputDirection)) entity.walking = true;
-		if (entity.walking && !hasValue(inputDirection)) entity.walking = false;
+		if (!entity.walking && hasValue(input.moveDirection)) entity.walking = true;
+		if (entity.walking && !hasValue(input.moveDirection)) entity.walking = false;
 
 		// Apply state
-		if (hasValue(inputDirection)) entity.direction = inputDirection;
-		if (hasPhysics(entity)) entity.acceleration = hasValue(inputDirection) ? multiply(entity.direction, walkForce) : { x: 0, y: 0 };
+		if (hasValue(input.moveDirection)) entity.direction = input.moveDirection;
+		if (hasPhysics(entity)) entity.acceleration = hasValue(input.moveDirection) ? multiply(entity.direction, walkForce) : { x: 0, y: 0 };
 
 		// Apply animation
 		if (!hasSprite(entity) || !(entity.sprite instanceof AnimatedSpriteSet)) continue;
