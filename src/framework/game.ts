@@ -11,9 +11,9 @@ settings.SORTABLE_CHILDREN = true;
 class Game extends Application {
 	constructor(element: HTMLElement) {
 		super({
-			autoDensity: true,
-			height: (element.clientWidth / 16) * 9,
 			width: element.clientWidth,
+			height: (element.clientWidth / 16) * 9,
+			autoDensity: true,
 			resolution: window.devicePixelRatio || 1
 		});
 
@@ -22,9 +22,16 @@ class Game extends Application {
 		this.stage.scale.y = this.screen.height / camera.height;
 
 		element.appendChild(this.view);
+
+		const { left, top } = element.getBoundingClientRect();
+		this.offsetX = left;
+		this.offsetY = top;
 	}
 
 	private _entities: BaseComponent[] = [];
+
+	offsetX: number;
+	offsetY: number;
 
 	async load(): Promise<void> {
 		await loadResources();
