@@ -3,9 +3,11 @@ import { System } from ".";
 import { AnimatedSpriteSet, hasBody, hasSprite } from "../components";
 import gameState from "../framework/gameState";
 
-const spriteSystem: System = (world, deltaSeconds) => {
-	for (const entity of world.entities) {
+const spriteSystem: System = (entities, stage, deltaSeconds) => {
+	for (const entity of entities) {
 		if (!hasBody(entity) || !hasSprite(entity)) continue;
+
+		if (!entity.sprite.parent) stage.addChild(entity.sprite);
 
 		entity.sprite.x = entity.position.x;
 		entity.sprite.y = entity.position.y;

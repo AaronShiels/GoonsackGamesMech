@@ -6,7 +6,6 @@ import { Tile, createTile } from "../entities";
 import camera from "../framework/camera";
 import gameState from "../framework/gameState";
 import { getResource, Resource } from "../framework/resources";
-import World from "../framework/world";
 import { Rectangle, intersects } from "../shapes";
 
 const areaLayer = demoMap.layers.filter((l) => l.name === "areas")[0];
@@ -20,13 +19,13 @@ let currentAreaIndex: number | undefined;
 let previousAreaIndex: number | undefined;
 let transitionElapsed: number = 0;
 
-const areaSystem: System = (world, deltaSeconds) => {
-	checkAreaTransition(world);
+const areaSystem: System = (entities, _, deltaSeconds) => {
+	checkAreaTransition(entities);
 	applyAreaTransition(deltaSeconds);
 };
 
-const checkAreaTransition = (world: World): void => {
-	for (const entity of world.entities) {
+const checkAreaTransition = (entities: BaseComponent[]): void => {
+	for (const entity of entities) {
 		if (!isPlayer(entity) || !hasBody(entity)) continue;
 
 		const playerBounds = getBounds(entity);
@@ -41,7 +40,7 @@ const checkAreaTransition = (world: World): void => {
 			currentAreaIndex = newAreaIndex;
 			transitionElapsed = 0;
 
-			loadArea(world, currentAreaIndex);
+			loadArea(entities, currentAreaIndex);
 		}
 
 		// Check end transition
@@ -69,7 +68,7 @@ const applyAreaTransition = (deltaSeconds: number): void => {
 	camera.y = startArea.y + (endArea.y - startArea.y) * progress;
 };
 
-const loadArea = (world: World, areaIndex: number): void => {
+const loadArea = (entities: BaseComponent[], areaIndex: number): void => {
 	const area = areas[areaIndex];
 	const floorTiles = createTiles(area, "floor", false, 0);
 	const wallTiles = createTiles(area, "walls", true, 1);
@@ -77,7 +76,7 @@ const loadArea = (world: World, areaIndex: number): void => {
 
 	const newEntities = [...floorTiles, ...wallTiles, ...overlayTiles];
 	areaEntites[areaIndex] = newEntities;
-	world.addEntities(newEntities);
+	entities.push(...newEntities);
 };
 
 const createTiles = (area: Rectangle, layer: string, solid: boolean, zIndex: number): Tile[] => {
