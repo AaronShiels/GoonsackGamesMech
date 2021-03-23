@@ -2,11 +2,11 @@ import { System } from ".";
 import { BodyComponent, getBounds, hasBody, hasEdges, hasPhysics } from "../components";
 import { intersection, length, subtract, Vector } from "../shapes";
 
-const collisionSystem: System = (world) => {
-	for (const entity of world.entities) {
+const collisionSystem: System = (entities) => {
+	for (const entity of entities) {
 		if (!hasPhysics(entity) || !hasBody(entity) || !hasEdges(entity)) continue;
 
-		for (const otherEntity of world.entities) {
+		for (const otherEntity of entities) {
 			if (!hasBody(otherEntity) || !hasEdges(otherEntity) || entity === otherEntity) continue;
 
 			const penetrationVector = getShortestPenetrationVector(entity, otherEntity);

@@ -5,10 +5,10 @@ import { add, multiply, subtract } from "../shapes";
 
 const frictionCoefficient = 10;
 
-const physicsSystem: System = (world, deltaSeconds) => {
+const physicsSystem: System = (entities, _, deltaSeconds) => {
 	if (!gameState.active()) return;
 
-	for (const entity of world.entities) {
+	for (const entity of entities) {
 		if (!hasBody(entity) || !hasPhysics(entity)) continue;
 
 		const frictionDecceleration = multiply(entity.velocity, frictionCoefficient);

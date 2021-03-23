@@ -6,7 +6,7 @@ import { Vector, cardinalise, hasValue, multiply, normalise } from "../shapes";
 
 const walkForce = 600;
 
-const playerSystem: System = (world) => {
+const playerSystem: System = (entities) => {
 	if (!gameState.active()) return;
 
 	const inputVector: Vector = { x: 0, y: 0 };
@@ -16,7 +16,7 @@ const playerSystem: System = (world) => {
 	if (input.up) inputVector.y--;
 	const inputDirection = hasValue(inputVector) ? normalise(inputVector) : { x: 0, y: 0 };
 
-	for (const entity of world.entities) {
+	for (const entity of entities) {
 		if (!isPlayer(entity)) continue;
 
 		// Check state
