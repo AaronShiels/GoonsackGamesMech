@@ -11,6 +11,7 @@ const hasSprite = (object: any): object is SpriteComponent => "sprite" in object
 interface AnimatedSpriteDefinition {
 	textures: Texture[];
 	animationSpeed: number;
+	loop: boolean;
 }
 
 class AnimatedSpriteSet extends AnimatedSprite {
@@ -26,13 +27,14 @@ class AnimatedSpriteSet extends AnimatedSprite {
 	play(animation?: string): void {
 		if (!animation || animation == this._currentAnimation) return;
 
-		const { textures, animationSpeed } = this._animatedSpriteDefinition[animation];
+		const { textures, animationSpeed, loop } = this._animatedSpriteDefinition[animation];
 		if (!textures || !animationSpeed) throw new Error(`Invalid animation ${animation}.`);
 
 		this._currentAnimation = animation;
 
 		super.textures = textures;
 		super.animationSpeed = animationSpeed;
+		super.loop = loop;
 		super.play();
 	}
 }
@@ -81,7 +83,7 @@ const createAnimatedSprite = (
 
 const createAnimatedSpriteSet = (
 	spriteSheet: Spritesheet | undefined,
-	animationDefinitions: { [key: string]: number },
+	animationDefinitions: { [key: string]: { animationSpeed: number; loop: boolean } },
 	defaultAnimationName?: string,
 	zIndex: number = 0,
 	centreOffset: Vector = { x: 0, y: 0 }
@@ -90,10 +92,11 @@ const createAnimatedSpriteSet = (
 
 	const animations: { [key: string]: Texture[] } = spriteSheet.animations;
 	const animatedSpriteDefinitions = Object.entries(animations).reduce<Record<string, AnimatedSpriteDefinition>>((cumm, [animationName, textures]) => {
-		const animationSpeed = animationDefinitions[animationName];
+		const animationSpeed = animationDefinitions[animationName].animationSpeed;
 		if (!animationSpeed) throw new Error(`Invalid speed for animation ${animationName}.`);
+		const loop = animationDefinitions[animationName].loop;
 
-		cumm[animationName] = { textures, animationSpeed };
+		cumm[animationName] = { textures, animationSpeed, loop };
 		return cumm;
 	}, {});
 

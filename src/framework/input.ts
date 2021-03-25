@@ -3,33 +3,41 @@ import game from "./Game";
 
 interface GameInput {
 	moveDirection: Vector;
+	attack: GameButton;
+	dash: GameButton;
 }
 
-interface KeyboardInput extends Record<string, boolean> {
-	w: boolean;
-	a: boolean;
-	s: boolean;
-	d: boolean;
+interface GameButton {
+	pressed: boolean;
+	held: boolean;
 }
 
-interface MouseInput {
-	position: Vector;
-	clickDown: boolean;
+const isTouch: boolean = "ontouchstart" in window || !!navigator.maxTouchPoints || !!navigator.msMaxTouchPoints;
+
+enum Keys {
+	S = "s",
+	A = "a",
+	D = "d",
+	W = "w",
+	Space = " "
 }
 
-const currentKeyboardInput: KeyboardInput = {
+const currentKeyboardInput: Record<Keys, boolean> = {
 	w: false,
 	a: false,
 	s: false,
-	d: false
+	d: false,
+	" ": false
 };
+let previousKeyboardInput = Object.assign({}, currentKeyboardInput);
 
-const currentMouseInput: MouseInput = { position: { x: 0, y: 0 }, clickDown: false };
+const currentMouseInput = { position: { x: 0, y: 0 }, clickDown: false };
+let previousMouseInput = Object.assign({}, currentMouseInput);
 
 const handleKeyDown = (event: KeyboardEvent): void => {
 	if (!Object.keys(currentKeyboardInput).includes(event.key)) return;
 
-	currentKeyboardInput[event.key] = true;
+	currentKeyboardInput[event.key as Keys] = true;
 
 	event.preventDefault();
 };
@@ -37,7 +45,7 @@ const handleKeyDown = (event: KeyboardEvent): void => {
 const handleKeyUp = (event: KeyboardEvent): void => {
 	if (!Object.keys(currentKeyboardInput).includes(event.key)) return;
 
-	currentKeyboardInput[event.key] = false;
+	currentKeyboardInput[event.key as Keys] = false;
 
 	event.preventDefault();
 };
@@ -69,23 +77,32 @@ window.addEventListener("pointerleave", handlePointerUp, false);
 window.addEventListener("pointermove", handlePointerMove, false);
 
 const getInput = (reference: Vector): GameInput => {
-	// Keyboard movement
-	const keyboardInputVector: Vector = { x: 0, y: 0 };
-	if (currentKeyboardInput.d) keyboardInputVector.x++;
-	if (currentKeyboardInput.a) keyboardInputVector.x--;
-	if (currentKeyboardInput.s) keyboardInputVector.y++;
-	if (currentKeyboardInput.w) keyboardInputVector.y--;
+	let moveDirection: Vector = { x: 0, y: 0 };
+	let attack: GameButton = { pressed: false, held: false };
+	let dash: GameButton = { pressed: false, held: false };
 
-	// Touch movement
-	const moveDirection = hasValue(keyboardInputVector)
-		? normalise(keyboardInputVector)
-		: currentMouseInput.clickDown
-		? normalise(subtract(currentMouseInput.position, reference))
-		: { x: 0, y: 0 };
+	if (isTouch) {
+		const relativeMousePosition = subtract(currentMouseInput.position, reference);
+		if (hasValue(relativeMousePosition)) moveDirection = normalise(relativeMousePosition);
+	} else {
+		const keyboardInputVector = { x: 0, y: 0 };
+		if (currentKeyboardInput.d) keyboardInputVector.x++;
+		if (currentKeyboardInput.a) keyboardInputVector.x--;
+		if (currentKeyboardInput.s) keyboardInputVector.y++;
+		if (currentKeyboardInput.w) keyboardInputVector.y--;
+		if (hasValue(keyboardInputVector)) moveDirection = normalise(keyboardInputVector);
 
-	return {
-		moveDirection
-	};
+		attack.held = currentMouseInput.clickDown;
+		attack.pressed = currentMouseInput.clickDown && !previousMouseInput.clickDown;
+
+		dash.held = currentKeyboardInput[Keys.Space];
+		dash.pressed = currentKeyboardInput[Keys.Space] && !previousKeyboardInput[Keys.Space];
+	}
+
+	Object.assign(previousKeyboardInput, currentKeyboardInput);
+	Object.assign(previousMouseInput, currentMouseInput);
+
+	return { moveDirection, attack, dash };
 };
 
 export { getInput };
