@@ -12,23 +12,23 @@ import { Vector } from "../shapes";
 
 type Cyborg = BodyComponent & PhysicsComponent & SpriteComponent & PlayerComponent;
 
-const animations: { [key: string]: number } = {
-	attackdown: 0.4,
-	attackdownalt: 0.4,
-	attackleft: 0.4,
-	attackleftalt: 0.4,
-	attackright: 0.4,
-	attackrightalt: 0.4,
-	attackup: 0.4,
-	attackupalt: 0.4,
-	standdown: 0.03,
-	standleft: 0.03,
-	standright: 0.03,
-	standup: 0.03,
-	walkdown: 0.4,
-	walkleft: 0.4,
-	walkright: 0.4,
-	walkup: 0.4
+const animations: { [key: string]: { animationSpeed: number; loop: boolean } } = {
+	attackdown: { animationSpeed: 0.4, loop: false },
+	attackdownalt: { animationSpeed: 0.4, loop: false },
+	attackleft: { animationSpeed: 0.4, loop: false },
+	attackleftalt: { animationSpeed: 0.4, loop: false },
+	attackright: { animationSpeed: 0.4, loop: false },
+	attackrightalt: { animationSpeed: 0.4, loop: false },
+	attackup: { animationSpeed: 0.4, loop: false },
+	attackupalt: { animationSpeed: 0.4, loop: false },
+	standdown: { animationSpeed: 0.03, loop: true },
+	standleft: { animationSpeed: 0.03, loop: true },
+	standright: { animationSpeed: 0.03, loop: true },
+	standup: { animationSpeed: 0.03, loop: true },
+	walkdown: { animationSpeed: 0.4, loop: true },
+	walkleft: { animationSpeed: 0.4, loop: true },
+	walkright: { animationSpeed: 0.4, loop: true },
+	walkup: { animationSpeed: 0.4, loop: true }
 };
 
 const createCyborg = (position: Vector): Cyborg => {
@@ -44,7 +44,9 @@ const createCyborg = (position: Vector): Cyborg => {
 		velocity: { x: 0, y: 0 },
 		acceleration: { x: 0, y: 0 },
 		direction: { x: 0, y: 0 },
-		walking: false,
+		walking: { active: false, elapsed: 0 },
+		attacking: { active: false, elapsed: 0, counter: 0 },
+		dashing: { active: false, elapsed: 0 },
 		...sprite
 	};
 };
