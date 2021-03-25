@@ -12,26 +12,7 @@ import { Vector } from "../shapes";
 
 type Cyborg = BodyComponent & PhysicsComponent & SpriteComponent & PlayerComponent;
 
-enum Animation {
-	AttackDown = "attackdown",
-	AttackDownAlt = "attackdownalt",
-	AttackLeft = "attackleft",
-	AttackLeftAlt = "attackleftalt",
-	AttackRight = "attackright",
-	AttackRightAlt = "attackrightalt",
-	AttackUp = "attackup",
-	AttackUpAlt = "attackupalt",
-	StandDown = "standdown",
-	StandLeft = "standleft",
-	StandRight = "standright",
-	StandUp = "standup",
-	WalkDown = "walkdown",
-	WalkLeft = "walkleft",
-	WalkRight = "walkright",
-	WalkUp = "walkup"
-}
-
-const animations: { [key in Animation]: number } = {
+const animations: { [key: string]: number } = {
 	attackdown: 0.4,
 	attackdownalt: 0.4,
 	attackleft: 0.4,

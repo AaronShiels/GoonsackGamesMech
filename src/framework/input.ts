@@ -43,9 +43,14 @@ const handleKeyUp = (event: KeyboardEvent): void => {
 };
 
 const handlePointerDown = (event: PointerEvent): void => {
+	currentMouseInput.clickDown = true;
+
+	event.preventDefault();
+};
+
+const handlePointerMove = (event: PointerEvent): void => {
 	const position = game.stage.toLocal({ x: event.x - game.offsetX, y: event.y - game.offsetY });
 	currentMouseInput.position = { x: position.x, y: position.y };
-	currentMouseInput.clickDown = true;
 
 	event.preventDefault();
 };
@@ -60,6 +65,8 @@ window.addEventListener("keydown", handleKeyDown, false);
 window.addEventListener("keyup", handleKeyUp, false);
 window.addEventListener("pointerdown", handlePointerDown, false);
 window.addEventListener("pointerup", handlePointerUp, false);
+window.addEventListener("pointerleave", handlePointerUp, false);
+window.addEventListener("pointermove", handlePointerMove, false);
 
 const getInput = (reference: Vector): GameInput => {
 	// Keyboard movement
