@@ -44,12 +44,6 @@ class Game extends Application {
 
 	private gameLoop(deltaSeconds: number): void {
 		for (const system of systems) system(this._entities, this.stage, deltaSeconds);
-
-		// Garbage collect destroyed entities
-		for (let i = this._entities.length - 1; i >= 0; i--) {
-			if (!this._entities[i].destroyed) continue;
-			this._entities.splice(i, 1);
-		}
 	}
 }
 

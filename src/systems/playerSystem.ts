@@ -26,13 +26,13 @@ const playerSystem: System = (entities, _, deltaSeconds) => {
 		if (entity.walking.active && (entity.attacking.active || entity.dashing.active || !hasValue(input.moveDirection))) entity.walking.active = false;
 
 		// Check state start
-		if (!entity.dashing.active && !entity.attacking.active && input.dash.pressed) {
+		if (!entity.dashing.active && !entity.attacking.active && input.dash) {
 			entity.dashing.active = true;
 			entity.dashing.elapsed = 0;
 			if (hasValue(input.moveDirection)) entity.direction = input.moveDirection;
 			if (hasPhysics(entity)) entity.velocity = multiply(entity.direction, dashInstantaneousVelocity);
 		}
-		if (!entity.attacking.active && input.attack.pressed) {
+		if (!entity.attacking.active && input.attack) {
 			entity.attacking.active = true;
 			entity.attacking.elapsed = 0;
 			entity.attacking.counter++;
