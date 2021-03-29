@@ -9,5 +9,4 @@ interface PlayerComponent {
 
 const isPlayer = (object: any): object is PlayerComponent => "direction" in object;
 
-export default PlayerComponent;
-export { isPlayer };
+export { PlayerComponent, isPlayer };

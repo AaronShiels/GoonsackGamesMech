@@ -10,4 +10,4 @@ const gameState: GameState = {
 	transitioning: false
 };
 
-export default gameState;
+export { gameState };

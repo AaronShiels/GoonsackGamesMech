@@ -1,6 +1,6 @@
-import { AnimatedSprite, Loader, Sprite, Spritesheet, Texture } from "pixi.js";
-import { add, divide, subtract, Vector } from "../shapes";
-import BaseComponent from "./BaseComponent";
+import { AnimatedSprite, Sprite, Spritesheet, Texture } from "pixi.js";
+import { add, divide, Vector } from "../shapes";
+import { BaseComponent } from "./base";
 
 interface SpriteComponent extends BaseComponent {
 	sprite: Sprite | AnimatedSprite | AnimatedSpriteSet;
@@ -117,5 +117,4 @@ const createAnimatedSpriteSet = (
 
 const createSpriteComponent = (sprite: Sprite | AnimatedSprite | AnimatedSpriteSet): SpriteComponent => ({ sprite, destroyed: false });
 
-export default SpriteComponent;
-export { AnimatedSpriteSet, hasSprite, createSprite, createAnimatedSprite, createAnimatedSpriteSet, createSpriteComponent };
+export { SpriteComponent, AnimatedSpriteSet, hasSprite, createSprite, createAnimatedSprite, createAnimatedSpriteSet, createSpriteComponent };

@@ -1,8 +1,8 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
 import { BaseComponent } from "../components";
 import { createCyborg } from "../entities";
-import systems from "../systems";
-import camera from "./camera";
+import { systems } from "../systems";
+import { camera } from "./camera";
 import { loadResources } from "./resources";
 
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
@@ -52,4 +52,4 @@ if (!gameElement) throw new Error("Game element not found.");
 
 const game: Game = new Game(gameElement);
 
-export default game;
+export { game };

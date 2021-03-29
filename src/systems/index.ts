@@ -1,16 +1,15 @@
-import playerSystem from "./playerSystem";
-import physicsSystem from "./physicsSystem";
-import spriteSystem from "./spriteSystem";
-import areaSystem from "./areaSystem";
-import cameraSystem from "./cameraSystem";
-import collisionSystem from "./collisionSystem";
+import { playerSystem } from "./player";
+import { physicsSystem } from "./physics";
+import { spriteSystem } from "./sprite";
+import { areaSystem } from "./area";
+import { cameraSystem } from "./camera";
+import { collisionSystem } from "./collision";
 import { BaseComponent } from "../components";
 import { Container } from "pixi.js";
-import garbageCollectionSystem from "./garbageCollectionSystem";
+import { garbageCollectionSystem } from "./garbageCollection";
 
 type System = (entites: BaseComponent[], stage: Container, deltaSeconds: number) => void;
 
 const systems = [areaSystem, playerSystem, physicsSystem, collisionSystem, cameraSystem, spriteSystem, garbageCollectionSystem];
 
-export default systems;
-export { System };
+export { System, systems };

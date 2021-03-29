@@ -1,7 +1,7 @@
 import { AnimatedSprite } from "pixi.js";
 import { System } from ".";
 import { AnimatedSpriteSet, hasBody, hasSprite } from "../components";
-import gameState from "../framework/gameState";
+import { gameState } from "../framework/gameState";
 
 const spriteSystem: System = (entities, stage, deltaSeconds) => {
 	for (const entity of entities) {
@@ -17,4 +17,4 @@ const spriteSystem: System = (entities, stage, deltaSeconds) => {
 	}
 };
 
-export default spriteSystem;
+export { spriteSystem };

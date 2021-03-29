@@ -34,4 +34,4 @@ const getShortestPenetrationVector = (entityA: BodyComponent, entityB: BodyCompo
 	return shortestPenetrationVector;
 };
 
-export default collisionSystem;
+export { collisionSystem };

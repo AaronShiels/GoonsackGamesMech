@@ -1,6 +1,6 @@
 import { cloneDeep } from "lodash";
 import { hasValue, normalise, subtract, Vector } from "../shapes";
-import game from "./Game";
+import { game } from "./Game";
 
 interface GameInput {
 	moveDirection: Vector;

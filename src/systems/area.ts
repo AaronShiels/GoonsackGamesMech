@@ -3,8 +3,8 @@ import * as demoMap from "../assets/maps/demo_map.json";
 import { BaseComponent, Edges, getBounds, hasBody } from "../components";
 import { isPlayer } from "../components";
 import { Tile, createTile } from "../entities";
-import camera from "../framework/camera";
-import gameState from "../framework/gameState";
+import { camera } from "../framework/camera";
+import { gameState } from "../framework/gameState";
 import { getResource, Resource } from "../framework/resources";
 import { Rectangle, intersects } from "../shapes";
 
@@ -130,4 +130,4 @@ const unloadArea = (areaIndex: number): void => {
 	areaEntites[areaIndex] = [];
 };
 
-export default areaSystem;
+export { areaSystem };

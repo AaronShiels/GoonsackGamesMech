@@ -19,5 +19,4 @@ const intersection = (a: Rectangle, b: Rectangle): Vector | undefined => {
 	return { x, y };
 };
 
-export default Rectangle;
-export { centre, intersects, intersection };
+export { Rectangle, centre, intersects, intersection };

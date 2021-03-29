@@ -51,5 +51,4 @@ const createCyborg = (position: Vector): Cyborg => {
 	};
 };
 
-export default Cyborg;
-export { createCyborg };
+export { Cyborg, createCyborg };
