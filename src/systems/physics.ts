@@ -1,6 +1,6 @@
 import { System } from ".";
 import { hasBody, hasPhysics } from "../components";
-import gameState from "../framework/gameState";
+import { gameState } from "../framework/gameState";
 import { add, multiply, subtract } from "../shapes";
 
 const frictionCoefficient = 10;
@@ -18,4 +18,4 @@ const physicsSystem: System = (entities, _, deltaSeconds) => {
 	}
 };
 
-export default physicsSystem;
+export { physicsSystem };

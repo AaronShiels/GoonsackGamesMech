@@ -45,5 +45,4 @@ const cardinalise = (vector: Vector) => {
 };
 const hasValue = (vector: Vector): boolean => vector.x !== 0 || vector.y !== 0;
 
-export default Vector;
-export { add, subtract, multiply, divide, length, normalise, cardinalise, hasValue };
+export { Vector, add, subtract, multiply, divide, length, normalise, cardinalise, hasValue };

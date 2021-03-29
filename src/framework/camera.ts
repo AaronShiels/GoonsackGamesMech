@@ -1,4 +1,4 @@
-import { Rectangle, Vector } from "../shapes";
+import { Rectangle } from "../shapes";
 
 const camera: Rectangle = {
 	x: 0,
@@ -7,4 +7,4 @@ const camera: Rectangle = {
 	height: 176
 };
 
-export default camera;
+export { camera };

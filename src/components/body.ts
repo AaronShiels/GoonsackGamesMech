@@ -1,5 +1,5 @@
 import { Rectangle, Vector } from "../shapes";
-import BaseComponent from "./BaseComponent";
+import { BaseComponent } from "./base";
 
 interface Edges {
 	bottom: boolean;
@@ -23,5 +23,4 @@ const getBounds = (entity: BodyComponent): Rectangle => ({
 	height: entity.size.y
 });
 
-export default BodyComponent;
-export { Edges, hasBody, hasEdges, getBounds };
+export { BodyComponent, Edges, hasBody, hasEdges, getBounds };

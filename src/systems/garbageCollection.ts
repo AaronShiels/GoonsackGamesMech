@@ -11,4 +11,4 @@ const garbageCollectionSystem: System = (entities, stage) => {
 	}
 };
 
-export default garbageCollectionSystem;
+export { garbageCollectionSystem };

@@ -1,7 +1,7 @@
 import { System } from ".";
 import { AnimatedSpriteSet, hasBody, hasPhysics, hasSprite, isPlayer } from "../components";
-import camera from "../framework/camera";
-import gameState from "../framework/gameState";
+import { camera } from "../framework/camera";
+import { gameState } from "../framework/gameState";
 import { getInput } from "../framework/input";
 import { Vector, cardinalise, hasValue, multiply, normalise } from "../shapes";
 
@@ -71,4 +71,4 @@ const toDirectionString = (direction: Vector): string => {
 	else return "down";
 };
 
-export default playerSystem;
+export { playerSystem };
