@@ -1,5 +1,5 @@
 import { Rectangle, Vector } from "../shapes";
-import { BaseComponent } from "./base";
+import { BaseComponent } from ".";
 
 interface Edges {
 	bottom: boolean;

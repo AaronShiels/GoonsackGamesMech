@@ -3,10 +3,11 @@ import * as demoMap from "../assets/maps/demo_map.json";
 import { BaseComponent, Edges, getBounds, hasBody } from "../components";
 import { isPlayer } from "../components";
 import { Tile, createTile } from "../entities";
+import { createZombie } from "../entities/zombie";
 import { camera } from "../framework/camera";
 import { gameState } from "../framework/gameState";
 import { getResource, Resource } from "../framework/resources";
-import { Rectangle, intersects } from "../shapes";
+import { Rectangle, intersects, centre, liesWithin } from "../shapes";
 
 const areaLayer = demoMap.layers.filter((l) => l.name === "areas")[0];
 if (!areaLayer || !areaLayer.objects) throw new Error("Invalid layer provided.");
@@ -73,8 +74,9 @@ const loadArea = (entities: BaseComponent[], areaIndex: number): void => {
 	const floorTiles = createTiles(area, "floor", false, 0);
 	const wallTiles = createTiles(area, "walls", true, 1);
 	const overlayTiles = createTiles(area, "overlay", false, 3);
+	const enemies = createEnemies(area);
 
-	const newEntities = [...floorTiles, ...wallTiles, ...overlayTiles];
+	const newEntities = [...floorTiles, ...wallTiles, ...overlayTiles, ...enemies];
 	areaEntites[areaIndex] = newEntities;
 	entities.push(...newEntities);
 };
@@ -123,6 +125,25 @@ const createTiles = (area: Rectangle, layer: string, solid: boolean, zIndex: num
 		}
 
 	return tiles;
+};
+
+const createEnemies = (area: Rectangle): BaseComponent[] => {
+	const enemiesLayer = demoMap.layers.filter((l) => l.name === "enemies")[0];
+
+	if (!enemiesLayer || enemiesLayer.type !== "objectgroup" || !enemiesLayer.objects) throw new Error("Invalid layer provided.");
+
+	const enemies: BaseComponent[] = [];
+	for (const object of enemiesLayer.objects) {
+		const objectCentre = centre(object);
+		if (!liesWithin(objectCentre, area)) continue;
+
+		if (object.type === "Zombie") {
+			const zombie = createZombie(centre(object));
+			enemies.push(zombie);
+		}
+	}
+
+	return enemies;
 };
 
 const unloadArea = (areaIndex: number): void => {

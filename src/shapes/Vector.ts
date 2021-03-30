@@ -3,34 +3,35 @@ interface Vector {
 	y: number;
 }
 
-const add = (a: Vector, b: Vector): Vector => ({
-	x: a.x + b.x,
-	y: a.y + b.y
+const add = (vectorA: Vector, vectorB: Vector): Vector => ({
+	x: vectorA.x + vectorB.x,
+	y: vectorA.y + vectorB.y
 });
-const subtract = (a: Vector, b: Vector): Vector => ({
-	x: a.x - b.x,
-	y: a.y - b.y
+const subtract = (vectorA: Vector, vectorB: Vector): Vector => ({
+	x: vectorA.x - vectorB.x,
+	y: vectorA.y - vectorB.y
 });
-const multiply = (a: Vector, b: Vector | number): Vector => {
-	if (typeof b === "number") b = { x: b, y: b };
+const multiply = (vectorA: Vector, vectorBOrScalar: Vector | number): Vector => {
+	if (typeof vectorBOrScalar === "number") vectorBOrScalar = { x: vectorBOrScalar, y: vectorBOrScalar };
 
 	return {
-		x: a.x * b.x,
-		y: a.y * b.y
+		x: vectorA.x * vectorBOrScalar.x,
+		y: vectorA.y * vectorBOrScalar.y
 	};
 };
-const divide = (a: Vector, b: Vector | number): Vector => {
-	if (typeof b === "number") b = { x: b, y: b };
+const divide = (vectorA: Vector, vectorBOrScalar: Vector | number): Vector => {
+	if (typeof vectorBOrScalar === "number") vectorBOrScalar = { x: vectorBOrScalar, y: vectorBOrScalar };
 
 	return {
-		x: a.x / b.x,
-		y: a.y / b.y
+		x: vectorA.x / vectorBOrScalar.x,
+		y: vectorA.y / vectorBOrScalar.y
 	};
 };
 const length = (vector: Vector): number => {
 	if (!hasValue(vector)) throw new Error("Vector is empty.");
 	return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
 };
+const dot = (vectorA: Vector, vectorB: Vector): number => vectorA.x * vectorB.x + vectorA.y * vectorB.y;
 const normalise = (vector: Vector): Vector => {
 	if (!hasValue(vector)) throw new Error("Vector is empty.");
 	const vectorLength = length(vector);
@@ -44,5 +45,15 @@ const cardinalise = (vector: Vector) => {
 	return horizontalMagnitude > verticalMagnitude - threshold ? { x: vector.x > 0 ? 1 : -1, y: 0 } : { x: 0, y: vector.y > 0 ? 1 : -1 };
 };
 const hasValue = (vector: Vector): boolean => vector.x !== 0 || vector.y !== 0;
+const toDirectionString = (vector: Vector): string => {
+	if (!hasValue(vector)) return "down";
 
-export { Vector, add, subtract, multiply, divide, length, normalise, cardinalise, hasValue };
+	const cardinal = cardinalise(vector);
+	if (cardinal.x === 1 && cardinal.y === 0) return "right";
+	else if (cardinal.x === -1 && cardinal.y === 0) return "left";
+	else if (cardinal.x === 0 && cardinal.y === 1) return "down";
+	else if (cardinal.x === 0 && cardinal.y === -1) return "up";
+	else return "down";
+};
+
+export { Vector, add, subtract, multiply, divide, length, dot, normalise, cardinalise, hasValue, toDirectionString };

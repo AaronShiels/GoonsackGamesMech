@@ -1,5 +1,5 @@
 import { Vector } from "../shapes";
-import { BaseComponent } from "./base";
+import { BaseComponent } from ".";
 
 interface PhysicsComponent extends BaseComponent {
 	velocity: Vector;

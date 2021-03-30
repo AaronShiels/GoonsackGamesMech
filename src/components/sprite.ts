@@ -1,6 +1,6 @@
 import { AnimatedSprite, Sprite, Spritesheet, Texture } from "pixi.js";
 import { add, divide, Vector } from "../shapes";
-import { BaseComponent } from "./base";
+import { BaseComponent } from ".";
 
 interface SpriteComponent extends BaseComponent {
 	sprite: Sprite | AnimatedSprite | AnimatedSpriteSet;

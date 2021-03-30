@@ -1,8 +1,14 @@
-import { BaseComponent, isEntity } from "./base";
 import { hasBody, getBounds, Edges, hasEdges, BodyComponent } from "./body";
+import { EnemyComponent, isEnemy } from "./enemy";
 import { hasPhysics, PhysicsComponent } from "./physics";
 import { isPlayer, PlayerComponent } from "./player";
 import { AnimatedSpriteSet, hasSprite, createSprite, createAnimatedSprite, createAnimatedSpriteSet, createSpriteComponent, SpriteComponent } from "./sprite";
+
+interface BaseComponent {
+	destroyed: boolean;
+}
+
+const isEntity = (object: any): object is BaseComponent => "destroyed" in object;
 
 export {
 	BaseComponent,
@@ -22,5 +28,7 @@ export {
 	createAnimatedSpriteSet,
 	createSpriteComponent,
 	PlayerComponent,
-	isPlayer
+	isPlayer,
+	EnemyComponent,
+	isEnemy
 };
