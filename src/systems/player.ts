@@ -3,7 +3,7 @@ import { AnimatedSpriteSet, hasBody, hasPhysics, hasSprite, isPlayer } from "../
 import { camera } from "../framework/camera";
 import { gameState } from "../framework/gameState";
 import { getInput } from "../framework/input";
-import { Vector, cardinalise, hasValue, multiply, normalise } from "../shapes";
+import { Vector, cardinalise, hasValue, multiply, normalise, toDirectionString } from "../shapes";
 
 const walkingForce = 600;
 const attackDuration = 0.25;
@@ -56,19 +56,10 @@ const playerSystem: System = (entities, _, deltaSeconds) => {
 		const directionSuffix = toDirectionString(entity.direction);
 		if (entity.attacking.active) {
 			const attackSuffix = entity.attacking.counter % 2 ? "alt" : "";
-			entity.sprite.play(`attack${directionSuffix}${attackSuffix}`);
-		} else if (entity.walking.active) entity.sprite.play(`walk${directionSuffix}`);
-		else entity.sprite.play(`stand${directionSuffix}`);
+			entity.sprite.play(`cyborgattack${directionSuffix}${attackSuffix}`);
+		} else if (entity.walking.active) entity.sprite.play(`cyborgwalk${directionSuffix}`);
+		else entity.sprite.play(`cyborgstand${directionSuffix}`);
 	}
-};
-
-const toDirectionString = (direction: Vector): string => {
-	const cardinal = hasValue(direction) ? cardinalise(direction) : { x: 0, y: 0 };
-	if (cardinal.x === 1 && cardinal.y === 0) return "right";
-	else if (cardinal.x === -1 && cardinal.y === 0) return "left";
-	else if (cardinal.x === 0 && cardinal.y === 1) return "down";
-	else if (cardinal.x === 0 && cardinal.y === -1) return "up";
-	else return "down";
 };
 
 export { playerSystem };

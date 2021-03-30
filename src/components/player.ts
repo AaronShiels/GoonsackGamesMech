@@ -1,12 +1,14 @@
+import { BaseComponent } from ".";
 import { Vector } from "../shapes";
 
-interface PlayerComponent {
+interface PlayerComponent extends BaseComponent {
+	isPlayer: true;
 	direction: Vector;
-	walking: { active: boolean; elapsed: number };
+	walking: { active: boolean };
 	attacking: { active: boolean; elapsed: number; counter: number };
 	dashing: { active: boolean; elapsed: number };
 }
 
-const isPlayer = (object: any): object is PlayerComponent => "direction" in object;
+const isPlayer = (object: any): object is PlayerComponent => !!object.isPlayer;
 
 export { PlayerComponent, isPlayer };

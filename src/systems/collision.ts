@@ -1,6 +1,6 @@
 import { System } from ".";
-import { BodyComponent, getBounds, hasBody, hasEdges, hasPhysics } from "../components";
-import { intersection, length, subtract, Vector } from "../shapes";
+import { BodyComponent, getBounds, hasBody, hasEdges, hasPhysics, isPlayer } from "../components";
+import { add, divide, intersection, length, multiply, normalise, subtract, Vector } from "../shapes";
 
 const collisionSystem: System = (entities) => {
 	for (const entity of entities) {
@@ -13,6 +13,14 @@ const collisionSystem: System = (entities) => {
 			if (!penetrationVector) continue;
 
 			entity.position = subtract(entity.position, penetrationVector);
+			if (hasPhysics(otherEntity)) {
+				const velocityAverage = divide(add(entity.velocity, otherEntity.velocity), 2);
+				entity.velocity = velocityAverage;
+				otherEntity.velocity = velocityAverage;
+			} else {
+				const velocityModifier = normalise({ x: Math.abs(penetrationVector.y), y: Math.abs(penetrationVector.x) });
+				entity.velocity = multiply(entity.velocity, velocityModifier);
+			}
 		}
 	}
 };
