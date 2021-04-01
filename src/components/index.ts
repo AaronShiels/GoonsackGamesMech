@@ -1,5 +1,6 @@
 import { hasBody, getBounds, Edges, hasEdges, BodyComponent } from "./body";
 import { EnemyComponent, isEnemy } from "./enemy";
+import { HealthComponent, hasHealth } from "./health";
 import { hasPhysics, PhysicsComponent } from "./physics";
 import { isPlayer, PlayerComponent } from "./player";
 import { AnimatedSpriteSet, hasSprite, createSprite, createAnimatedSprite, createAnimatedSpriteSet, createSpriteComponent, SpriteComponent } from "./sprite";
@@ -30,5 +31,7 @@ export {
 	PlayerComponent,
 	isPlayer,
 	EnemyComponent,
-	isEnemy
+	isEnemy,
+	HealthComponent,
+	hasHealth
 };
