@@ -1,6 +1,7 @@
 import { cloneDeep } from "lodash";
 import { hasValue, normalise, subtract, Vector } from "../shapes";
 import { game } from "./Game";
+import { now } from "./time";
 
 interface GameInput {
 	moveDirection: Vector;
@@ -8,7 +9,7 @@ interface GameInput {
 	dash: boolean;
 }
 
-const tapThreshold = 0.2 * 1000;
+const tapThreshold = 0.2;
 
 const isTouch: boolean = "ontouchstart" in window || !!navigator.maxTouchPoints || !!navigator.msMaxTouchPoints;
 
@@ -27,7 +28,7 @@ interface KeyState {
 
 const isDown = (current: KeyState): boolean => current.down > current.up;
 const isPressed = (current: KeyState, previous: KeyState): boolean => current.down > current.up && previous.down <= previous.up;
-const isHeld = (current: KeyState): boolean => current.down > current.up && performance.now() > current.down + tapThreshold;
+const isHeld = (current: KeyState): boolean => current.down > current.up && now() > current.down + tapThreshold;
 const isTapped = (current: KeyState, previous: KeyState): boolean =>
 	current.up > current.down && previous.up <= previous.down && current.up - current.down < tapThreshold;
 
@@ -60,7 +61,7 @@ const handleKeyDown = (event: KeyboardEvent): void => {
 	if (!Object.keys(currentKeyboardInput).includes(event.key)) return;
 
 	const key = currentKeyboardInput[event.key as Keys];
-	if (!key.down || !isDown(key)) key.down = performance.now();
+	if (!key.down || !isDown(key)) key.down = now();
 
 	event.preventDefault();
 };
@@ -69,13 +70,13 @@ const handleKeyUp = (event: KeyboardEvent): void => {
 	if (!Object.keys(currentKeyboardInput).includes(event.key)) return;
 
 	const key = currentKeyboardInput[event.key as Keys];
-	key.up = performance.now();
+	key.up = now();
 
 	event.preventDefault();
 };
 
 const handlePointerDown = (event: PointerEvent): void => {
-	currentMouseInput.click.down = performance.now();
+	currentMouseInput.click.down = now();
 
 	event.preventDefault();
 };
@@ -88,7 +89,7 @@ const handlePointerMove = (event: PointerEvent): void => {
 };
 
 const handlePointerUp = (event: PointerEvent): void => {
-	currentMouseInput.click.up = performance.now();
+	currentMouseInput.click.up = now();
 
 	event.preventDefault();
 };

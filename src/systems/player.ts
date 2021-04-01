@@ -1,8 +1,9 @@
 import { System } from ".";
-import { AnimatedSpriteSet, getBounds, hasBody, hasPhysics, hasSprite, isEnemy, isPlayer } from "../components";
+import { AnimatedSpriteSet, getBounds, hasBody, hasHealth, hasPhysics, hasSprite, isEnemy, isPlayer } from "../components";
 import { camera } from "../framework/camera";
 import { gameState } from "../framework/gameState";
 import { getInput } from "../framework/input";
+import { now } from "../framework/time";
 import { cardinalise, hasValue, multiply, normalise, sectorRectangeIntersects, subtract, toDirectionString, Vector } from "../shapes";
 
 const walkingForce = 600;
@@ -56,10 +57,17 @@ const playerSystem: System = (entities, _, deltaSeconds) => {
 				const enemeyBounds = getBounds(otherEntity);
 				if (!sectorRectangeIntersects(attackSector, enemeyBounds)) continue;
 
-				if (!hasPhysics(otherEntity)) continue;
-				const knockbackDirection = normalise(subtract(otherEntity.position, playerPosition));
-				const knockbackVector = multiply(knockbackDirection, attackKnockbackVelocity);
-				otherEntity.velocity = knockbackVector;
+				const currentTimestamp = now();
+				if (hasHealth(otherEntity) && otherEntity.lastHitTimestamp + entity.attacking.elapsed < currentTimestamp) {
+					otherEntity.hitpoints--;
+					otherEntity.lastHitTimestamp = currentTimestamp;
+				}
+
+				if (hasPhysics(otherEntity)) {
+					const knockbackDirection = normalise(subtract(otherEntity.position, playerPosition));
+					const knockbackVector = multiply(knockbackDirection, attackKnockbackVelocity);
+					otherEntity.velocity = knockbackVector;
+				}
 			}
 		}
 		if (entity.walking.active) {
@@ -82,7 +90,7 @@ const playerSystem: System = (entities, _, deltaSeconds) => {
 };
 
 const getAttackAngles = (direction: Vector, attackCounter: number): { sectorMinimum: number; sectorMaximum: number } => {
-	const cardinalDirection = cardinalise(direction);
+	const cardinalDirection = hasValue(direction) ? cardinalise(direction) : { x: 0, y: 1 };
 	let baseAttackAngle = 0;
 	if (cardinalDirection.x == 1) baseAttackAngle = 0;
 	else if (cardinalDirection.x == -1) baseAttackAngle = Math.PI;

@@ -5,12 +5,13 @@ import {
 	AnimatedSpriteSet,
 	createAnimatedSpriteSet,
 	createSpriteComponent,
-	EnemyComponent
+	EnemyComponent,
+	HealthComponent
 } from "../components";
 import { getResource, Resource } from "../framework/resources";
 import { Vector } from "../shapes";
 
-type Zombie = BodyComponent & PhysicsComponent & SpriteComponent & EnemyComponent;
+type Zombie = BodyComponent & PhysicsComponent & SpriteComponent & EnemyComponent & HealthComponent;
 
 const animations: { [key: string]: { animationSpeed: number; loop: boolean } } = {
 	zombiestanddown: { animationSpeed: 0.03, loop: true },
@@ -38,6 +39,8 @@ const createZombie = (position: Vector): Zombie => {
 		isEnemy: true,
 		direction: { x: 0, y: 0 },
 		walking: { active: false },
+		hitpoints: 3,
+		lastHitTimestamp: 0,
 		...sprite
 	};
 };
