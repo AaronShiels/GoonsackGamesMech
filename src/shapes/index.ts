@@ -1,9 +1,12 @@
-import { centre, intersection, intersects, Rectangle, liesWithin } from "./rectangle";
+import { Circle, Sector, circleRectangleIntersects, sectorRectangeIntersects } from "./circle";
+import { Rectangle, centre, rectanglesIntersect, rectanglesIntersection, liesWithin } from "./rectangle";
 import { add, subtract, multiply, divide, length, dot, normalise, cardinalise, hasValue, Vector, toDirectionString } from "./vector";
 
 export {
 	Vector,
 	Rectangle,
+	Circle,
+	Sector,
 	add,
 	subtract,
 	multiply,
@@ -15,7 +18,9 @@ export {
 	hasValue,
 	toDirectionString,
 	centre,
-	intersects,
-	intersection,
+	rectanglesIntersect,
+	rectanglesIntersection,
+	circleRectangleIntersects,
+	sectorRectangeIntersects,
 	liesWithin
 };

@@ -46,7 +46,7 @@ const createCyborg = (position: Vector): Cyborg => {
 		isPlayer: true,
 		direction: { x: 0, y: 0 },
 		walking: { active: false },
-		attacking: { active: false, elapsed: 0, counter: 0 },
+		attacking: { active: false, elapsed: 0, counter: 0, minimumAngle: 0, maximumAngle: 0, radius: 18 },
 		dashing: { active: false, elapsed: 0 },
 		...sprite
 	};

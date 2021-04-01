@@ -6,13 +6,13 @@ interface Rectangle extends Vector {
 }
 
 const centre = (rectangle: Rectangle): Vector => ({ x: rectangle.x + rectangle.width / 2, y: rectangle.y + rectangle.height / 2 });
-const intersects = (rectangleA: Rectangle, rectangleB: Rectangle): boolean =>
+const rectanglesIntersect = (rectangleA: Rectangle, rectangleB: Rectangle): boolean =>
 	rectangleA.x < rectangleB.x + rectangleB.width &&
 	rectangleB.x < rectangleA.x + rectangleA.width &&
 	rectangleA.y < rectangleB.y + rectangleB.height &&
 	rectangleB.y < rectangleA.y + rectangleA.height;
-const intersection = (rectangleA: Rectangle, rectangleB: Rectangle): Vector | undefined => {
-	if (!intersects(rectangleA, rectangleB)) return;
+const rectanglesIntersection = (rectangleA: Rectangle, rectangleB: Rectangle): Vector | undefined => {
+	if (!rectanglesIntersect(rectangleA, rectangleB)) return;
 
 	const centreA = centre(rectangleA);
 	const centreB = centre(rectangleB);
@@ -25,4 +25,4 @@ const intersection = (rectangleA: Rectangle, rectangleB: Rectangle): Vector | un
 const liesWithin = (point: Vector, rectangle: Rectangle): boolean =>
 	point.x > rectangle.x && point.x < rectangle.x + rectangle.width && point.y > rectangle.y && point.y < rectangle.y + rectangle.height;
 
-export { Rectangle, centre, intersects, intersection, liesWithin };
+export { Rectangle, centre, rectanglesIntersect, rectanglesIntersection, liesWithin };

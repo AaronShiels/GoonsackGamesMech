@@ -1,9 +1,9 @@
 import { System } from ".";
-import { AnimatedSpriteSet, hasBody, hasPhysics, hasSprite, isPlayer } from "../components";
+import { AnimatedSpriteSet, getBounds, hasBody, hasPhysics, hasSprite, isEnemy, isPlayer } from "../components";
 import { camera } from "../framework/camera";
 import { gameState } from "../framework/gameState";
 import { getInput } from "../framework/input";
-import { Vector, cardinalise, hasValue, multiply, normalise, toDirectionString } from "../shapes";
+import { cardinalise, hasValue, multiply, normalise, sectorRectangeIntersects, subtract, toDirectionString, Vector } from "../shapes";
 
 const walkingForce = 600;
 const attackDuration = 0.25;
@@ -37,12 +37,31 @@ const playerSystem: System = (entities, _, deltaSeconds) => {
 			entity.attacking.elapsed = 0;
 			entity.attacking.counter++;
 			if (hasValue(input.moveDirection)) entity.direction = input.moveDirection;
+
+			const { sectorMinimum, sectorMaximum } = getAttackAngles(entity.direction, entity.attacking.counter);
+			entity.attacking.minimumAngle = sectorMinimum;
+			entity.attacking.maximumAngle = sectorMaximum;
 		}
 		if (!entity.walking.active && !entity.dashing.active && !entity.attacking.active && hasValue(input.moveDirection)) entity.walking.active = true;
 
 		// Apply state
 		if (entity.dashing.active) entity.dashing.elapsed += deltaSeconds;
-		if (entity.attacking.active) entity.attacking.elapsed += deltaSeconds;
+		if (entity.attacking.active) {
+			entity.attacking.elapsed += deltaSeconds;
+
+			const attackSector = { ...entity.attacking, ...playerPosition };
+			for (const otherEntity of entities) {
+				if (!isEnemy(otherEntity) || !hasBody(otherEntity)) continue;
+
+				const enemeyBounds = getBounds(otherEntity);
+				if (!sectorRectangeIntersects(attackSector, enemeyBounds)) continue;
+
+				if (!hasPhysics(otherEntity)) continue;
+				const knockbackDirection = normalise(subtract(otherEntity.position, playerPosition));
+				const knockbackVector = multiply(knockbackDirection, attackKnockbackVelocity);
+				otherEntity.velocity = knockbackVector;
+			}
+		}
 		if (entity.walking.active) {
 			entity.direction = input.moveDirection;
 			if (hasPhysics(entity)) entity.acceleration = multiply(entity.direction, walkingForce);
@@ -55,11 +74,23 @@ const playerSystem: System = (entities, _, deltaSeconds) => {
 
 		const directionSuffix = toDirectionString(entity.direction);
 		if (entity.attacking.active) {
-			const attackSuffix = entity.attacking.counter % 2 ? "alt" : "";
+			const attackSuffix = entity.attacking.counter % 2 !== 0 ? "alt" : "";
 			entity.sprite.play(`cyborgattack${directionSuffix}${attackSuffix}`);
 		} else if (entity.walking.active) entity.sprite.play(`cyborgwalk${directionSuffix}`);
 		else entity.sprite.play(`cyborgstand${directionSuffix}`);
 	}
+};
+
+const getAttackAngles = (direction: Vector, attackCounter: number): { sectorMinimum: number; sectorMaximum: number } => {
+	const cardinalDirection = cardinalise(direction);
+	let baseAttackAngle = 0;
+	if (cardinalDirection.x == 1) baseAttackAngle = 0;
+	else if (cardinalDirection.x == -1) baseAttackAngle = Math.PI;
+	else if (cardinalDirection.y == 1) baseAttackAngle = 0.5 * Math.PI;
+	else if (cardinalDirection.y == -1) baseAttackAngle = 1.5 * Math.PI;
+
+	const adjustedAngle = baseAttackAngle + 0.125 * Math.PI * (attackCounter % 2 === 0 ? 1 : -1);
+	return { sectorMinimum: adjustedAngle - 0.3125 * Math.PI, sectorMaximum: adjustedAngle + 0.3125 * Math.PI };
 };
 
 export { playerSystem };
