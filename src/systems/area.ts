@@ -7,7 +7,7 @@ import { createZombie } from "../entities/zombie";
 import { camera } from "../framework/camera";
 import { gameState } from "../framework/gameState";
 import { getResource, Resource } from "../framework/resources";
-import { Rectangle, intersects, centre, liesWithin } from "../shapes";
+import { Rectangle, rectanglesIntersect, centre, liesWithin } from "../shapes";
 
 const areaLayer = demoMap.layers.filter((l) => l.name === "areas")[0];
 if (!areaLayer || !areaLayer.objects) throw new Error("Invalid layer provided.");
@@ -30,7 +30,7 @@ const checkAreaTransition = (entities: BaseComponent[]): void => {
 		if (!isPlayer(entity) || !hasBody(entity)) continue;
 
 		const playerBounds = getBounds(entity);
-		const newAreaIndex = areas.findIndex((area) => intersects(area, playerBounds));
+		const newAreaIndex = areas.findIndex((area) => rectanglesIntersect(area, playerBounds));
 		if (newAreaIndex < 0) break;
 
 		// Check begin transition
@@ -98,7 +98,7 @@ const createTiles = (area: Rectangle, layer: string, solid: boolean, zIndex: num
 				width: demoMap.tilewidth,
 				height: demoMap.tileheight
 			};
-			if (!intersects(area, tileBounds)) continue;
+			if (!rectanglesIntersect(area, tileBounds)) continue;
 
 			const index = xIndex + yIndex * tilesLayer.width;
 			const tileValue = tilesLayer.data[index];

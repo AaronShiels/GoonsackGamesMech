@@ -1,6 +1,6 @@
 import { System } from ".";
 import { BodyComponent, getBounds, hasBody, hasEdges, hasPhysics, isPlayer } from "../components";
-import { add, divide, intersection, length, multiply, normalise, subtract, Vector } from "../shapes";
+import { add, divide, rectanglesIntersection, length, multiply, normalise, subtract, Vector } from "../shapes";
 
 const collisionSystem: System = (entities) => {
 	for (const entity of entities) {
@@ -28,7 +28,7 @@ const collisionSystem: System = (entities) => {
 const getShortestPenetrationVector = (entityA: BodyComponent, entityB: BodyComponent): Vector | undefined => {
 	const entityBounds = getBounds(entityA);
 	const otherEntityBounds = getBounds(entityB);
-	const intersectionVector = intersection(entityBounds, otherEntityBounds);
+	const intersectionVector = rectanglesIntersection(entityBounds, otherEntityBounds);
 
 	if (!intersectionVector) return;
 
