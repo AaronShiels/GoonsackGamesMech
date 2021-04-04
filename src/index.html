@@ -11,28 +11,41 @@
             height: 100%;
         }
 
-        body{
+        body {
             background-color: black;
             height: 100%;
             margin: 0;
         }
 
-        #game-pane {
+        .container {
             align-items: center;
-            display: flex;            
+            display: flex;
+            flex-direction: column;
             height: 100%;
             justify-content: center;
         }
 
-        #game {
+        .container > div {
             width: 1280px;
+        }
+
+        .github-icon { 
+            background: url(assets/github.png) left top; 
+            display: block;
+            float: right;
+            height: 32px;
+            margin: 10px;
+            width: 32px; 
         }
     </style>
 </head>
 
 <body>
-    <div id="game-pane">
+    <div class="container">
         <div id="game"></div>
+        <div>
+            <a href="https://github.com/AaronShiels/GoonsackGames"><span class="github-icon"></span></a>
+        </div>        
     </div>
 </body>
 
