@@ -4,36 +4,44 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "tiled",
-			"command": "C:/Program Files/Tiled/Tiled.exe",
-			"type": "process",
-			"problemMatcher": "$msCompile"
+			"label": "npm: install",
+			"type": "npm",
+			"script": "install",
+			"problemMatcher": ["$tsc"],
+			"options": {
+				"cwd": "${workspaceFolder}/client"
+			}
 		},
 		{
+			"label": "npm: build: production",
 			"type": "npm",
 			"script": "build: production",
 			"problemMatcher": ["$tsc"],
-			"group": "build",
-			"label": "npm: build: production"
+			"options": {
+				"cwd": "${workspaceFolder}/client"
+			}
 		},
 		{
+			"label": "npm: debug: development",
 			"type": "npm",
 			"script": "debug: development",
 			"problemMatcher": ["$tsc"],
-			"label": "npm: debug: development"
+			"options": {
+				"cwd": "${workspaceFolder}/client"
+			}
 		},
 		{
+			"label": "terraform: apply",
 			"type": "shell",
 			"command": "terraform",
 			"args": ["apply"],
-			"label": "terraform: apply",
 			"problemMatcher": []
 		},
 		{
+			"label": "aws: sync",
 			"type": "shell",
 			"command": "aws",
-			"args": ["s3", "sync", "./dist", "s3://goonsackgames.com"],
-			"label": "aws: sync",
+			"args": ["s3", "sync", "./client/dist", "s3://goonsackgames.com"],
 			"problemMatcher": []
 		}
 	]
