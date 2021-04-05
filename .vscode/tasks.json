@@ -31,6 +31,36 @@
 			}
 		},
 		{
+			"label": "dotnet: build",
+			"type": "process",
+			"command": "dotnet",
+			"args": ["build"],
+			"options": {
+				"cwd": "${workspaceFolder}/server/src/GameApi"
+			},
+			"problemMatcher": ["$msCompile"]
+		},
+		{
+			"label": "docker: build",
+			"type": "shell",
+			"command": "docker",
+			"args": ["build", "--tag", "aaronshiels/goonsackgames:latest", "."],
+			"options": {
+				"cwd": "${workspaceFolder}/server"
+			},
+			"problemMatcher": ["$msCompile"]
+		},
+		{
+			"label": "docker: push",
+			"type": "shell",
+			"command": "docker",
+			"args": ["push", "aaronshiels/goonsackgames:latest"],
+			"options": {
+				"cwd": "${workspaceFolder}/server"
+			},
+			"problemMatcher": ["$msCompile"]
+		},
+		{
 			"label": "terraform: apply",
 			"type": "shell",
 			"command": "terraform",
