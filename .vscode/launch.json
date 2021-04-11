@@ -5,9 +5,9 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "Game Client",
 			"type": "pwa-chrome",
 			"request": "launch",
-			"name": "Launch",
 			"url": "http://localhost:8080",
 			"webRoot": "${workspaceFolder}/client/src",
 			"sourceMaps": true

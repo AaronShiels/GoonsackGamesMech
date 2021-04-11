@@ -1,3 +1,3 @@
-import { game } from "./framework/Game";
+import { game } from "./framework/game";
 
 game.load();

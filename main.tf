@@ -12,23 +12,24 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-resource "aws_acm_certificate" "certificate" {
+resource "aws_acm_certificate" "this" {
   domain_name               = "goonsackgames.com"
-  subject_alternative_names = ["www.goonsackgames.com"]
+  subject_alternative_names = ["*.goonsackgames.com"]
   validation_method         = "DNS"
 }
 
-resource "aws_route53_zone" "zone" {
+resource "aws_route53_zone" "this" {
   name = "goonsackgames.com"
 }
+# Note: Manually update name servers to match those assigned to this resource
 
 resource "aws_route53_record" "certificate_validation_cname_records" {
   for_each = {
-    for dvo in aws_acm_certificate.certificate.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
       name    = dvo.resource_record_name
       record  = dvo.resource_record_value
       type    = dvo.resource_record_type
-      zone_id = aws_route53_zone.zone.id
+      zone_id = aws_route53_zone.this.id
     }
   }
 
@@ -40,12 +41,12 @@ resource "aws_route53_record" "certificate_validation_cname_records" {
   zone_id         = each.value.zone_id
 }
 
-resource "aws_acm_certificate_validation" "certificate_validation" {
-  certificate_arn         = aws_acm_certificate.certificate.arn
+resource "aws_acm_certificate_validation" "this" {
+  certificate_arn         = aws_acm_certificate.this.arn
   validation_record_fqdns = [for record in aws_route53_record.certificate_validation_cname_records : record.fqdn]
 }
 
-resource "aws_cloudfront_distribution" "distribution" {
+resource "aws_cloudfront_distribution" "cdn" {
   enabled             = true
   aliases             = ["goonsackgames.com", "www.goonsackgames.com"]
   default_root_object = "index.html"
@@ -73,7 +74,7 @@ resource "aws_cloudfront_distribution" "distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate_validation.certificate_validation.certificate_arn
+    acm_certificate_arn      = aws_acm_certificate_validation.this.certificate_arn
     minimum_protocol_version = "TLSv1"
     ssl_support_method       = "sni-only"
   }
@@ -85,21 +86,21 @@ resource "aws_cloudfront_distribution" "distribution" {
   }
 }
 
-resource "aws_route53_record" "a_record" {
+resource "aws_route53_record" "root_a_record" {
   name    = "goonsackgames.com"
-  zone_id = aws_route53_zone.zone.id
+  zone_id = aws_route53_zone.this.id
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.distribution.domain_name
-    zone_id                = aws_cloudfront_distribution.distribution.hosted_zone_id
+    name                   = aws_cloudfront_distribution.cdn.domain_name
+    zone_id                = aws_cloudfront_distribution.cdn.hosted_zone_id
     evaluate_target_health = false
   }
 }
 
 resource "aws_route53_record" "www_cname_record" {
   name    = "www.goonsackgames.com"
-  zone_id = aws_route53_zone.zone.id
+  zone_id = aws_route53_zone.this.id
   type    = "CNAME"
   ttl     = "300"
   records = ["goonsackgames.com"]
