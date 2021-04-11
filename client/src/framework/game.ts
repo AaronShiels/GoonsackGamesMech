@@ -38,8 +38,9 @@ class Game extends Application {
 
 		const cyborg = createCyborg({ x: 80, y: 90 });
 		this._entities.push(cyborg);
-
 		this.ticker.add((delta): void => this.gameLoop(delta / 60));
+
+		console.log(`Game started using ${this.renderer.type === 1 ? "WebGL" : "canvas"} renderer.`);
 	}
 
 	private gameLoop(deltaSeconds: number): void {
