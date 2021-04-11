@@ -2,6 +2,7 @@ import { Application, SCALE_MODES, settings } from "pixi.js";
 import { BaseComponent } from "../components";
 import { createCyborg } from "../entities";
 import { systems } from "../systems";
+import { connect } from "./api";
 import { camera } from "./camera";
 import { loadResources } from "./resources";
 
@@ -35,6 +36,7 @@ class Game extends Application {
 
 	async load(): Promise<void> {
 		await loadResources();
+		await connect();
 
 		const cyborg = createCyborg({ x: 80, y: 90 });
 		this._entities.push(cyborg);

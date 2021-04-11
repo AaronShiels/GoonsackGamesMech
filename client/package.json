@@ -27,6 +27,7 @@
 		"webpack-dev-server": "^3.11.2"
 	},
 	"dependencies": {
+		"@microsoft/signalr": "^5.0.5",
 		"lodash": "^4.17.21",
 		"npm": "^7.6.0",
 		"pixi.js": "^5.3.8"

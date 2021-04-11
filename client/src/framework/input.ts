@@ -1,5 +1,6 @@
 import { cloneDeep } from "lodash";
 import { hasValue, normalise, subtract, Vector } from "../shapes";
+import { ping } from "./api";
 import { game } from "./Game";
 import { now } from "./time";
 
@@ -77,7 +78,7 @@ const handleKeyUp = (event: KeyboardEvent): void => {
 
 const handlePointerDown = (event: PointerEvent): void => {
 	currentMouseInput.click.down = now();
-
+	ping("test");
 	event.preventDefault();
 };
 
