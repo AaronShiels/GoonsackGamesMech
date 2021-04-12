@@ -4,12 +4,14 @@ import * as demoMap from "../assets/maps/demo_map.json";
 enum Resource {
 	Cyborg = "cyborg",
 	DemoMap = "demoMap",
-	Zombie = "zombie"
+	Zombie = "zombie",
+	WaterNoise = "waterNoise"
 }
 const resourceLookup: Record<Resource, string> = {
 	cyborg: "assets/cyborg/cyborg.json",
 	demoMap: `assets/maps/${demoMap.tilesets[0].image}`,
-	zombie: "assets/zombie/zombie.json"
+	zombie: "assets/zombie/zombie.json",
+	waterNoise: "assets/filters/water_noise.png"
 };
 
 const getResource = (resource: Resource): LoaderResource => Loader.shared.resources[resourceLookup[resource]];

@@ -1,6 +1,7 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
 import { BaseComponent } from "../components";
 import { createCyborg } from "../entities";
+import { applyWaterFilter } from "../filters";
 import { systems } from "../systems";
 import { camera } from "./camera";
 import { loadResources } from "./resources";
@@ -30,8 +31,8 @@ class Game extends Application {
 
 	private _entities: BaseComponent[] = [];
 
-	offsetX: number;
-	offsetY: number;
+	public offsetX: number;
+	public offsetY: number;
 
 	async load(): Promise<void> {
 		await loadResources();
@@ -39,6 +40,8 @@ class Game extends Application {
 		const cyborg = createCyborg({ x: 80, y: 90 });
 		this._entities.push(cyborg);
 		this.ticker.add((delta): void => this.gameLoop(delta / 60));
+
+		applyWaterFilter(this.stage);
 
 		console.log(`Game started using ${this.renderer.type === 1 ? "WebGL" : "canvas"} renderer.`);
 	}
