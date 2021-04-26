@@ -1,12 +1,12 @@
 import { System } from ".";
-import { BodyComponent, getBounds, hasBody, hasEdges, hasPhysics, isPlayer } from "../components";
-import { add, divide, rectanglesIntersection, length, multiply, normalise, subtract, Vector } from "../shapes";
+import { BodyComponent, getBounds, hasBody, hasEdges, hasPhysics } from "../components";
+import { add, divide, rectanglesIntersection, length, multiply, normalise, subtract, Vector } from "../utilities";
 
-const collisionSystem: System = (entities) => {
-	for (const entity of entities) {
+const collisionSystem: System = (game) => {
+	for (const entity of game.entities) {
 		if (!hasPhysics(entity) || !hasBody(entity) || !hasEdges(entity)) continue;
 
-		for (const otherEntity of entities) {
+		for (const otherEntity of game.entities) {
 			if (!hasBody(otherEntity) || !hasEdges(otherEntity) || entity === otherEntity) continue;
 
 			const penetrationVector = getShortestPenetrationVector(entity, otherEntity);

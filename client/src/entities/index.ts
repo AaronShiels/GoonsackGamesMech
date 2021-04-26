@@ -1,4 +1,11 @@
-import { createCyborg, Cyborg } from "./cyborg";
-import { createTile, Tile } from "./tile";
+import { createCyborg } from "./cyborg";
+import { createTile } from "./tile";
+import { createZombie } from "./zombie";
 
-export { Cyborg, createCyborg, Tile, createTile };
+interface Entity {
+	destroyed: boolean;
+}
+
+const isEntity = (object: any): object is Entity => "destroyed" in object;
+
+export { Entity, isEntity, createCyborg, createTile, createZombie };

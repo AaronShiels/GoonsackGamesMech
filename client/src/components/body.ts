@@ -1,5 +1,5 @@
-import { Rectangle, Vector } from "../shapes";
-import { BaseComponent } from ".";
+import { Entity } from "../entities";
+import { Rectangle, Vector } from "../utilities";
 
 interface Edges {
 	bottom: boolean;
@@ -8,13 +8,13 @@ interface Edges {
 	top: boolean;
 }
 
-interface BodyComponent extends BaseComponent {
+interface BodyComponent extends Entity {
 	position: Vector;
 	size: Vector;
 	edges: Edges;
 }
 
-const hasBody = (object: any): object is BodyComponent => "position" in object && "size" in object;
+const hasBody = (object: any): object is BodyComponent => "position" in object && "size" in object && "edges" in object;
 const hasEdges = (entity: BodyComponent): boolean => entity.edges.bottom || entity.edges.left || entity.edges.right || entity.edges.top;
 const getBounds = (entity: BodyComponent): Rectangle => ({
 	x: entity.position.x - entity.size.x / 2,

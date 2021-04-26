@@ -7,8 +7,8 @@ import {
 	SpriteComponent,
 	PlayerComponent
 } from "../components";
-import { getResource, Resource } from "../framework/resources";
-import { Vector } from "../shapes";
+import { getResource, Resource } from "../resources";
+import { Vector } from "../utilities";
 
 type Cyborg = BodyComponent & PhysicsComponent & SpriteComponent & PlayerComponent;
 
@@ -52,4 +52,4 @@ const createCyborg = (position: Vector): Cyborg => {
 	};
 };
 
-export { Cyborg, createCyborg };
+export { createCyborg };

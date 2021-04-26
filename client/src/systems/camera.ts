@@ -1,9 +1,8 @@
 import { System } from ".";
-import { camera } from "../framework/camera";
 
-const cameraSystem: System = (_, stage) => {
-	stage.x = -(camera.x * stage.scale.x);
-	stage.y = -(camera.y * stage.scale.y);
+const cameraSystem: System = (game) => {
+	game.stage.x = -(game.camera.x * game.stage.scale.x);
+	game.stage.y = -(game.camera.y * game.stage.scale.y);
 };
 
 export { cameraSystem };

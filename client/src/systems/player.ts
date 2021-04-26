@@ -1,10 +1,6 @@
 import { System } from ".";
-import { AnimatedSpriteSet, getBounds, hasBody, hasHealth, hasPhysics, hasSprite, isEnemy, isPlayer } from "../components";
-import { camera } from "../framework/camera";
-import { gameState } from "../framework/gameState";
-import { getInput } from "../framework/input";
-import { now } from "../framework/time";
-import { cardinalise, hasValue, multiply, normalise, sectorRectangeIntersects, subtract, toDirectionString, Vector } from "../shapes";
+import { AnimatedSpriteSet, BodyComponent, getBounds, hasBody, hasHealth, hasPhysics, hasSprite, isEnemy, isPlayer, PlayerComponent } from "../components";
+import { cardinalise, hasValue, multiply, normalise, sectorRectangeIntersects, subtract, timestampSeconds, toDirectionString, Vector } from "../utilities";
 
 const walkingForce = 600;
 const attackDuration = 0.25;
@@ -12,81 +8,79 @@ const attackKnockbackVelocity = 400;
 const dashDuration = 0.75;
 const dashInstantaneousVelocity = 400;
 
-const playerSystem: System = (entities, _, deltaSeconds) => {
-	if (!gameState.active()) return;
+const playerSystem: System = (game, deltaSeconds) => {
+	if (!game.state.active()) return;
 
-	for (const entity of entities) {
-		if (!isPlayer(entity)) continue;
+	const playerEntity = game.entities.filter((e) => isPlayer(e) && hasBody(e))[0] as (PlayerComponent & BodyComponent) | undefined;
+	if (!playerEntity) return;
 
-		const playerPosition = hasBody(entity) ? entity.position : { x: camera.width / 2, y: camera.height / 2 };
-		const input = getInput(playerPosition);
+	// Check state end
+	if (playerEntity.dashing.active && playerEntity.dashing.elapsed >= dashDuration) playerEntity.dashing.active = false;
+	if (playerEntity.attacking.active && playerEntity.attacking.elapsed >= attackDuration) playerEntity.attacking.active = false;
+	if (playerEntity.walking.active && (playerEntity.attacking.active || playerEntity.dashing.active || !hasValue(game.input.moveDirection)))
+		playerEntity.walking.active = false;
 
-		// Check state end
-		if (entity.dashing.active && entity.dashing.elapsed >= dashDuration) entity.dashing.active = false;
-		if (entity.attacking.active && entity.attacking.elapsed >= attackDuration) entity.attacking.active = false;
-		if (entity.walking.active && (entity.attacking.active || entity.dashing.active || !hasValue(input.moveDirection))) entity.walking.active = false;
+	// Check state start
+	if (!playerEntity.dashing.active && !playerEntity.attacking.active && game.input.dash) {
+		playerEntity.dashing.active = true;
+		playerEntity.dashing.elapsed = 0;
+		if (hasValue(game.input.moveDirection)) playerEntity.direction = game.input.moveDirection;
+		if (hasPhysics(playerEntity)) playerEntity.velocity = multiply(playerEntity.direction, dashInstantaneousVelocity);
+	}
+	if (!playerEntity.attacking.active && game.input.attack) {
+		playerEntity.attacking.active = true;
+		playerEntity.attacking.elapsed = 0;
+		playerEntity.attacking.counter++;
+		if (hasValue(game.input.moveDirection)) playerEntity.direction = game.input.moveDirection;
 
-		// Check state start
-		if (!entity.dashing.active && !entity.attacking.active && input.dash) {
-			entity.dashing.active = true;
-			entity.dashing.elapsed = 0;
-			if (hasValue(input.moveDirection)) entity.direction = input.moveDirection;
-			if (hasPhysics(entity)) entity.velocity = multiply(entity.direction, dashInstantaneousVelocity);
-		}
-		if (!entity.attacking.active && input.attack) {
-			entity.attacking.active = true;
-			entity.attacking.elapsed = 0;
-			entity.attacking.counter++;
-			if (hasValue(input.moveDirection)) entity.direction = input.moveDirection;
+		const { sectorMinimum, sectorMaximum } = getAttackAngles(playerEntity.direction, playerEntity.attacking.counter);
+		playerEntity.attacking.minimumAngle = sectorMinimum;
+		playerEntity.attacking.maximumAngle = sectorMaximum;
+	}
+	if (!playerEntity.walking.active && !playerEntity.dashing.active && !playerEntity.attacking.active && hasValue(game.input.moveDirection))
+		playerEntity.walking.active = true;
 
-			const { sectorMinimum, sectorMaximum } = getAttackAngles(entity.direction, entity.attacking.counter);
-			entity.attacking.minimumAngle = sectorMinimum;
-			entity.attacking.maximumAngle = sectorMaximum;
-		}
-		if (!entity.walking.active && !entity.dashing.active && !entity.attacking.active && hasValue(input.moveDirection)) entity.walking.active = true;
+	// Apply state
+	if (playerEntity.dashing.active) playerEntity.dashing.elapsed += deltaSeconds;
+	if (playerEntity.attacking.active) {
+		playerEntity.attacking.elapsed += deltaSeconds;
 
-		// Apply state
-		if (entity.dashing.active) entity.dashing.elapsed += deltaSeconds;
-		if (entity.attacking.active) {
-			entity.attacking.elapsed += deltaSeconds;
+		const attackSector = { ...playerEntity.attacking, ...playerEntity.position };
+		for (const otherEntity of game.entities) {
+			if (!isEnemy(otherEntity) || !hasBody(otherEntity)) continue;
 
-			const attackSector = { ...entity.attacking, ...playerPosition };
-			for (const otherEntity of entities) {
-				if (!isEnemy(otherEntity) || !hasBody(otherEntity)) continue;
+			const enemeyBounds = getBounds(otherEntity);
+			if (!sectorRectangeIntersects(attackSector, enemeyBounds)) continue;
 
-				const enemeyBounds = getBounds(otherEntity);
-				if (!sectorRectangeIntersects(attackSector, enemeyBounds)) continue;
+			const timestamp = timestampSeconds();
+			if (hasHealth(otherEntity) && otherEntity.lastHitTimestamp + playerEntity.attacking.elapsed < timestamp) {
+				otherEntity.hitpoints--;
+				otherEntity.lastHitTimestamp = timestamp;
+			}
 
-				const currentTimestamp = now();
-				if (hasHealth(otherEntity) && otherEntity.lastHitTimestamp + entity.attacking.elapsed < currentTimestamp) {
-					otherEntity.hitpoints--;
-					otherEntity.lastHitTimestamp = currentTimestamp;
-				}
-
-				if (hasPhysics(otherEntity)) {
-					const knockbackDirection = normalise(subtract(otherEntity.position, playerPosition));
-					const knockbackVector = multiply(knockbackDirection, attackKnockbackVelocity);
-					otherEntity.velocity = knockbackVector;
-				}
+			if (hasPhysics(otherEntity)) {
+				const knockbackDirection = normalise(subtract(otherEntity.position, playerEntity.position));
+				const knockbackVector = multiply(knockbackDirection, attackKnockbackVelocity);
+				otherEntity.velocity = knockbackVector;
 			}
 		}
-		if (entity.walking.active) {
-			entity.direction = input.moveDirection;
-			if (hasPhysics(entity)) entity.acceleration = multiply(entity.direction, walkingForce);
-		} else {
-			if (hasPhysics(entity)) entity.acceleration = { x: 0, y: 0 };
-		}
-
-		// Apply animation
-		if (!hasSprite(entity) || !(entity.sprite instanceof AnimatedSpriteSet)) continue;
-
-		const directionSuffix = toDirectionString(entity.direction);
-		if (entity.attacking.active) {
-			const attackSuffix = entity.attacking.counter % 2 !== 0 ? "alt" : "";
-			entity.sprite.play(`cyborgattack${directionSuffix}${attackSuffix}`);
-		} else if (entity.walking.active) entity.sprite.play(`cyborgwalk${directionSuffix}`);
-		else entity.sprite.play(`cyborgstand${directionSuffix}`);
 	}
+	if (playerEntity.walking.active) {
+		playerEntity.direction = game.input.moveDirection;
+		if (hasPhysics(playerEntity)) playerEntity.acceleration = multiply(playerEntity.direction, walkingForce);
+	} else {
+		if (hasPhysics(playerEntity)) playerEntity.acceleration = { x: 0, y: 0 };
+	}
+
+	// Apply animation
+	if (!hasSprite(playerEntity) || !(playerEntity.sprite instanceof AnimatedSpriteSet)) return;
+
+	const directionSuffix = toDirectionString(playerEntity.direction);
+	if (playerEntity.attacking.active) {
+		const attackSuffix = playerEntity.attacking.counter % 2 !== 0 ? "alt" : "";
+		playerEntity.sprite.play(`cyborgattack${directionSuffix}${attackSuffix}`);
+	} else if (playerEntity.walking.active) playerEntity.sprite.play(`cyborgwalk${directionSuffix}`);
+	else playerEntity.sprite.play(`cyborgstand${directionSuffix}`);
 };
 
 const getAttackAngles = (direction: Vector, attackCounter: number): { sectorMinimum: number; sectorMaximum: number } => {

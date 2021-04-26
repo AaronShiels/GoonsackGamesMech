@@ -1,5 +1,6 @@
 import { Circle, Sector, circleRectangleIntersects, sectorRectangeIntersects } from "./circle";
 import { Rectangle, centre, rectanglesIntersect, rectanglesIntersection, liesWithin } from "./rectangle";
+import { timestampSeconds } from "./time";
 import { add, subtract, multiply, divide, length, dot, normalise, cardinalise, hasValue, Vector, toDirectionString } from "./vector";
 
 export {
@@ -22,5 +23,6 @@ export {
 	rectanglesIntersection,
 	circleRectangleIntersects,
 	sectorRectangeIntersects,
-	liesWithin
+	liesWithin,
+	timestampSeconds
 };

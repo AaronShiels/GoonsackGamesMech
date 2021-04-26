@@ -1,18 +1,17 @@
 import { System } from ".";
 import { AnimatedSpriteSet, BodyComponent, hasBody, hasPhysics, hasSprite, isEnemy, isPlayer } from "../components";
-import { gameState } from "../framework/gameState";
-import { multiply, length, subtract, normalise, toDirectionString } from "../shapes";
+import { multiply, length, subtract, normalise, toDirectionString } from "../utilities";
 
 const walkingForce = 200;
 const walkingAcquisitonRange = 50;
 
-const enemySystem: System = (entities) => {
-	if (!gameState.active()) return;
+const enemySystem: System = (game) => {
+	if (!game.state.active()) return;
 
-	for (const entity of entities) {
+	for (const entity of game.entities) {
 		if (!isEnemy(entity)) continue;
 
-		const targetVectorsAscending = entities
+		const targetVectorsAscending = game.entities
 			.filter((e) => isPlayer(e) && hasBody(e))
 			.map((e) => subtract((e as BodyComponent).position, ((entity as unknown) as BodyComponent).position))
 			.sort((v1, v2) => length(v1) - length(v2));

@@ -1,14 +1,13 @@
 import { System } from ".";
 import { hasBody, hasPhysics } from "../components";
-import { gameState } from "../framework/gameState";
-import { add, multiply, subtract } from "../shapes";
+import { add, multiply, subtract } from "../utilities";
 
 const frictionCoefficient = 10;
 
-const physicsSystem: System = (entities, _, deltaSeconds) => {
-	if (!gameState.active()) return;
+const physicsSystem: System = (game, deltaSeconds) => {
+	if (!game.state.active()) return;
 
-	for (const entity of entities) {
+	for (const entity of game.entities) {
 		if (!hasBody(entity) || !hasPhysics(entity)) continue;
 
 		const frictionDecceleration = multiply(entity.velocity, frictionCoefficient);

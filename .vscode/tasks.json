@@ -22,9 +22,9 @@
 			}
 		},
 		{
-			"label": "npm: debug: development",
+			"label": "npm: watch: development",
 			"type": "npm",
-			"script": "debug: development",
+			"script": "watch: development",
 			"problemMatcher": ["$tsc"],
 			"options": {
 				"cwd": "${workspaceFolder}/client"

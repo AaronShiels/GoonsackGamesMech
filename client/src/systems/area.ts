@@ -1,75 +1,64 @@
 import { System } from ".";
-import * as demoMap from "../assets/maps/demo_map.json";
-import { BaseComponent, Edges, getBounds, hasBody } from "../components";
+import demoMap from "../assets/maps/demo_map.json";
+import { BodyComponent, Edges, getBounds, hasBody, PlayerComponent } from "../components";
 import { isPlayer } from "../components";
-import { Tile, createTile } from "../entities";
+import { createTile, Entity } from "../entities";
 import { createZombie } from "../entities/zombie";
-import { camera } from "../framework/camera";
-import { gameState } from "../framework/gameState";
-import { getResource, Resource } from "../framework/resources";
-import { Rectangle, rectanglesIntersect, centre, liesWithin } from "../shapes";
+import { getResource, Resource } from "../resources";
+import { Rectangle, rectanglesIntersect, centre, liesWithin, timestampSeconds } from "../utilities";
 
 const areaLayer = demoMap.layers.filter((l) => l.name === "areas")[0];
 if (!areaLayer || !areaLayer.objects) throw new Error("Invalid layer provided.");
 
 const areas: ReadonlyArray<Rectangle> = areaLayer.objects;
-const areaEntites: BaseComponent[][] = areas.map((_) => []);
+const areaEntites: Entity[][] = areas.map((_) => []);
 
 const transitionDuration = 0.5;
 let currentAreaIndex: number | undefined;
 let previousAreaIndex: number | undefined;
-let transitionElapsed: number = 0;
+let transitionStarted: number = 0;
 
-const areaSystem: System = (entities, _, deltaSeconds) => {
-	checkAreaTransition(entities);
-	applyAreaTransition(deltaSeconds);
-};
+const areaSystem: System = (game) => {
+	const timestamp = timestampSeconds();
+	const playerEntity = game.entities.filter((e) => isPlayer(e) && hasBody(e))[0] as (PlayerComponent & BodyComponent) | undefined;
 
-const checkAreaTransition = (entities: BaseComponent[]): void => {
-	for (const entity of entities) {
-		if (!isPlayer(entity) || !hasBody(entity)) continue;
-
-		const playerBounds = getBounds(entity);
+	if (playerEntity) {
+		const playerBounds = getBounds(playerEntity);
 		const newAreaIndex = areas.findIndex((area) => rectanglesIntersect(area, playerBounds));
-		if (newAreaIndex < 0) break;
 
 		// Check begin transition
-		if (!gameState.transitioning && newAreaIndex !== currentAreaIndex) {
-			gameState.transitioning = true;
+		if (!game.state.transitioning && newAreaIndex !== currentAreaIndex && newAreaIndex >= 0) {
+			game.state.transitioning = true;
 
 			previousAreaIndex = currentAreaIndex;
 			currentAreaIndex = newAreaIndex;
-			transitionElapsed = 0;
+			transitionStarted = timestamp;
 
-			loadArea(entities, currentAreaIndex);
+			loadArea(game.entities, currentAreaIndex);
 		}
 
 		// Check end transition
-		if (gameState.transitioning && transitionElapsed > transitionDuration && typeof currentAreaIndex !== "undefined") {
-			gameState.transitioning = false;
+		if (game.state.transitioning && timestamp - transitionStarted > transitionDuration && typeof currentAreaIndex !== "undefined") {
+			game.state.transitioning = false;
 
-			camera.x = areas[currentAreaIndex].x;
-			camera.y = areas[currentAreaIndex].y;
+			game.camera.x = areas[currentAreaIndex].x;
+			game.camera.y = areas[currentAreaIndex].y;
 
 			if (typeof previousAreaIndex !== "undefined") unloadArea(previousAreaIndex);
 		}
 	}
-};
 
-const applyAreaTransition = (deltaSeconds: number): void => {
-	if (!gameState.transitioning || typeof currentAreaIndex === "undefined") return;
+	if (!game.state.transitioning || typeof currentAreaIndex === "undefined") return;
 
-	transitionElapsed += deltaSeconds;
-
-	const progress = transitionElapsed / transitionDuration;
+	const progress = (timestamp - transitionStarted) / transitionDuration;
 	const startArea = areas[typeof previousAreaIndex !== "undefined" ? previousAreaIndex : currentAreaIndex];
 	const endArea = areas[currentAreaIndex];
 
-	camera.x = startArea.x + (endArea.x - startArea.x) * progress;
-	camera.y = startArea.y + (endArea.y - startArea.y) * progress;
+	game.camera.x = startArea.x + (endArea.x - startArea.x) * progress;
+	game.camera.y = startArea.y + (endArea.y - startArea.y) * progress;
 };
 
-const loadArea = (entities: BaseComponent[], areaIndex: number): void => {
+const loadArea = (entities: Entity[], areaIndex: number): void => {
 	const area = areas[areaIndex];
 	const floorTiles = createTiles(area, "floor", false, 0);
 	const wallTiles = createTiles(area, "walls", true, 1);
@@ -81,7 +70,7 @@ const loadArea = (entities: BaseComponent[], areaIndex: number): void => {
 	entities.push(...newEntities);
 };
 
-const createTiles = (area: Rectangle, layer: string, solid: boolean, zIndex: number): Tile[] => {
+const createTiles = (area: Rectangle, layer: string, solid: boolean, zIndex: number): Entity[] => {
 	const tilesLayer = demoMap.layers.filter((l) => l.name === layer)[0];
 	const tileSet = demoMap.tilesets[0];
 	const textureAtlas = getResource(Resource.DemoMap).texture;
@@ -89,7 +78,7 @@ const createTiles = (area: Rectangle, layer: string, solid: boolean, zIndex: num
 	if (!tilesLayer || tilesLayer.type !== "tilelayer" || !tilesLayer.data || !tilesLayer.width || !tilesLayer.height)
 		throw new Error("Invalid layer provided.");
 
-	const tiles: Tile[] = [];
+	const tiles: Entity[] = [];
 	for (let yIndex = 0; yIndex < tilesLayer.height; yIndex++)
 		for (let xIndex = 0; xIndex < tilesLayer.width; xIndex++) {
 			const tileBounds: Rectangle = {
@@ -120,19 +109,19 @@ const createTiles = (area: Rectangle, layer: string, solid: boolean, zIndex: num
 			if (!solid || (xIndex < tilesLayer.width - 1 && tilesLayer.data[xIndex + 1 + yIndex * tilesLayer.width])) edges.right = false;
 			if (!solid || (yIndex > 0 && tilesLayer.data[xIndex + (yIndex - 1) * tilesLayer.width])) edges.top = false;
 
-			const tile: Tile = createTile(textureAtlas, textureAtlasFrame, tileBounds, edges, zIndex);
+			const tile: Entity = createTile(textureAtlas, textureAtlasFrame, tileBounds, edges, zIndex);
 			tiles.push(tile);
 		}
 
 	return tiles;
 };
 
-const createEnemies = (area: Rectangle): BaseComponent[] => {
+const createEnemies = (area: Rectangle): Entity[] => {
 	const enemiesLayer = demoMap.layers.filter((l) => l.name === "enemies")[0];
 
 	if (!enemiesLayer || enemiesLayer.type !== "objectgroup" || !enemiesLayer.objects) throw new Error("Invalid layer provided.");
 
-	const enemies: BaseComponent[] = [];
+	const enemies: Entity[] = [];
 	for (const object of enemiesLayer.objects) {
 		const objectCentre = centre(object);
 		if (!liesWithin(objectCentre, area)) continue;

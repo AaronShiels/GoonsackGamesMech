@@ -1,7 +1,7 @@
-import { BaseComponent } from ".";
-import { Vector } from "../shapes";
+import { Entity } from "../entities";
+import { Vector } from "../utilities";
 
-interface PlayerComponent extends BaseComponent {
+interface PlayerComponent extends Entity {
 	isPlayer: true;
 	direction: Vector;
 	walking: { active: boolean };

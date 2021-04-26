@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"scripts": {
 		"build: production": "webpack --mode=production",
-		"debug: development": "webpack serve --mode=development --config webpack.config.js --progress --profile --content-base dist/"
+		"watch: development": "webpack serve --mode=development --config webpack.config.js --progress --profile --content-base dist/"
 	},
 	"repository": {
 		"type": "git",

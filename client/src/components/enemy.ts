@@ -1,7 +1,7 @@
-import { BaseComponent } from ".";
-import { Vector } from "../shapes";
+import { Entity } from "../entities";
+import { Vector } from "../utilities";
 
-interface EnemyComponent extends BaseComponent {
+interface EnemyComponent extends Entity {
 	isEnemy: true;
 	direction: Vector;
 	walking: { active: boolean };

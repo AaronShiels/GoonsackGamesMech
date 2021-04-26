@@ -1,6 +1,6 @@
 import { Rectangle as PixiRectangle, Texture } from "pixi.js";
 import { BodyComponent, createSpriteComponent, SpriteComponent, createSprite, Edges } from "../components";
-import { centre, Rectangle, Vector } from "../shapes";
+import { centre, Rectangle, Vector } from "../utilities";
 
 type Tile = BodyComponent & SpriteComponent;
 
@@ -15,4 +15,4 @@ const createTile = (textureAtlas: Texture, frame: Rectangle, bounds: Rectangle, 
 	return { position, size, edges, ...sprite };
 };
 
-export { Tile, createTile };
+export { createTile };

@@ -1,5 +1,5 @@
 import { Loader, LoaderResource } from "pixi.js";
-import * as demoMap from "../assets/maps/demo_map.json";
+import demoMap from "./assets/maps/demo_map.json";
 
 enum Resource {
 	Cyborg = "cyborg",

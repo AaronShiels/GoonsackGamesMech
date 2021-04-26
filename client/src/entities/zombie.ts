@@ -8,8 +8,8 @@ import {
 	EnemyComponent,
 	HealthComponent
 } from "../components";
-import { getResource, Resource } from "../framework/resources";
-import { Vector } from "../shapes";
+import { getResource, Resource } from "../resources";
+import { Vector } from "../utilities";
 
 type Zombie = BodyComponent & PhysicsComponent & SpriteComponent & EnemyComponent & HealthComponent;
 
@@ -45,4 +45,4 @@ const createZombie = (position: Vector): Zombie => {
 	};
 };
 
-export { Zombie, createZombie };
+export { createZombie };
