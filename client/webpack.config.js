@@ -38,7 +38,7 @@ const config = (_, { mode }) => {
 		path: path.resolve(__dirname, "dist")
 	};
 	const cleanWebpackPlugin = new CleanWebpackPlugin({ cleanStaleWebpackAssets: false });
-	const htmlPluginConfig = new HtmlWebpackPlugin({ title: "GoonSackGames - Cyborg", template: path.resolve(__dirname, "src/index.html") });
+	const htmlPluginConfig = new HtmlWebpackPlugin({ title: "GoonSackGames", template: path.resolve(__dirname, "src/index.html") });
 	const copyPlugin = new CopyPlugin({ patterns: [{ from: "assets", to: "assets" }] });
 	const plugins = [cleanWebpackPlugin, htmlPluginConfig, copyPlugin];
 
