@@ -1,7 +1,6 @@
 import { playerSystem } from "./player";
 import { physicsSystem } from "./physics";
 import { spriteSystem } from "./sprite";
-import { areaSystem } from "./area";
 import { cameraSystem } from "./camera";
 import { collisionSystem } from "./collision";
 import { garbageCollectionSystem } from "./garbageCollection";
@@ -11,6 +10,6 @@ import { Game } from "../game";
 
 type System = (game: Game, deltaSeconds: number) => void;
 
-const systems = [areaSystem, playerSystem, enemySystem, healthSystem, physicsSystem, collisionSystem, cameraSystem, spriteSystem, garbageCollectionSystem];
+const systems = [playerSystem, enemySystem, healthSystem, physicsSystem, collisionSystem, cameraSystem, spriteSystem, garbageCollectionSystem];
 
 export { System, systems };

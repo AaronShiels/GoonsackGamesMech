@@ -1,6 +1,5 @@
-import { createCyborg } from "./cyborg";
-import { createTile } from "./tile";
-import { createZombie } from "./zombie";
+import { createMech } from "./mech";
+import { createTile } from "./Tile";
 
 interface Entity {
 	destroyed: boolean;
@@ -8,4 +7,4 @@ interface Entity {
 
 const isEntity = (object: any): object is Entity => "destroyed" in object;
 
-export { Entity, isEntity, createCyborg, createTile, createZombie };
+export { Entity, isEntity, createMech, createTile };

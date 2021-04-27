@@ -1,11 +1,12 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
 import { BodyComponent, hasBody, isPlayer } from "./components";
-import { createCyborg, Entity } from "./entities";
+import { Entity, createMech } from "./entities";
 import { hasValue, normalise, Rectangle, subtract, Vector } from "./utilities";
 import { systems } from "./systems";
-import { loadResources } from "./resources";
+import { defaultMap, loadResources } from "./assets";
 import { rawInput, isTouch, isDown, isPressed, isHeld, isTapped, Keys } from "./input";
 import { cloneDeep } from "lodash";
+import { createMapTiles } from "./utilities/map";
 
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
 settings.SORTABLE_CHILDREN = true;
@@ -23,7 +24,6 @@ interface GameInput {
 
 interface GameState {
 	active(): boolean;
-	transitioning: boolean;
 }
 
 class Game extends Application {
@@ -53,23 +53,25 @@ class Game extends Application {
 	public readonly camera: Rectangle;
 	public readonly entities: Entity[] = [];
 	public readonly state: GameState = {
-		active() {
-			return !this.transitioning;
-		},
-		transitioning: false
+		active: () => true
 	};
 	public readonly input: GameInput = { attack: false, dash: false, moveDirection: { x: 0, y: 0 } };
 
 	async load(): Promise<void> {
 		// Initialise render target
-		this.renderer.backgroundColor = parseInt("39314B", 16);
+		this.renderer.backgroundColor = parseInt("FFFFFF", 16);
 
 		// Load resourcess
 		await loadResources();
 
+		// Load map
+		const groundTiles = createMapTiles(defaultMap, "ground", false);
+		const buildingTiles = createMapTiles(defaultMap, "building", true);
+		this.entities.push(...groundTiles, ...buildingTiles);
+
 		// Initialise player
-		const cyborg = createCyborg({ x: 80, y: 90 });
-		this.entities.push(cyborg);
+		const mech = createMech({ x: 80, y: 120 });
+		this.entities.push(mech);
 
 		// Start game loop
 		this.ticker.add((delta): void => {

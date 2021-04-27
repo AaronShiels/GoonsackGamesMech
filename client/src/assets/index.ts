@@ -1,17 +1,13 @@
 import { Loader, LoaderResource } from "pixi.js";
-import demoMap from "./assets/maps/demo_map.json";
+import defaultMap from "./maps/default.json";
 
 enum Resource {
-	Cyborg = "cyborg",
-	DemoMap = "demoMap",
-	Zombie = "zombie",
-	WaterNoise = "waterNoise"
+	Mech = "mech",
+	Map = "map"
 }
 const resourceLookup: Record<Resource, string> = {
-	cyborg: "assets/cyborg/cyborg.json",
-	demoMap: `assets/maps/${demoMap.tilesets[0].image}`,
-	zombie: "assets/zombie/zombie.json",
-	waterNoise: "assets/filters/water_noise.png"
+	mech: "assets/black.png",
+	map: "assets/maps/default.png"
 };
 
 const getResource = (resource: Resource): LoaderResource => Loader.shared.resources[resourceLookup[resource]];
@@ -21,4 +17,4 @@ const loadResources = (): Promise<void> =>
 		Loader.shared.add(allResources).load((_) => res());
 	});
 
-export { Resource, getResource, loadResources };
+export { Resource, getResource, loadResources, defaultMap };
