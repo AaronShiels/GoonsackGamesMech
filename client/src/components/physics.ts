@@ -1,7 +1,7 @@
-import { Entity } from "../entities";
 import { Vector } from "../utilities";
+import { BodyComponent } from "./body";
 
-interface PhysicsComponent extends Entity {
+interface PhysicsComponent extends BodyComponent {
 	velocity: Vector;
 	acceleration: Vector;
 }

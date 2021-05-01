@@ -1,24 +1,24 @@
-import { Sprite } from "pixi.js";
-import { BodyComponent, PhysicsComponent, SpriteComponent, PlayerComponent } from "../components";
+import { PhysicsComponent, SpriteComponent, PlayerComponent, AnimatedSpriteCollection } from "../components";
 import { getResource, Resource } from "../assets";
 import { Vector } from "../utilities";
 
-type Mech = BodyComponent & PhysicsComponent & SpriteComponent & PlayerComponent;
+type Mech = PhysicsComponent & SpriteComponent & PlayerComponent;
 
 const createMech = (position: Vector): Mech => {
-	const sprite = new Sprite(getResource(Resource.Mech).texture);
+	const spritesheet = getResource(Resource.Mech).spritesheet!;
+	const sprite = new AnimatedSpriteCollection(spritesheet);
 	sprite.anchor.set(0.5);
+	sprite.play("mech_0");
 
 	return {
 		destroyed: false,
 		position,
-		size: { x: 16, y: 16 },
+		size: { x: 32, y: 32 },
 		edges: { bottom: true, left: true, right: true, top: true },
 		velocity: { x: 0, y: 0 },
 		acceleration: { x: 0, y: 0 },
 		isPlayer: true,
-		direction: { x: 0, y: 0 },
-		walking: { active: false },
+		direction: 0,
 		sprite
 	};
 };

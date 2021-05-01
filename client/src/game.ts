@@ -1,11 +1,8 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
-import { BodyComponent, hasBody, isPlayer } from "./components";
 import { Entity, createMech } from "./entities";
-import { hasValue, normalise, Rectangle, subtract, Vector } from "./utilities";
+import { Rectangle, Vector } from "./utilities";
 import { systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
-import { rawInput, isTouch, isDown, isPressed, isHeld, isTapped, Keys } from "./input";
-import { cloneDeep } from "lodash";
 import { createMapTiles } from "./utilities/map";
 
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
@@ -18,8 +15,7 @@ interface GameSettings {
 
 interface GameInput {
 	moveDirection: Vector;
-	attack: boolean;
-	dash: boolean;
+	cursorPosition: Vector;
 }
 
 interface GameState {
@@ -27,8 +23,6 @@ interface GameState {
 }
 
 class Game extends Application {
-	private _offset: Vector;
-
 	constructor(element: HTMLElement, settings: GameSettings) {
 		super({
 			width: element.clientWidth,
@@ -44,18 +38,20 @@ class Game extends Application {
 		element.appendChild(this.view);
 
 		const { left, top } = element.getBoundingClientRect();
-		this._offset = { x: left, y: top };
+		this.offset = { x: left, y: top };
 
 		this.camera = { x: 0, y: 0, ...settings };
+		this.input = { cursorPosition: { x: settings.width / 2, y: settings.height / 2 }, moveDirection: { x: 0, y: 0 } };
 	}
 
+	public readonly offset: Vector;
 	public readonly settings: GameSettings;
 	public readonly camera: Rectangle;
 	public readonly entities: Entity[] = [];
 	public readonly state: GameState = {
 		active: () => true
 	};
-	public readonly input: GameInput = { attack: false, dash: false, moveDirection: { x: 0, y: 0 } };
+	public readonly input: GameInput;
 
 	async load(): Promise<void> {
 		// Initialise render target
@@ -74,50 +70,9 @@ class Game extends Application {
 		this.entities.push(mech);
 
 		// Start game loop
-		this.ticker.add((delta): void => {
-			this.updateGameInput();
-
-			systems.forEach((system) => system(this, delta / 60));
-		});
+		this.ticker.add((delta): void => systems.forEach((system) => system(this, delta / 60)));
 
 		console.log(`Game started using ${this.renderer.type === 1 ? "WebGL" : "canvas"} renderer.`);
-	}
-
-	private updateGameInput() {
-		let moveDirection: Vector = { x: 0, y: 0 };
-		let attack: boolean = false;
-		let dash: boolean = false;
-
-		if (isTouch) {
-			attack = isTapped(rawInput.mouse.current.click, rawInput.mouse.previous.click);
-
-			if (isHeld(rawInput.mouse.current.click) || attack) {
-				const gameMousePosition = this.stage.toLocal({
-					x: rawInput.mouse.current.position.x - this._offset.x,
-					y: rawInput.mouse.current.position.y - this._offset.y
-				});
-				const playerEntity = this.entities.filter((e) => isPlayer(e) && hasBody(e))[0] as BodyComponent | undefined;
-				const relativeMousePosition = subtract(gameMousePosition, playerEntity?.position || { x: 0, y: 0 });
-				if (hasValue(relativeMousePosition)) moveDirection = normalise(relativeMousePosition);
-			}
-		} else {
-			const keyboardInputVector = { x: 0, y: 0 };
-			if (isDown(rawInput.keyboard.current.d)) keyboardInputVector.x++;
-			if (isDown(rawInput.keyboard.current.a)) keyboardInputVector.x--;
-			if (isDown(rawInput.keyboard.current.s)) keyboardInputVector.y++;
-			if (isDown(rawInput.keyboard.current.w)) keyboardInputVector.y--;
-			if (hasValue(keyboardInputVector)) moveDirection = normalise(keyboardInputVector);
-
-			attack = isPressed(rawInput.mouse.current.click, rawInput.mouse.previous.click);
-			dash = isPressed(rawInput.keyboard.current[Keys.Space], rawInput.keyboard.previous[Keys.Space]);
-		}
-
-		rawInput.keyboard.previous = cloneDeep(rawInput.keyboard.current);
-		rawInput.mouse.previous = cloneDeep(rawInput.mouse.current);
-
-		this.input.attack = attack;
-		this.input.dash = dash;
-		this.input.moveDirection = moveDirection;
 	}
 }
 

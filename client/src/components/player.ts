@@ -1,10 +1,8 @@
 import { Entity } from "../entities";
-import { Vector } from "../utilities";
 
 interface PlayerComponent extends Entity {
 	isPlayer: true;
-	direction: Vector;
-	walking: { active: boolean };
+	direction: number;
 }
 
 const isPlayer = (object: any): object is PlayerComponent => !!object.isPlayer;

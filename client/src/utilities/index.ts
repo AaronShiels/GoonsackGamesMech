@@ -1,3 +1,4 @@
+import { boundAngle, toDegrees } from "./angles";
 import { Circle, Sector, circleRectangleIntersects, sectorRectangeIntersects } from "./circle";
 import { Rectangle, centre, rectanglesIntersect, rectanglesIntersection, liesWithin } from "./rectangle";
 import { timestampSeconds } from "./time";
@@ -24,5 +25,7 @@ export {
 	circleRectangleIntersects,
 	sectorRectangeIntersects,
 	liesWithin,
-	timestampSeconds
+	timestampSeconds,
+	boundAngle,
+	toDegrees
 };

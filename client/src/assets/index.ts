@@ -6,7 +6,7 @@ enum Resource {
 	Map = "map"
 }
 const resourceLookup: Record<Resource, string> = {
-	mech: "assets/black.png",
+	mech: "assets/mech/mech.json",
 	map: "assets/maps/default.png"
 };
 
