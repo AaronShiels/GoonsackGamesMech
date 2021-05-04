@@ -45,15 +45,6 @@ const cardinalise = (vector: Vector) => {
 	return horizontalMagnitude > verticalMagnitude - threshold ? { x: vector.x > 0 ? 1 : -1, y: 0 } : { x: 0, y: vector.y > 0 ? 1 : -1 };
 };
 const hasValue = (vector: Vector): boolean => vector.x !== 0 || vector.y !== 0;
-const toDirectionString = (vector: Vector): string => {
-	if (!hasValue(vector)) return "down";
+const round = (vector: Vector): Vector => ({ x: Math.round(vector.x), y: Math.round(vector.y) });
 
-	const cardinal = cardinalise(vector);
-	if (cardinal.x === 1 && cardinal.y === 0) return "right";
-	else if (cardinal.x === -1 && cardinal.y === 0) return "left";
-	else if (cardinal.x === 0 && cardinal.y === 1) return "down";
-	else if (cardinal.x === 0 && cardinal.y === -1) return "up";
-	else return "down";
-};
-
-export { Vector, add, subtract, multiply, divide, length, dot, normalise, cardinalise, hasValue, toDirectionString };
+export { Vector, add, subtract, multiply, divide, length, dot, normalise, cardinalise, hasValue, round };

@@ -1,8 +1,9 @@
 import { boundAngle, toDegrees } from "./angles";
 import { Circle, Sector, circleRectangleIntersects, sectorRectangeIntersects } from "./circle";
 import { Rectangle, centre, rectanglesIntersect, rectanglesIntersection, liesWithin } from "./rectangle";
+import { AnimatedSpriteCollection } from "./sprite";
 import { timestampSeconds } from "./time";
-import { add, subtract, multiply, divide, length, dot, normalise, cardinalise, hasValue, Vector, toDirectionString } from "./vector";
+import { add, subtract, multiply, divide, length, dot, normalise, cardinalise, hasValue, Vector, round } from "./vector";
 
 export {
 	Vector,
@@ -18,7 +19,7 @@ export {
 	normalise,
 	cardinalise,
 	hasValue,
-	toDirectionString,
+	round,
 	centre,
 	rectanglesIntersect,
 	rectanglesIntersection,
@@ -27,5 +28,6 @@ export {
 	liesWithin,
 	timestampSeconds,
 	boundAngle,
-	toDegrees
+	toDegrees,
+	AnimatedSpriteCollection
 };

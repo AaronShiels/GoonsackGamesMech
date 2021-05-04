@@ -1,6 +1,6 @@
-import { boundAngle, hasValue, subtract, timestampSeconds, toDegrees } from "../utilities";
+import { AnimatedSpriteCollection, boundAngle, hasValue, subtract, toDegrees } from "../utilities";
 import { System } from ".";
-import { isPlayer, PlayerComponent, hasPhysics, PhysicsComponent, hasSprite, SpriteComponent, AnimatedSpriteCollection } from "../components";
+import { isPlayer, PlayerComponent, hasPhysics, PhysicsComponent, hasSprite, SpriteComponent } from "../components";
 import { multiply } from "../utilities";
 
 const walkingForce = 200;

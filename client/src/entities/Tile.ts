@@ -1,6 +1,6 @@
 import { Rectangle as PixiRectangle, Sprite, Texture } from "pixi.js";
 import { BodyComponent, SpriteComponent, Edges } from "../components";
-import { centre, Rectangle, Vector } from "../utilities";
+import { centre, Rectangle } from "../utilities";
 
 type Tile = BodyComponent & SpriteComponent;
 

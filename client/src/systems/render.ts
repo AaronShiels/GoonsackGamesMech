@@ -1,10 +1,11 @@
 import { AnimatedSprite } from "pixi.js";
 import { System } from ".";
-import { AnimatedSpriteCollection, hasBody, hasSprite } from "../components";
+import { hasBody, hasSprite } from "../components";
+import { AnimatedSpriteCollection } from "../utilities";
 
 const renderSystem: System = (game, deltaSeconds) => {
-	game.stage.x = -(game.camera.x * game.stage.scale.x);
-	game.stage.y = -(game.camera.y * game.stage.scale.y);
+	game.stage.x = -((game.camera.x - game.camera.width / 2) * game.stage.scale.x);
+	game.stage.y = -((game.camera.y - game.camera.height / 2) * game.stage.scale.y);
 
 	for (const entity of game.entities) {
 		if (!hasBody(entity) || !hasSprite(entity)) continue;

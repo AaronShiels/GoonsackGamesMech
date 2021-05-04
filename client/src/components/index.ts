@@ -3,7 +3,7 @@ import { EnemyComponent, isEnemy } from "./enemy";
 import { HealthComponent, hasHealth } from "./health";
 import { hasPhysics, PhysicsComponent } from "./physics";
 import { isPlayer, PlayerComponent } from "./player";
-import { SpriteComponent, AnimatedSpriteCollection, hasSprite } from "./sprite";
+import { SpriteComponent, hasSprite } from "./sprite";
 
 export {
 	BodyComponent,
@@ -14,7 +14,6 @@ export {
 	PhysicsComponent,
 	hasPhysics,
 	SpriteComponent,
-	AnimatedSpriteCollection,
 	hasSprite,
 	PlayerComponent,
 	isPlayer,

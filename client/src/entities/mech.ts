@@ -1,6 +1,6 @@
-import { PhysicsComponent, SpriteComponent, PlayerComponent, AnimatedSpriteCollection } from "../components";
+import { PhysicsComponent, SpriteComponent, PlayerComponent } from "../components";
 import { getResource, Resource } from "../assets";
-import { Vector } from "../utilities";
+import { AnimatedSpriteCollection, Vector } from "../utilities";
 
 type Mech = PhysicsComponent & SpriteComponent & PlayerComponent;
 
