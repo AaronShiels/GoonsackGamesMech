@@ -1,18 +1,21 @@
 import { System } from ".";
 import { BodyComponent, getBounds, hasBody, hasEdges, hasPhysics } from "../components";
-import { add, divide, rectanglesIntersection, length, multiply, normalise, subtract, Vector } from "../utilities";
+import { add, divide, rectanglesIntersection, length, multiply, normalise, subtract, Vector, round } from "../utilities";
 
 const collisionSystem: System = (game) => {
-	for (const entity of game.entities) {
+	for (const entity of game.stage.children) {
 		if (!hasPhysics(entity) || !hasBody(entity) || !hasEdges(entity)) continue;
 
-		for (const otherEntity of game.entities) {
+		for (const otherEntity of game.stage.children) {
 			if (!hasBody(otherEntity) || !hasEdges(otherEntity) || entity === otherEntity) continue;
 
 			const penetrationVector = getShortestPenetrationVector(entity, otherEntity);
 			if (!penetrationVector) continue;
 
-			entity.position = subtract(entity.position, penetrationVector);
+			const correctedPosition = subtract(entity, penetrationVector);
+			entity.x = correctedPosition.x;
+			entity.y = correctedPosition.y;
+
 			if (hasPhysics(otherEntity)) {
 				const velocityAverage = divide(add(entity.velocity, otherEntity.velocity), 2);
 				entity.velocity = velocityAverage;

@@ -4,7 +4,7 @@ import { hasHealth } from "../components";
 const healthSystem: System = (game) => {
 	if (!game.state.active()) return;
 
-	for (const entity of game.entities) {
+	for (const entity of game.stage.children) {
 		if (!hasHealth(entity)) continue;
 
 		if (entity.hitpoints <= 0) entity.destroyed = true;

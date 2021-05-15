@@ -1,5 +1,5 @@
 import { System } from ".";
-import { BodyComponent, hasBody, isPlayer, PlayerComponent } from "../components";
+import { Mech } from "../entities";
 import { add, multiply, normalise, subtract, length, timestampSeconds } from "../utilities";
 
 const focalCoefficient = 0.25;
@@ -8,12 +8,12 @@ const scrollSpeed = 100;
 const cameraSystem: System = (game, deltaSeconds) => {
 	if (!game.state.active()) return;
 
-	const playerEntity = game.entities.filter((e) => isPlayer(e) && hasBody(e))[0] as (PlayerComponent & BodyComponent) | undefined;
-	if (!playerEntity) return;
+	const mech = game.stage.children.filter((e) => e instanceof Mech)[0] as Mech | undefined;
+	if (!mech) return;
 
 	// Check change
 	const cursorOffset = subtract(game.input.cursorPosition, game.camera);
-	const desiredPosition = add(playerEntity.position, multiply(cursorOffset, focalCoefficient));
+	const desiredPosition = add(mech, multiply(cursorOffset, focalCoefficient));
 
 	// Apply change
 	if (desiredPosition.x === game.camera.x && desiredPosition.y === game.camera.y) return;

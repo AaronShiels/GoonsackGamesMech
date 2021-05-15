@@ -1,10 +1,11 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
-import { Entity, createMech } from "./entities";
+import { Mech } from "./entities";
 import { Rectangle, Vector } from "./utilities";
 import { systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
 import { createMapTiles } from "./utilities/map";
 
+settings.ROUND_PIXELS = true;
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
 settings.SORTABLE_CHILDREN = true;
 
@@ -28,26 +29,18 @@ class Game extends Application {
 			width: element.clientWidth,
 			height: (element.clientWidth / settings.width) * settings.height,
 			autoDensity: true,
-			resolution: window.devicePixelRatio || 1
+			resolution: window.devicePixelRatio
 		});
-
-		this.settings = settings;
 
 		this.stage.scale.x = this.screen.width / settings.width;
 		this.stage.scale.y = this.screen.height / settings.height;
 		element.appendChild(this.view);
 
-		const { left, top } = element.getBoundingClientRect();
-		this.offset = { x: left, y: top };
-
 		this.camera = { x: 0, y: 0, ...settings };
 		this.input = { cursorPosition: { x: settings.width / 2, y: settings.height / 2 }, moveDirection: { x: 0, y: 0 } };
 	}
 
-	public readonly offset: Vector;
-	public readonly settings: GameSettings;
 	public readonly camera: Rectangle;
-	public readonly entities: Entity[] = [];
 	public readonly state: GameState = {
 		active: () => true
 	};
@@ -63,11 +56,11 @@ class Game extends Application {
 		// Load map
 		const groundTiles = createMapTiles(defaultMap, "ground", false);
 		const buildingTiles = createMapTiles(defaultMap, "building", true);
-		this.entities.push(...groundTiles, ...buildingTiles);
+		this.stage.addChild(...groundTiles, ...buildingTiles);
 
 		// Initialise player
-		const mech = createMech({ x: 80, y: 120 });
-		this.entities.push(mech);
+		const mech = new Mech({ x: 80, y: 120 });
+		this.stage.addChild(mech);
 
 		// Start game loop
 		this.ticker.add((delta): void => systems.forEach((system) => system(this, delta / 60)));

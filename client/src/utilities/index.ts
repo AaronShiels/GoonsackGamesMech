@@ -1,7 +1,6 @@
 import { boundAngle, toDegrees } from "./angles";
 import { Circle, Sector, circleRectangleIntersects, sectorRectangeIntersects } from "./circle";
 import { Rectangle, centre, rectanglesIntersect, rectanglesIntersection, liesWithin } from "./rectangle";
-import { AnimatedSpriteCollection } from "./sprite";
 import { timestampSeconds } from "./time";
 import { add, subtract, multiply, divide, length, dot, normalise, cardinalise, hasValue, Vector, round } from "./vector";
 
@@ -28,6 +27,5 @@ export {
 	liesWithin,
 	timestampSeconds,
 	boundAngle,
-	toDegrees,
-	AnimatedSpriteCollection
+	toDegrees
 };

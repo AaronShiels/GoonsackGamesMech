@@ -1,5 +1,5 @@
 import { getResource, Resource } from "../assets";
-import { Entity, createTile } from "../entities";
+import { Tile } from "../entities";
 
 interface TileMap {
 	layers: TileLayer[];
@@ -22,7 +22,7 @@ interface TileSet {
 	tileheight: number;
 }
 
-const createMapTiles = (map: TileMap, layer: string, solid: boolean, zIndex: number = 0): Entity[] => {
+const createMapTiles = (map: TileMap, layer: string, solid: boolean, zIndex: number = 0): Tile[] => {
 	const tilesLayer = map.layers.filter((l) => l.name === layer)[0];
 	const tileSet = map.tilesets[0];
 	const textureAtlas = getResource(Resource.Map).texture;
@@ -30,7 +30,7 @@ const createMapTiles = (map: TileMap, layer: string, solid: boolean, zIndex: num
 	if (!tilesLayer || tilesLayer.type !== "tilelayer" || !tilesLayer.data || !tilesLayer.width || !tilesLayer.height)
 		throw new Error("Invalid layer provided.");
 
-	const tiles: Entity[] = [];
+	const tiles: Tile[] = [];
 	for (let yIndex = 0; yIndex < tilesLayer.height; yIndex++)
 		for (let xIndex = 0; xIndex < tilesLayer.width; xIndex++) {
 			const tileBounds = {
@@ -60,7 +60,7 @@ const createMapTiles = (map: TileMap, layer: string, solid: boolean, zIndex: num
 			if (!solid || (xIndex < tilesLayer.width - 1 && tilesLayer.data[xIndex + 1 + yIndex * tilesLayer.width])) edges.right = false;
 			if (!solid || (yIndex > 0 && tilesLayer.data[xIndex + (yIndex - 1) * tilesLayer.width])) edges.top = false;
 
-			const tile = createTile(textureAtlas, textureAtlasFrame, tileBounds, edges, zIndex);
+			const tile = new Tile(textureAtlas, textureAtlasFrame, tileBounds, edges, zIndex);
 			tiles.push(tile);
 		}
 

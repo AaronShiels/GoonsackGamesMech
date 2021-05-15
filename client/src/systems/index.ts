@@ -1,4 +1,4 @@
-import { playerSystem } from "./player";
+import { mechSystem } from "./mech";
 import { physicsSystem } from "./physics";
 import { renderSystem } from "./render";
 import { collisionSystem } from "./collision";
@@ -11,6 +11,6 @@ import { cameraSystem } from "./camera";
 
 type System = (game: Game, deltaSeconds: number) => void;
 
-const systems = [inputSystem, playerSystem, enemySystem, healthSystem, physicsSystem, collisionSystem, cameraSystem, renderSystem, garbageCollectionSystem];
+const systems = [inputSystem, mechSystem, enemySystem, healthSystem, physicsSystem, collisionSystem, cameraSystem, renderSystem, garbageCollectionSystem];
 
 export { System, systems };

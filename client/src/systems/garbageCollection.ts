@@ -1,13 +1,12 @@
 import { System } from ".";
-import { hasSprite } from "../components";
+import { isEntity } from "../entities";
 
 const garbageCollectionSystem: System = (game) => {
-	for (let i = game.entities.length - 1; i >= 0; i--) {
-		const entity = game.entities[i];
-		if (!entity.destroyed) continue;
+	for (let i = game.stage.children.length - 1; i >= 0; i--) {
+		const entity = game.stage.getChildAt(i);
+		if (!isEntity(entity) || !entity.destroyed) continue;
 
-		if (hasSprite(entity)) game.stage.removeChild(entity.sprite);
-		game.entities.splice(i, 1);
+		game.stage.removeChild(entity);
 	}
 };
 
