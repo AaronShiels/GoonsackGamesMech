@@ -7,7 +7,7 @@ const renderSystem: System = (game, deltaSeconds) => {
 
 	if (!game.state.active()) return;
 
-	for (const entity of game.stage.children) {
+	for (const entity of game.entities) {
 		if (!(entity instanceof AnimatedSprite)) continue;
 
 		entity.update(deltaSeconds * 60);

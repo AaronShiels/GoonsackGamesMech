@@ -1,5 +1,5 @@
 import { Loader, LoaderResource } from "pixi.js";
-import defaultMap from "./maps/default.json";
+import defaultMap from "./maps/map.json";
 
 enum Resource {
 	Mech = "mech",
@@ -7,7 +7,7 @@ enum Resource {
 }
 const resourceLookup: Record<Resource, string> = {
 	mech: "assets/mech/mech.json",
-	map: "assets/maps/default.png"
+	map: "assets/maps/map.png"
 };
 
 const getResource = (resource: Resource): LoaderResource => Loader.shared.resources[resourceLookup[resource]];

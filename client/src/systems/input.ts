@@ -1,7 +1,7 @@
 import { System } from ".";
 import { hasValue, normalise } from "../utilities";
 
-const inputSystem: System = (game, _) => {
+const inputSystem: System = (game) => {
 	const keyboardMoveVector = { x: 0, y: 0 };
 	if (currentKeyboardInput.d) keyboardMoveVector.x++;
 	if (currentKeyboardInput.a) keyboardMoveVector.x--;
@@ -9,7 +9,7 @@ const inputSystem: System = (game, _) => {
 	if (currentKeyboardInput.w) keyboardMoveVector.y--;
 
 	game.input.moveDirection = hasValue(keyboardMoveVector) ? normalise(keyboardMoveVector) : keyboardMoveVector;
-	game.input.cursorPosition = game.stage.toLocal(game.renderer.plugins.interaction.mouse.global);
+	game.input.cursorLocation = game.stage.toLocal(game.renderer.plugins.interaction.mouse.global);
 };
 
 enum Keys {

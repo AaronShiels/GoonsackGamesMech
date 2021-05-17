@@ -1,6 +1,6 @@
 {"frames": {
 
-"mech_0-0.png":
+"mech_0.png":
 {
 	"frame": {"x":0,"y":0,"w":64,"h":64},
 	"rotated": false,
@@ -8,109 +8,56 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"mech_0-1.png":
+"mech_15.png":
 {
-	"frame": {"x":64,"y":0,"w":64,"h":64},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
-	"sourceSize": {"w":64,"h":64}
-},
-"mech_15-0.png":
-{
-	"frame": {"x":128,"y":0,"w":79,"h":79},
+	"frame": {"x":64,"y":0,"w":79,"h":79},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":79,"h":79},
 	"sourceSize": {"w":79,"h":79}
 },
-"mech_15-1.png":
+"mech_30.png":
 {
-	"frame": {"x":207,"y":0,"w":79,"h":79},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":79,"h":79},
-	"sourceSize": {"w":79,"h":79}
-},
-"mech_30-0.png":
-{
-	"frame": {"x":286,"y":0,"w":88,"h":88},
+	"frame": {"x":143,"y":0,"w":88,"h":88},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":88,"h":88},
 	"sourceSize": {"w":88,"h":88}
 },
-"mech_30-1.png":
+"mech_45.png":
 {
-	"frame": {"x":374,"y":0,"w":88,"h":88},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":88,"h":88},
-	"sourceSize": {"w":88,"h":88}
-},
-"mech_45-0.png":
-{
-	"frame": {"x":462,"y":0,"w":91,"h":91},
+	"frame": {"x":231,"y":0,"w":91,"h":91},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":91,"h":91},
 	"sourceSize": {"w":91,"h":91}
 },
-"mech_45-1.png":
+"mech_60.png":
 {
-	"frame": {"x":553,"y":0,"w":91,"h":91},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":91,"h":91},
-	"sourceSize": {"w":91,"h":91}
-},
-"mech_60-0.png":
-{
-	"frame": {"x":644,"y":0,"w":88,"h":88},
+	"frame": {"x":322,"y":0,"w":88,"h":88},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":88,"h":88},
 	"sourceSize": {"w":88,"h":88}
 },
-"mech_60-1.png":
+"mech_75.png":
 {
-	"frame": {"x":732,"y":0,"w":88,"h":88},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":88,"h":88},
-	"sourceSize": {"w":88,"h":88}
-},
-"mech_75-0.png":
-{
-	"frame": {"x":820,"y":0,"w":79,"h":79},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":79,"h":79},
-	"sourceSize": {"w":79,"h":79}
-},
-"mech_75-1.png":
-{
-	"frame": {"x":899,"y":0,"w":79,"h":79},
+	"frame": {"x":410,"y":0,"w":79,"h":79},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":79,"h":79},
 	"sourceSize": {"w":79,"h":79}
 }},
 "animations": {
-	"mech_0": ["mech_0-0.png","mech_0-1.png"],
-	"mech_15": ["mech_15-0.png","mech_15-1.png"],
-	"mech_30": ["mech_30-0.png","mech_30-1.png"],
-	"mech_45": ["mech_45-0.png","mech_45-1.png"],
-	"mech_60": ["mech_60-0.png","mech_60-1.png"],
-	"mech_75": ["mech_75-0.png","mech_75-1.png"]
+	"mech": ["mech_0.png","mech_15.png","mech_30.png","mech_45.png","mech_60.png","mech_75.png"]
 },
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "mech.png",
 	"format": "RGBA8888",
-	"size": {"w":978,"h":91},
+	"size": {"w":489,"h":91},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:9cac0d2e8e9991e8a52430015ae934ea:483cbcd53891ceaabe90398db136dab6:f26e3e7f6e503f19c0222d4608d6fed2$"
+	"smartupdate": "$TexturePacker:SmartUpdate:75dfeba644e143934b2b39f4ef877016:fbf68d649693992bfdc1f18d86cb3148:f26e3e7f6e503f19c0222d4608d6fed2$"
 }
 }

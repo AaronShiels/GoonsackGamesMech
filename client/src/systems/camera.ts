@@ -8,17 +8,17 @@ const scrollSpeed = 100;
 const cameraSystem: System = (game, deltaSeconds) => {
 	if (!game.state.active()) return;
 
-	const mech = game.stage.children.filter((e) => e instanceof Mech)[0] as Mech | undefined;
+	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 
 	// Check change
-	const cursorOffset = subtract(game.input.cursorPosition, game.camera);
-	const desiredPosition = add(mech, multiply(cursorOffset, focalCoefficient));
+	const cursorOffset = subtract(game.input.cursorLocation, game.camera);
+	const desiredLocation = add(mech, multiply(cursorOffset, focalCoefficient));
 
 	// Apply change
-	if (desiredPosition.x === game.camera.x && desiredPosition.y === game.camera.y) return;
+	if (desiredLocation.x === game.camera.x && desiredLocation.y === game.camera.y) return;
 
-	const difference = subtract(desiredPosition, game.camera);
+	const difference = subtract(desiredLocation, game.camera);
 	const differenceLength = length(difference);
 	const deltaLength = scrollSpeed * deltaSeconds;
 	const delta = multiply(normalise(difference), deltaLength);

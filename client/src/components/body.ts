@@ -8,7 +8,8 @@ interface Edges {
 	top: boolean;
 }
 
-interface BodyComponent extends Vector, Entity {
+interface BodyComponent extends Entity {
+	location: Vector;
 	size: Vector;
 	edges: Edges;
 }
@@ -16,8 +17,8 @@ interface BodyComponent extends Vector, Entity {
 const hasBody = (object: any): object is BodyComponent => "x" in object && "y" in object && "size" in object && "edges" in object;
 const hasEdges = (entity: BodyComponent): boolean => entity.edges.bottom || entity.edges.left || entity.edges.right || entity.edges.top;
 const getBounds = (entity: BodyComponent): Rectangle => ({
-	x: entity.x - entity.size.x / 2,
-	y: entity.y - entity.size.y / 2,
+	x: entity.location.x - entity.size.x / 2,
+	y: entity.location.y - entity.size.y / 2,
 	width: entity.size.x,
 	height: entity.size.y
 });

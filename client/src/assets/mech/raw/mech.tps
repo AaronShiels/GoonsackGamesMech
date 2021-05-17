@@ -181,18 +181,7 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">mech_0-0.png</key>
-            <key type="filename">mech_0-1.png</key>
-            <key type="filename">mech_15-0.png</key>
-            <key type="filename">mech_15-1.png</key>
-            <key type="filename">mech_30-0.png</key>
-            <key type="filename">mech_30-1.png</key>
-            <key type="filename">mech_45-0.png</key>
-            <key type="filename">mech_45-1.png</key>
-            <key type="filename">mech_60-0.png</key>
-            <key type="filename">mech_60-1.png</key>
-            <key type="filename">mech_75-0.png</key>
-            <key type="filename">mech_75-1.png</key>
+            <key type="filename">mech_0.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -207,21 +196,62 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">mech_15.png</key>
+            <key type="filename">mech_75.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>20,20,39,39</rect>
+                <key>scale9Paddings</key>
+                <rect>20,20,39,39</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">mech_30.png</key>
+            <key type="filename">mech_60.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>22,22,44,44</rect>
+                <key>scale9Paddings</key>
+                <rect>22,22,44,44</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">mech_45.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>23,23,45,45</rect>
+                <key>scale9Paddings</key>
+                <rect>23,23,45,45</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>mech_0-0.png</filename>
-            <filename>mech_15-0.png</filename>
-            <filename>mech_30-0.png</filename>
-            <filename>mech_45-0.png</filename>
-            <filename>mech_0-1.png</filename>
-            <filename>mech_15-1.png</filename>
-            <filename>mech_30-1.png</filename>
-            <filename>mech_45-1.png</filename>
-            <filename>mech_60-0.png</filename>
-            <filename>mech_60-1.png</filename>
-            <filename>mech_75-0.png</filename>
-            <filename>mech_75-1.png</filename>
+            <filename>mech_0.png</filename>
+            <filename>mech_15.png</filename>
+            <filename>mech_30.png</filename>
+            <filename>mech_45.png</filename>
+            <filename>mech_60.png</filename>
+            <filename>mech_75.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
