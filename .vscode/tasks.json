@@ -41,7 +41,7 @@
 			"label": "aws: sync",
 			"type": "shell",
 			"command": "aws",
-			"args": ["s3", "sync", "./client/dist", "s3://goonsackgames.com", "--exclude", "*/raw/*"],
+			"args": ["s3", "sync", "./client/dist", "s3://goonsackgames.com/mech", "--exclude", "*/raw/*"],
 			"problemMatcher": []
 		}
 	]

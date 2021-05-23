@@ -181,6 +181,8 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">arm_left_0.png</key>
+            <key type="filename">arm_right_0.png</key>
             <key type="filename">foot_0.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -196,6 +198,44 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">arm_left_15.png</key>
+            <key type="filename">arm_left_75.png</key>
+            <key type="filename">arm_right_15.png</key>
+            <key type="filename">arm_right_75.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>10,10,20,20</rect>
+                <key>scale9Paddings</key>
+                <rect>10,10,20,20</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">arm_left_30.png</key>
+            <key type="filename">arm_left_60.png</key>
+            <key type="filename">arm_right_30.png</key>
+            <key type="filename">arm_right_60.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>11,11,22,22</rect>
+                <key>scale9Paddings</key>
+                <rect>11,11,22,22</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">arm_left_45.png</key>
+            <key type="filename">arm_right_45.png</key>
             <key type="filename">foot_45.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -284,6 +324,18 @@
             <filename>mech_75.png</filename>
             <filename>foot_0.png</filename>
             <filename>foot_45.png</filename>
+            <filename>arm_left_0.png</filename>
+            <filename>arm_left_15.png</filename>
+            <filename>arm_left_30.png</filename>
+            <filename>arm_left_45.png</filename>
+            <filename>arm_left_60.png</filename>
+            <filename>arm_left_75.png</filename>
+            <filename>arm_right_0.png</filename>
+            <filename>arm_right_15.png</filename>
+            <filename>arm_right_30.png</filename>
+            <filename>arm_right_45.png</filename>
+            <filename>arm_right_60.png</filename>
+            <filename>arm_right_75.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

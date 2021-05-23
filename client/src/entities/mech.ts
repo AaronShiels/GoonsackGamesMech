@@ -11,11 +11,17 @@ class Mech extends Container implements PhysicsComponent {
 
 		this.body = new MechBody(0);
 		this.addChild(this.body);
+		this.leftArm = new MechArm(0, "left");
+		this.leftArm.zIndex = this.zIndex - 1;
+		this.addChild(this.leftArm);
+		this.rightArm = new MechArm(0, "right");
+		this.rightArm.zIndex = this.zIndex - 1;
+		this.addChild(this.rightArm);
 		this.leftFoot = new MechFoot(0, location);
-		this.leftFoot.zIndex = this.zIndex - 1;
+		this.leftFoot.zIndex = this.zIndex - 2;
 		this.addChild(this.leftFoot);
 		this.rightFoot = new MechFoot(0, location);
-		this.rightFoot.zIndex = this.zIndex - 1;
+		this.rightFoot.zIndex = this.zIndex - 2;
 		this.addChild(this.rightFoot);
 
 		// Initialise location
@@ -37,6 +43,8 @@ class Mech extends Container implements PhysicsComponent {
 	}
 
 	public readonly body: MechBody;
+	public readonly leftArm: MechArm;
+	public readonly rightArm: MechArm;
 	public readonly leftFoot: MechFoot;
 	public readonly rightFoot: MechFoot;
 
@@ -55,9 +63,8 @@ class MechBody extends Sprite {
 		super();
 
 		this._spritesheet = getResource(Resource.Mech).spritesheet!;
-		this.texture = this._spritesheet.textures["mech_0.png"];
-		this.anchor.set(0.5);
 
+		this.anchor.set(0.5);
 		this.direction = initialDirection;
 	}
 
@@ -75,6 +82,45 @@ class MechBody extends Sprite {
 	}
 }
 
+class MechArm extends Sprite {
+	private _spritesheet: Spritesheet;
+	private _direction: number = 0;
+	private _location: Vector = { x: 0, y: 0 };
+	private _side: "left" | "right";
+
+	constructor(initialDirection: number, side: "left" | "right") {
+		super();
+
+		this._spritesheet = getResource(Resource.Mech).spritesheet!;
+		this._side = side;
+
+		this.anchor.set(0.5);
+		this.direction = initialDirection;
+	}
+
+	public get direction(): number {
+		return this._direction;
+	}
+	public set direction(value: number) {
+		this._direction = value;
+
+		const degreeAngle = boundAngle(toDegrees(value), 0, 360);
+		const roundedDegreeAngle = Math.round(degreeAngle / 15) * 15;
+
+		this.texture = this._spritesheet.textures[`arm_${this._side}_${roundedDegreeAngle % 90}.png`];
+		this.angle = Math.floor(roundedDegreeAngle / 90) * 90;
+	}
+	public get location(): Vector {
+		return this._location;
+	}
+	public set location(value: Vector) {
+		this._location = value;
+
+		this.position.x = Math.round(this._location.x);
+		this.position.y = Math.round(this._location.y);
+	}
+}
+
 class MechFoot extends Sprite {
 	private _spritesheet: Spritesheet;
 	private _location: Vector = { x: 0, y: 0 };
@@ -84,9 +130,8 @@ class MechFoot extends Sprite {
 		super();
 
 		this._spritesheet = getResource(Resource.Mech).spritesheet!;
-		this.texture = this._spritesheet.textures["foot_0.png"];
-		this.anchor.set(0.5);
 
+		this.anchor.set(0.5);
 		this.direction = initialDirection;
 		this.location = initalLocation;
 		this.desiredLocation = initalLocation;
@@ -118,4 +163,4 @@ class MechFoot extends Sprite {
 	public desiredLocation: Vector;
 }
 
-export { Mech, MechBody, MechFoot };
+export { Mech, MechBody, MechArm, MechFoot };
