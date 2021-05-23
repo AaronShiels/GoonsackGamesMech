@@ -1,7 +1,7 @@
 import { Edges, PhysicsComponent } from "../components";
 import { getResource, Resource } from "../assets";
 import { boundAngle, toDegrees, Vector } from "../utilities";
-import { Container, Graphics, Sprite, Spritesheet } from "pixi.js";
+import { Container, Sprite, Spritesheet } from "pixi.js";
 
 class Mech extends Container implements PhysicsComponent {
 	private _location: Vector = { x: 0, y: 0 };
@@ -11,10 +11,10 @@ class Mech extends Container implements PhysicsComponent {
 
 		this.body = new MechBody(0);
 		this.addChild(this.body);
-		this.leftFoot = new MechFoot(location);
+		this.leftFoot = new MechFoot(0, location);
 		this.leftFoot.zIndex = this.zIndex - 1;
 		this.addChild(this.leftFoot);
-		this.rightFoot = new MechFoot(location);
+		this.rightFoot = new MechFoot(0, location);
 		this.rightFoot.zIndex = this.zIndex - 1;
 		this.addChild(this.rightFoot);
 
@@ -75,20 +75,35 @@ class MechBody extends Sprite {
 	}
 }
 
-class MechFoot extends Graphics {
+class MechFoot extends Sprite {
+	private _spritesheet: Spritesheet;
 	private _location: Vector = { x: 0, y: 0 };
+	private _direction: number = 0;
 
-	constructor(initalLocation: Vector) {
+	constructor(initialDirection: number, initalLocation: Vector) {
 		super();
 
-		this.beginFill(0x0000ff);
-		this.drawCircle(0, 0, 10);
-		this.endFill();
+		this._spritesheet = getResource(Resource.Mech).spritesheet!;
+		this.texture = this._spritesheet.textures["foot_0.png"];
+		this.anchor.set(0.5);
 
+		this.direction = initialDirection;
 		this.location = initalLocation;
 		this.desiredLocation = initalLocation;
 	}
 
+	public get direction(): number {
+		return this._direction;
+	}
+	public set direction(value: number) {
+		this._direction = value;
+
+		const degreeAngle = boundAngle(toDegrees(value), 0, 360);
+		const roundedDegreeAngle = Math.round(degreeAngle / 45) * 45;
+
+		this.texture = this._spritesheet.textures[`foot_${roundedDegreeAngle % 90}.png`];
+		this.angle = Math.floor(roundedDegreeAngle / 90) * 90;
+	}
 	public get location(): Vector {
 		return this._location;
 	}

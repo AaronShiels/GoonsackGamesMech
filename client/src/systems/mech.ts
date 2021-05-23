@@ -7,7 +7,6 @@ const walkingForce = 200;
 const turnSpeed = 3;
 const footSpeed = 200;
 const maxFootNormalDistance = 15;
-const footNormalDistanceCoefficient = 0.95;
 const footTangentDistance = 10;
 
 const mechSystem: System = (game, deltaSeconds) => {
@@ -40,15 +39,23 @@ const updateDesiredFeetLocations = (mech: Mech, moveDirection: Vector): void => 
 		const rightFootCentreScalarOffset = calculateFootCentreScalarOffset(mech, mech.rightFoot, moveDirection);
 
 		if (leftFootCentreScalarOffset < 0 && rightFootCentreScalarOffset < 0)
-			if (rightFootCentreScalarOffset > leftFootCentreScalarOffset)
+			if (rightFootCentreScalarOffset > leftFootCentreScalarOffset) {
 				mech.leftFoot.desiredLocation = calculateDesiredFootLocation(mech, moveDirection, "left");
-			else mech.rightFoot.desiredLocation = calculateDesiredFootLocation(mech, moveDirection, "right");
+				mech.leftFoot.direction = Math.atan2(moveDirection.y, moveDirection.x);
+			} else {
+				mech.rightFoot.desiredLocation = calculateDesiredFootLocation(mech, moveDirection, "right");
+				mech.rightFoot.direction = Math.atan2(moveDirection.y, moveDirection.x);
+			}
 
-		if (Math.abs(leftFootCentreScalarOffset) > maxFootNormalDistance)
+		if (Math.abs(leftFootCentreScalarOffset) > maxFootNormalDistance) {
 			mech.leftFoot.desiredLocation = calculateDesiredFootLocation(mech, moveDirection, "left");
+			mech.leftFoot.direction = Math.atan2(moveDirection.y, moveDirection.x);
+		}
 
-		if (Math.abs(rightFootCentreScalarOffset) > maxFootNormalDistance)
+		if (Math.abs(rightFootCentreScalarOffset) > maxFootNormalDistance) {
 			mech.rightFoot.desiredLocation = calculateDesiredFootLocation(mech, moveDirection, "right");
+			mech.rightFoot.direction = Math.atan2(moveDirection.y, moveDirection.x);
+		}
 	}
 };
 
@@ -59,7 +66,7 @@ const calculateFootCentreScalarOffset = (mech: Mech, foot: MechFoot, moveDirecti
 };
 
 const calculateDesiredFootLocation = (mech: Mech, moveDirection: Vector, leftOrRight: "left" | "right"): Vector => {
-	const forwardFootLocation = add(mech.location, multiply(moveDirection, maxFootNormalDistance * footNormalDistanceCoefficient));
+	const forwardFootLocation = add(mech.location, multiply(moveDirection, maxFootNormalDistance));
 	const tangentDirection = leftOrRight == "left" ? 1 : -1;
 	const tangentOffset = multiply({ x: moveDirection.y * tangentDirection, y: moveDirection.x * -tangentDirection }, footTangentDistance);
 	const adjustedForwardFootLocation = add(forwardFootLocation, tangentOffset);
