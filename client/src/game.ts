@@ -1,9 +1,9 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
-import { Entity, isEntity, Mech } from "./entities";
+import { Building, Entity, Tile, isEntity, Mech } from "./entities";
 import { Rectangle, Vector } from "./utilities";
 import { systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
-import { createMapTiles } from "./utilities/map";
+import { generateTileData, generateObjectData } from "./utilities/map";
 
 // settings.ROUND_PIXELS = true;
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
@@ -45,7 +45,7 @@ class Game extends Application {
 		active: () => true
 	};
 	public readonly input: GameInput;
-	public get entities(): Entity[] {
+	public get entities(): ReadonlyArray<Entity> {
 		return this.stage.children.filter((e) => isEntity(e)) as unknown as Entity[];
 	}
 
@@ -57,9 +57,9 @@ class Game extends Application {
 		await loadResources();
 
 		// Load map
-		const groundTiles = createMapTiles(defaultMap, "ground", false);
-		const buildingTiles = createMapTiles(defaultMap, "building", true);
-		this.stage.addChild(...groundTiles, ...buildingTiles);
+		const tiles = generateTileData(defaultMap, "ground").map((td) => new Tile(td));
+		const buildings = generateObjectData(defaultMap, "buildings").map((od) => new Building(od));
+		this.stage.addChild(...tiles, ...buildings);
 
 		// Initialise player
 		const mech = new Mech({ x: 80, y: 120 });

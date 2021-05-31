@@ -24,7 +24,7 @@ class Mech extends Container implements PhysicsComponent {
 		this.rightFoot.zIndex = this.zIndex - 2;
 		this.addChild(this.rightFoot);
 
-		// Initialise location
+		this.zIndex = 1;
 		this.location = location;
 	}
 

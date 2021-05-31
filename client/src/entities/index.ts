@@ -1,3 +1,4 @@
+import { Building } from "./building";
 import { Mech, MechBody, MechArm, MechFoot } from "./mech";
 import { Tile } from "./tile";
 
@@ -7,4 +8,4 @@ interface Entity {
 
 const isEntity = (object: any): object is Entity => "destroyed" in object;
 
-export { Entity, isEntity, Mech, MechBody, MechArm, MechFoot, Tile };
+export { Entity, isEntity, Mech, MechBody, MechArm, MechFoot, Tile, Building };

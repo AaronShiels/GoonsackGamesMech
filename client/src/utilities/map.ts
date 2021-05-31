@@ -1,8 +1,9 @@
+import { Texture } from "pixi.js";
+import { Rectangle, Vector } from ".";
 import { getResource, Resource } from "../assets";
-import { Tile } from "../entities";
 
 interface TileMap {
-	layers: TileLayer[];
+	layers: Array<TileLayer | ObjectGroup>;
 	tilesets: TileSet[];
 	tilewidth: number;
 	tileheight: number;
@@ -16,32 +17,56 @@ interface TileLayer {
 	height: number;
 }
 
+interface ObjectGroup {
+	name: string;
+	type: string;
+	objects: any[];
+}
+
 interface TileSet {
 	columns: number;
 	tilewidth: number;
 	tileheight: number;
 }
 
-const createMapTiles = (map: TileMap, layer: string, solid: boolean, zIndex: number = 0): Tile[] => {
-	const tilesLayer = map.layers.filter((l) => l.name === layer)[0];
+interface TileData {
+	textureAtlas: { texture: Texture; frame: Rectangle };
+	location: Vector;
+	size: Vector;
+	neighbours: { bottom: boolean; left: boolean; right: boolean; top: boolean };
+}
+
+interface ObjectData {
+	location: Vector;
+	size: Vector;
+	name: string;
+	type: string;
+}
+
+const isTileLayer = (layer: any): layer is TileLayer => layer.type === "tilelayer";
+const isObjectGroup = (layer: any): layer is ObjectGroup => layer.type === "objectgroup";
+
+const generateTileData = (map: TileMap, layerName: string): TileData[] => {
+	const layer = map.layers.filter((l) => l.name === layerName)[0];
 	const tileSet = map.tilesets[0];
-	const textureAtlas = getResource(Resource.Map).texture;
+	const textureAtlasTexture = getResource(Resource.Map).texture;
 
-	if (!tilesLayer || tilesLayer.type !== "tilelayer" || !tilesLayer.data || !tilesLayer.width || !tilesLayer.height)
-		throw new Error("Invalid layer provided.");
+	if (!isTileLayer(layer)) throw new Error("Invalid layer provided.");
 
-	const tiles: Tile[] = [];
-	for (let yIndex = 0; yIndex < tilesLayer.height; yIndex++)
-		for (let xIndex = 0; xIndex < tilesLayer.width; xIndex++) {
-			const tileBounds = {
-				x: xIndex * map.tilewidth,
-				y: yIndex * map.tileheight,
-				width: map.tilewidth,
-				height: map.tileheight
+	const tiles: TileData[] = [];
+	for (let yIndex = 0; yIndex < layer.height; yIndex++)
+		for (let xIndex = 0; xIndex < layer.width; xIndex++) {
+			const location = {
+				x: xIndex * map.tilewidth + map.tilewidth / 2,
+				y: yIndex * map.tileheight + map.tileheight / 2
+			};
+			const size = {
+				x: map.tilewidth,
+				y: map.tileheight
 			};
 
-			const index = xIndex + yIndex * tilesLayer.width;
-			const tileValue = tilesLayer.data[index];
+			const index = xIndex + yIndex * layer.width;
+			const tileValue = layer.data[index];
 			if (!tileValue) continue;
 
 			const textureAtlasIndex = tileValue - 1;
@@ -54,17 +79,35 @@ const createMapTiles = (map: TileMap, layer: string, solid: boolean, zIndex: num
 				height: tileSet.tileheight
 			};
 
-			const edges = { bottom: true, left: true, right: true, top: true };
-			if (!solid || (yIndex < tilesLayer.height - 1 && tilesLayer.data[xIndex + (yIndex + 1) * tilesLayer.width])) edges.bottom = false;
-			if (!solid || (xIndex > 0 && tilesLayer.data[xIndex - 1 + yIndex * tilesLayer.width])) edges.left = false;
-			if (!solid || (xIndex < tilesLayer.width - 1 && tilesLayer.data[xIndex + 1 + yIndex * tilesLayer.width])) edges.right = false;
-			if (!solid || (yIndex > 0 && tilesLayer.data[xIndex + (yIndex - 1) * tilesLayer.width])) edges.top = false;
+			const neighbours = { bottom: false, left: false, right: false, top: false };
+			if (yIndex < layer.height - 1 && layer.data[xIndex + (yIndex + 1) * layer.width]) neighbours.bottom = true;
+			if (xIndex > 0 && layer.data[xIndex - 1 + yIndex * layer.width]) neighbours.left = true;
+			if (xIndex < layer.width - 1 && layer.data[xIndex + 1 + yIndex * layer.width]) neighbours.right = true;
+			if (yIndex > 0 && layer.data[xIndex + (yIndex - 1) * layer.width]) neighbours.top = true;
 
-			const tile = new Tile(textureAtlas, textureAtlasFrame, tileBounds, edges, zIndex);
-			tiles.push(tile);
+			const tileData = {
+				textureAtlas: { texture: textureAtlasTexture, frame: textureAtlasFrame },
+				location,
+				size,
+				neighbours
+			};
+			tiles.push(tileData);
 		}
 
 	return tiles;
 };
 
-export { createMapTiles };
+const generateObjectData = (map: TileMap, layerName: string): ObjectData[] => {
+	const layer = map.layers.filter((l) => l.name === layerName)[0];
+
+	if (!isObjectGroup(layer)) throw new Error("Invalid layer provided.");
+
+	return layer.objects.map((v) => ({
+		location: { x: v.x + v.width / 2, y: v.y + v.height / 2 },
+		size: { x: v.width, y: v.height },
+		name: v.name,
+		type: v.type
+	}));
+};
+
+export { TileData, ObjectData, generateTileData, generateObjectData };
