@@ -1,7 +1,7 @@
 import { System } from ".";
-import { Building, Mech } from "../entities";
+import { BuildingSegment, Mech } from "../entities";
 import { Game } from "../game";
-import { add, multiply, normalise, subtract, length } from "../utilities";
+import { add, multiply, normalise, subtract, length, round } from "../utilities";
 
 const focalCoefficient = 0.25;
 const scrollSpeed = 100;
@@ -33,9 +33,9 @@ const updateCameraLocation = (game: Game, deltaSeconds: number): void => {
 
 const applyBuildingElevation = (game: Game): void => {
 	for (const entity of game.entities) {
-		if (!(entity instanceof Building)) continue;
+		if (!(entity instanceof BuildingSegment)) continue;
 
-		entity.cameraOffset = subtract(game.camera, entity.location);
+		entity.updatePerspective(round(subtract(game.camera, entity.location)));
 	}
 };
 

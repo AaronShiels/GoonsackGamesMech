@@ -1,5 +1,5 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
-import { Building, Entity, Tile, isEntity, Mech } from "./entities";
+import { Entity, Tile, isEntity, Mech, createBuilding } from "./entities";
 import { Rectangle, Vector } from "./utilities";
 import { systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
@@ -58,7 +58,8 @@ class Game extends Application {
 
 		// Load map
 		const tiles = generateTileData(defaultMap, "ground").map((td) => new Tile(td));
-		const buildings = generateObjectData(defaultMap, "buildings").map((od) => new Building(od));
+		const buildings = generateObjectData(defaultMap, "buildings").flatMap((od) => createBuilding(od));
+		// const buildings = [...createBuilding(generateObjectData(defaultMap, "buildings")[0])];
 		this.stage.addChild(...tiles, ...buildings);
 
 		// Initialise player

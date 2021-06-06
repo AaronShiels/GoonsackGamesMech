@@ -1,49 +1,153 @@
-import { Sprite } from "pixi.js";
+import { Container, Sprite } from "pixi.js";
 import { getResource, Resource } from "../assets";
 import { BodyComponent, Edges } from "../components";
-import { multiply, ObjectData, Vector } from "../utilities";
+import { ObjectData, Vector } from "../utilities";
 
-class Building extends Sprite implements BodyComponent {
+const segmentCount = 5;
+const elevationPerspectiveCoefficient = 10;
+
+class BuildingSegment extends Container implements BodyComponent {
 	private _location: Vector = { x: 0, y: 0 };
-	private _cameraOffset: Vector = { x: 0, y: 0 };
+	private _floor: number;
+	private _segmentSprite: Sprite;
 
-	constructor(objectData: ObjectData) {
-		super(getResource(Resource.Building).spritesheet!.textures["building_top.png"]);
+	constructor(objectData: ObjectData, floor: number, roof: boolean) {
+		super();
 
-		console.log(objectData);
-		this.elevation = 0.25;
+		this._floor = floor;
+
 		this.location = objectData.location;
 		this.size = objectData.size;
-		this.edges = { bottom: true, left: true, right: true, top: true };
-		this.scale.set(1 + this.elevation);
-		this.zIndex = this.elevation * 10;
-		this.anchor.set(0.5);
+		this.edges = { bottom: !this._floor, left: !this._floor, right: !this._floor, top: !this._floor };
+		this.zIndex = this._floor;
+
+		const spriteSheet = getResource(Resource.Building).spritesheet!;
+		const texture = spriteSheet.textures[`building_${roof ? "roof" : "side"}.png`];
+		this._segmentSprite = new Sprite(texture);
+		this._segmentSprite.anchor.set(0.5);
+		this._segmentSprite.scale.x = 1 + this._floor / elevationPerspectiveCoefficient;
+		this._segmentSprite.scale.y = 1 + this._floor / elevationPerspectiveCoefficient;
+		this.addChild(this._segmentSprite);
 	}
 
-	public elevation: number;
-	public set cameraOffset(value: Vector) {
-		if (this._cameraOffset && this._cameraOffset.x === value.x && this._cameraOffset.y === value.y) return;
-
-		this._cameraOffset = value;
-		this.updatePosition();
-	}
 	public get location(): Vector {
 		return this._location;
 	}
 	public set location(value: Vector) {
 		this._location = value;
-		this.updatePosition();
+
+		this.position.x = value.x;
+		this.position.y = value.y;
 	}
 	public size: Vector;
 	public edges: Edges;
 	public destroyed: boolean = false;
 
-	private updatePosition(): void {
-		const displacement = multiply(this._cameraOffset, this.elevation);
-
-		this.position.x = Math.round(this._location.x - displacement.x);
-		this.position.y = Math.round(this._location.y - displacement.y);
+	public updatePerspective(cameraOffset: Vector): void {
+		this._segmentSprite.position.x = Math.round(-cameraOffset.x * (this._floor / elevationPerspectiveCoefficient));
+		this._segmentSprite.position.y = Math.round(-cameraOffset.y * (this._floor / elevationPerspectiveCoefficient));
 	}
 }
 
-export { Building };
+const createBuilding = (objectData: ObjectData): BuildingSegment[] => {
+	const buildingSegments = [];
+	for (let i = 0; i < segmentCount; i++) buildingSegments.push(new BuildingSegment(objectData, i, i === segmentCount - 1));
+
+	return buildingSegments;
+};
+
+/* OLD IMPLEMENTATION
+class Building extends Container implements BodyComponent {
+	private readonly _roof: Sprite;
+	private readonly _sideNS: Sprite[] = [];
+	private readonly _sideEW: Sprite[] = [];
+
+	private _cameraOffset: Vector = { x: 0, y: 0 };
+
+	constructor(objectData: ObjectData) {
+		super();
+
+		this.elevation = 0.25;
+		this.location = objectData.location;
+		this.size = objectData.size;
+		this.edges = { bottom: true, left: true, right: true, top: true };
+
+		this.position.x = this.location.x;
+		this.position.y = this.location.y;
+
+		const spriteSheet = getResource(Resource.Building).spritesheet!;
+		const roofTexture = spriteSheet.textures["building_roof.png"];
+		const sideTexture = spriteSheet.textures["building_side.png"];
+
+		this._roof = new Sprite(roofTexture);
+		this._roof.anchor.set(0.5);
+		this._roof.zIndex = 1;
+		this.addChild(this._roof);
+
+		for (let i = 0; i < segmentCount; i++) {
+			const segmentNS = new Sprite(sideTexture);
+			segmentNS.anchor.set(0.5);
+			this.addChild(segmentNS);
+			this._sideNS.push(segmentNS);
+
+			const segmentEW = new Sprite(sideTexture);
+			segmentEW.anchor.set(0.5);
+			this.addChild(segmentEW);
+			this._sideEW.push(segmentEW);
+		}
+	}
+
+	public elevation: number;
+	public location: Vector;
+	public size: Vector;
+	public edges: Edges;
+	public destroyed: boolean = false;
+
+	public updatePerspective(cameraOffset: Vector): void {
+		if (this._cameraOffset.x === cameraOffset.x && this._cameraOffset.y === cameraOffset.y) return;
+
+		this._cameraOffset = cameraOffset;
+
+		// Calculate roof
+		const roofWidth = Math.round(this.size.x * (1 + this.elevation));
+		const roofHeight = Math.round(this.size.y * (1 + this.elevation));
+		const roofDisplacementX = Math.round(-this._cameraOffset.x * this.elevation);
+		const roofDisplacementY = Math.round(-this._cameraOffset.y * this.elevation);
+
+		this._roof.position.x = roofDisplacementX;
+		this._roof.position.y = roofDisplacementY;
+		this._roof.width = roofWidth;
+		this._roof.height = roofHeight;
+
+		// Calculate sides
+		const positionXInterval = roofDisplacementX / segmentCount;
+		const positionYInterval = roofDisplacementY / segmentCount;
+		const widthInterval = (roofWidth - this.size.x) / segmentCount;
+		const heightInterval = (roofHeight - this.size.y) / segmentCount;
+
+		const sideEWCoefficient = cameraOffset.x >= 0 ? 1 : -1;
+		const sideNSCoefficient = cameraOffset.y >= 0 ? 1 : -1;
+		const sideEWGround = (sideEWCoefficient * this.size.x) / 2;
+		const sideNSGround = (sideNSCoefficient * this.size.y) / 2;
+		const sideEWRoof = roofDisplacementX + (sideEWCoefficient * roofWidth) / 2;
+		const sideNSRoof = roofDisplacementY + (sideNSCoefficient * roofHeight) / 2;
+
+		const sideEWInterval = (sideEWRoof - sideEWGround) / segmentCount;
+		const sideNSInterval = (sideNSRoof - sideNSGround) / segmentCount;
+
+		for (let i = 0; i < segmentCount; i++) {
+			this._sideNS[i].width = this.size.x + widthInterval * i;
+			this._sideNS[i].height = sideNSInterval;
+			this._sideNS[i].position.x = positionXInterval * i;
+			this._sideNS[i].position.y = sideNSGround + sideNSInterval * i + sideNSInterval / 2;
+
+			this._sideEW[i].width = sideEWInterval;
+			this._sideEW[i].height = this.size.y + heightInterval * i;
+			this._sideEW[i].position.x = sideEWGround + sideEWInterval * i + sideEWInterval / 2;
+			this._sideEW[i].position.y = positionYInterval * i;
+		}
+	}
+}
+*/
+
+export { BuildingSegment, createBuilding };
