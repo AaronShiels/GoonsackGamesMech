@@ -14,7 +14,7 @@ interface BodyComponent extends Entity {
 	edges: Edges;
 }
 
-const hasBody = (object: any): object is BodyComponent => "x" in object && "y" in object && "size" in object && "edges" in object;
+const hasBody = (object: any): object is BodyComponent => "location" in object && "size" in object && "edges" in object;
 const hasEdges = (entity: BodyComponent): boolean => entity.edges.bottom || entity.edges.left || entity.edges.right || entity.edges.top;
 const getBounds = (entity: BodyComponent): Rectangle => ({
 	x: entity.location.x - entity.size.x / 2,

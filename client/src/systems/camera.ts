@@ -9,11 +9,6 @@ const scrollSpeed = 100;
 const cameraSystem: System = (game, deltaSeconds) => {
 	if (!game.state.active()) return;
 
-	updateCameraLocation(game, deltaSeconds);
-	applyBuildingElevation(game);
-};
-
-const updateCameraLocation = (game: Game, deltaSeconds: number): void => {
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 
@@ -29,14 +24,6 @@ const updateCameraLocation = (game: Game, deltaSeconds: number): void => {
 
 	game.camera.x += differenceLength < deltaLength ? difference.x : delta.x;
 	game.camera.y += differenceLength < deltaLength ? difference.y : delta.y;
-};
-
-const applyBuildingElevation = (game: Game): void => {
-	for (const entity of game.entities) {
-		if (!(entity instanceof BuildingSegment)) continue;
-
-		entity.updatePerspective(round(subtract(game.camera, entity.location)));
-	}
 };
 
 export { cameraSystem };

@@ -1,32 +1,30 @@
 import { Container, Sprite } from "pixi.js";
 import { getResource, Resource } from "../assets";
-import { BodyComponent, Edges } from "../components";
+import { Edges, ElevationComponent } from "../components";
 import { ObjectData, Vector } from "../utilities";
 
-const segmentCount = 5;
-const elevationPerspectiveCoefficient = 10;
+const maxFloors = 8;
+const minFloors = 4;
 
-class BuildingSegment extends Container implements BodyComponent {
+class BuildingSegment extends Container implements ElevationComponent {
 	private _location: Vector = { x: 0, y: 0 };
-	private _floor: number;
+	private _elevation: number = 0;
+	private _perspectiveDisplacement: Vector = { x: 0, y: 0 };
+	private _perspectiveScale: number = 1;
 	private _segmentSprite: Sprite;
 
 	constructor(objectData: ObjectData, floor: number, roof: boolean) {
 		super();
 
-		this._floor = floor;
-
 		this.location = objectData.location;
 		this.size = objectData.size;
-		this.edges = { bottom: !this._floor, left: !this._floor, right: !this._floor, top: !this._floor };
-		this.zIndex = this._floor;
+		this.edges = { bottom: !floor, left: !floor, right: !floor, top: !floor };
+		this.elevation = floor;
 
 		const spriteSheet = getResource(Resource.Building).spritesheet!;
 		const texture = spriteSheet.textures[`building_${roof ? "roof" : "side"}.png`];
 		this._segmentSprite = new Sprite(texture);
 		this._segmentSprite.anchor.set(0.5);
-		this._segmentSprite.scale.x = 1 + this._floor / elevationPerspectiveCoefficient;
-		this._segmentSprite.scale.y = 1 + this._floor / elevationPerspectiveCoefficient;
 		this.addChild(this._segmentSprite);
 	}
 
@@ -41,15 +39,37 @@ class BuildingSegment extends Container implements BodyComponent {
 	}
 	public size: Vector;
 	public edges: Edges;
-	public destroyed: boolean = false;
-
-	public updatePerspective(cameraOffset: Vector): void {
-		this._segmentSprite.position.x = Math.round(-cameraOffset.x * (this._floor / elevationPerspectiveCoefficient));
-		this._segmentSprite.position.y = Math.round(-cameraOffset.y * (this._floor / elevationPerspectiveCoefficient));
+	public get elevation(): number {
+		return this._elevation;
 	}
+	public set elevation(value: number) {
+		this._elevation = value;
+
+		this.zIndex = value;
+	}
+	public get perspectiveDisplacement(): Vector {
+		return this._perspectiveDisplacement;
+	}
+	public set perspectiveDisplacement(value: Vector) {
+		this._perspectiveDisplacement = value;
+
+		this._segmentSprite.position.x = Math.round(value.x);
+		this._segmentSprite.position.y = Math.round(value.y);
+	}
+	public get perspectiveScale(): number {
+		return this._perspectiveScale;
+	}
+	public set perspectiveScale(value: number) {
+		this._perspectiveScale = value;
+
+		this._segmentSprite.scale.set(value);
+	}
+	public destroyed: boolean = false;
 }
 
 const createBuilding = (objectData: ObjectData): BuildingSegment[] => {
+	const segmentCount = Math.floor(Math.random() * (maxFloors - minFloors + 1) + minFloors);
+
 	const buildingSegments = [];
 	for (let i = 0; i < segmentCount; i++) buildingSegments.push(new BuildingSegment(objectData, i, i === segmentCount - 1));
 

@@ -8,9 +8,21 @@ import { healthSystem } from "./health";
 import { Game } from "../game";
 import { inputSystem } from "./input";
 import { cameraSystem } from "./camera";
+import { elevationSystem } from "./elevation";
 
 type System = (game: Game, deltaSeconds: number) => void;
 
-const systems = [inputSystem, mechSystem, enemySystem, healthSystem, physicsSystem, collisionSystem, cameraSystem, renderSystem, garbageCollectionSystem];
+const systems = [
+	inputSystem,
+	mechSystem,
+	enemySystem,
+	healthSystem,
+	physicsSystem,
+	collisionSystem,
+	cameraSystem,
+	elevationSystem,
+	renderSystem,
+	garbageCollectionSystem
+];
 
 export { System, systems };
