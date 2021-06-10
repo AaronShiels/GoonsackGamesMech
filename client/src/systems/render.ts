@@ -1,4 +1,4 @@
-import { AnimatedSprite, DisplayObject } from "pixi.js";
+import { AnimatedSprite } from "pixi.js";
 import { System } from ".";
 
 const renderSystem: System = (game, deltaSeconds) => {

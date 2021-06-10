@@ -12,8 +12,15 @@ const physicsSystem: System = (game, deltaSeconds) => {
 
 		const frictionDecceleration = multiply(entity.velocity, frictionCoefficient);
 		const totalAcceleration = subtract(entity.acceleration, frictionDecceleration);
-		entity.velocity = add(entity.velocity, multiply(totalAcceleration, deltaSeconds));
-		entity.location = add(entity.location, multiply(entity.velocity, deltaSeconds));
+		const deltaAcceleration = multiply(totalAcceleration, deltaSeconds);
+
+		entity.velocity.x += deltaAcceleration.x;
+		entity.velocity.y += deltaAcceleration.y;
+
+		const deltaVelocity = multiply(entity.velocity, deltaSeconds);
+
+		entity.position.x += deltaVelocity.x;
+		entity.position.y += deltaVelocity.y;
 	}
 };
 

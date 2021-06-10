@@ -3,7 +3,7 @@ import { BodyComponent } from "./body";
 
 interface ElevationComponent extends BodyComponent {
 	elevation: number;
-	perspectiveDisplacement: Vector;
+	readonly perspectiveDisplacement: Vector;
 	perspectiveScale: number;
 }
 

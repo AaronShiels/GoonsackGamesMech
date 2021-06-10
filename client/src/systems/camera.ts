@@ -12,12 +12,12 @@ const cameraSystem: System = (game, deltaSeconds) => {
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 
-	const cursorOffset = subtract(game.input.cursorLocation, game.camera);
-	const desiredCameraLocation = add(mech.location, multiply(cursorOffset, focalCoefficient));
+	const cursorOffset = subtract(game.input.cursorPosition, game.camera);
+	const desiredCameraPosition = add(mech.position, multiply(cursorOffset, focalCoefficient));
 
-	if (desiredCameraLocation.x === game.camera.x && desiredCameraLocation.y === game.camera.y) return;
+	if (desiredCameraPosition.x === game.camera.x && desiredCameraPosition.y === game.camera.y) return;
 
-	const difference = subtract(desiredCameraLocation, game.camera);
+	const difference = subtract(desiredCameraPosition, game.camera);
 	const differenceLength = length(difference);
 	const deltaLength = scrollSpeed * deltaSeconds;
 	const delta = multiply(normalise(difference), deltaLength);

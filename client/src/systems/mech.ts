@@ -17,102 +17,126 @@ const mechSystem: System = (game, deltaSeconds) => {
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 
-	mech.acceleration = multiply(game.input.moveDirection, walkingForce);
+	const acceleration = multiply(game.input.moveDirection, walkingForce);
 
-	updateBodyDirection(mech, game.input.cursorLocation, deltaSeconds);
-	updateArmDirections(mech, game.input.cursorLocation, deltaSeconds);
-	updateDesiredFeetLocations(mech, game.input.moveDirection);
-	updateFeetLocation(mech, deltaSeconds);
+	mech.acceleration.x = acceleration.x;
+	mech.acceleration.y = acceleration.y;
+
+	updateBodyDirection(mech, game.input.cursorPosition, deltaSeconds);
+	updateArmDirection(mech, mech.leftArm, game.input.cursorPosition, deltaSeconds);
+	updateArmDirection(mech, mech.rightArm, game.input.cursorPosition, deltaSeconds);
+	updateDesiredFeetPositions(mech, game.input.moveDirection);
+	updateFootPosition(mech.leftFoot, deltaSeconds);
+	updateFootPosition(mech.rightFoot, deltaSeconds);
 };
 
-const updateBodyDirection = (mech: Mech, targetLocation: Vector, deltaSeconds: number): void => {
-	const targetVector = subtract(targetLocation, mech.location);
+const updateBodyDirection = (mech: Mech, targetPosition: Vector, deltaSeconds: number): void => {
+	const targetVector = subtract(targetPosition, mech.position);
 	if (!hasValue(targetVector)) return;
 
 	const targetAngle = Math.atan2(targetVector.y, targetVector.x);
 	const differenceAngle = boundAngle(targetAngle - mech.body.direction);
 	const deltaAngle = differenceAngle > 0 ? Math.min(differenceAngle, bodyTurnSpeed * deltaSeconds) : Math.max(differenceAngle, -bodyTurnSpeed * deltaSeconds);
 	const newAngle = boundAngle(mech.body.direction + deltaAngle);
+
 	mech.body.direction = newAngle;
 
-	updateArmLocation(mech.leftArm, newAngle, "left");
-	updateArmLocation(mech.rightArm, newAngle, "right");
+	updateArmPosition(mech.leftArm, newAngle, "left");
+	updateArmPosition(mech.rightArm, newAngle, "right");
 };
 
-const updateArmDirections = (mech: Mech, targetLocation: Vector, deltaSeconds: number): void => {
-	updateArmDirection(mech, mech.leftArm, targetLocation, deltaSeconds);
-	updateArmDirection(mech, mech.rightArm, targetLocation, deltaSeconds);
-};
-
-const updateArmDirection = (mech: Mech, arm: MechArm, targetLocation: Vector, deltaSeconds: number): void => {
-	const absoluteArmLocation = add(mech.location, arm.location);
-	const targetVector = subtract(targetLocation, absoluteArmLocation);
+const updateArmDirection = (mech: Mech, arm: MechArm, targetPosition: Vector, deltaSeconds: number): void => {
+	const absoluteArmPosition = add(mech.position, arm.position);
+	const targetVector = subtract(targetPosition, absoluteArmPosition);
 	const targetAngle = Math.atan2(targetVector.y, targetVector.x);
 	const differenceAngle = boundAngle(targetAngle - arm.direction);
 	const deltaAngle = differenceAngle > 0 ? Math.min(differenceAngle, armTurnSpeed * deltaSeconds) : Math.max(differenceAngle, -armTurnSpeed * deltaSeconds);
 	const newAngle = boundAngle(arm.direction + deltaAngle);
+
 	arm.direction = newAngle;
 };
 
-const updateArmLocation = (arm: MechArm, bodyDirection: number, side: "left" | "right"): void => {
+const updateArmPosition = (arm: MechArm, bodyDirection: number, side: "left" | "right"): void => {
 	const bodyDirectionNormal = { x: Math.cos(bodyDirection), y: Math.sin(bodyDirection) };
 	const tangentDirection = side == "left" ? 1 : -1;
 	const tangentOffset = multiply({ x: bodyDirectionNormal.y * tangentDirection, y: bodyDirectionNormal.x * -tangentDirection }, armTangentDistance);
-	arm.location = tangentOffset;
+
+	arm.position.x = tangentOffset.x;
+	arm.position.y = tangentOffset.y;
 };
 
-const updateDesiredFeetLocations = (mech: Mech, moveDirection: Vector): void => {
+const updateDesiredFeetPositions = (mech: Mech, moveDirection: Vector): void => {
 	if (hasValue(moveDirection)) {
 		const leftFootCentreScalarOffset = calculateFootCentreScalarOffset(mech, mech.leftFoot, moveDirection);
 		const rightFootCentreScalarOffset = calculateFootCentreScalarOffset(mech, mech.rightFoot, moveDirection);
 
 		if (leftFootCentreScalarOffset < 0 && rightFootCentreScalarOffset < 0)
 			if (rightFootCentreScalarOffset > leftFootCentreScalarOffset) {
-				mech.leftFoot.desiredLocation = calculateDesiredFootLocation(mech, moveDirection, "left");
-				mech.leftFoot.direction = Math.atan2(moveDirection.y, moveDirection.x);
+				const desiredAbsolutePosition = calculateDesiredFootPosition(mech, moveDirection, "left");
+				const direction = Math.atan2(moveDirection.y, moveDirection.x);
+
+				mech.leftFoot.desiredAbsolutePosition.x = desiredAbsolutePosition.x;
+				mech.leftFoot.desiredAbsolutePosition.y = desiredAbsolutePosition.y;
+				mech.leftFoot.direction = direction;
 			} else {
-				mech.rightFoot.desiredLocation = calculateDesiredFootLocation(mech, moveDirection, "right");
-				mech.rightFoot.direction = Math.atan2(moveDirection.y, moveDirection.x);
+				const desiredAbsolutePosition = calculateDesiredFootPosition(mech, moveDirection, "right");
+				const direction = Math.atan2(moveDirection.y, moveDirection.x);
+
+				mech.rightFoot.desiredAbsolutePosition.x = desiredAbsolutePosition.x;
+				mech.rightFoot.desiredAbsolutePosition.y = desiredAbsolutePosition.y;
+				mech.rightFoot.direction = direction;
 			}
 
 		if (Math.abs(leftFootCentreScalarOffset) > maxFootNormalDistance) {
-			mech.leftFoot.desiredLocation = calculateDesiredFootLocation(mech, moveDirection, "left");
-			mech.leftFoot.direction = Math.atan2(moveDirection.y, moveDirection.x);
+			const desiredAbsolutePosition = calculateDesiredFootPosition(mech, moveDirection, "left");
+			const direction = Math.atan2(moveDirection.y, moveDirection.x);
+
+			mech.leftFoot.desiredAbsolutePosition.x = desiredAbsolutePosition.x;
+			mech.leftFoot.desiredAbsolutePosition.y = desiredAbsolutePosition.y;
+			mech.leftFoot.direction = direction;
 		}
 
 		if (Math.abs(rightFootCentreScalarOffset) > maxFootNormalDistance) {
-			mech.rightFoot.desiredLocation = calculateDesiredFootLocation(mech, moveDirection, "right");
-			mech.rightFoot.direction = Math.atan2(moveDirection.y, moveDirection.x);
+			const desiredAbsolutePosition = calculateDesiredFootPosition(mech, moveDirection, "right");
+			const direction = Math.atan2(moveDirection.y, moveDirection.x);
+
+			mech.rightFoot.desiredAbsolutePosition.x = desiredAbsolutePosition.x;
+			mech.rightFoot.desiredAbsolutePosition.y = desiredAbsolutePosition.y;
+			mech.rightFoot.direction = direction;
 		}
 	}
 };
 
 const calculateFootCentreScalarOffset = (mech: Mech, foot: MechFoot, moveDirection: Vector): number => {
-	const footCentreOffset = subtract(foot.desiredLocation, mech.location);
+	const footCentreOffset = subtract(foot.desiredAbsolutePosition, mech.position);
 	const footCentreScalarOffset = dot(footCentreOffset, moveDirection);
+
 	return footCentreScalarOffset;
 };
 
-const calculateDesiredFootLocation = (mech: Mech, moveDirection: Vector, side: "left" | "right"): Vector => {
-	const forwardFootLocation = add(mech.location, multiply(moveDirection, maxFootNormalDistance));
+const calculateDesiredFootPosition = (mech: Mech, moveDirection: Vector, side: "left" | "right"): Vector => {
+	const forwardFootPosition = add(mech.position, multiply(moveDirection, maxFootNormalDistance));
 	const tangentDirection = side == "left" ? 1 : -1;
 	const tangentOffset = multiply({ x: moveDirection.y * tangentDirection, y: moveDirection.x * -tangentDirection }, footTangentDistance);
-	const adjustedForwardFootLocation = add(forwardFootLocation, tangentOffset);
-	return adjustedForwardFootLocation;
+	const adjustedForwardFootPosition = add(forwardFootPosition, tangentOffset);
+
+	return adjustedForwardFootPosition;
 };
 
-const updateFeetLocation = (mech: Mech, deltaSeconds: number): void => {
-	const maxDeltaDistance = footMoveSpeed * deltaSeconds;
-	updateFootLocation(mech.leftFoot, maxDeltaDistance);
-	updateFootLocation(mech.rightFoot, maxDeltaDistance);
-};
+const updateFootPosition = (foot: MechFoot, deltaSeconds: number): void => {
+	const desiredPositionOffset = subtract(foot.desiredAbsolutePosition, foot.absolutePosition);
+	const deltaDistance = footMoveSpeed * deltaSeconds;
 
-const updateFootLocation = (foot: MechFoot, maxDeltaDistance: number): void => {
-	const desiredFootLocationOffset = subtract(foot.desiredLocation, foot.location);
-	if (hasValue(desiredFootLocationOffset))
-		if (length(desiredFootLocationOffset) > maxDeltaDistance)
-			foot.location = add(foot.location, multiply(normalise(desiredFootLocationOffset), maxDeltaDistance));
-		else foot.location = foot.desiredLocation;
+	if (hasValue(desiredPositionOffset))
+		if (length(desiredPositionOffset) > deltaDistance) {
+			const deltaAbsolutePosition = multiply(normalise(desiredPositionOffset), deltaDistance);
+
+			foot.absolutePosition.x += deltaAbsolutePosition.x;
+			foot.absolutePosition.y += deltaAbsolutePosition.y;
+		} else {
+			foot.absolutePosition.x = foot.desiredAbsolutePosition.x;
+			foot.absolutePosition.y = foot.desiredAbsolutePosition.y;
+		}
 };
 
 export { mechSystem };

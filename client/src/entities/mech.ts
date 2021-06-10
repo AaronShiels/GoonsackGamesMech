@@ -1,12 +1,25 @@
 import { Edges, PhysicsComponent } from "../components";
 import { getResource, Resource } from "../assets";
 import { boundAngle, toDegrees, Vector } from "../utilities";
-import { Container, Sprite, Spritesheet } from "pixi.js";
+import { Container, ObservablePoint, Sprite, Spritesheet, Transform } from "pixi.js";
+
+class ObservableTransform extends Transform {
+	private _cb: (scope: Transform) => void;
+
+	constructor(cb: (scope: Transform) => void) {
+		super();
+
+		this._cb = cb;
+	}
+
+	protected onChange() {
+		this._cb(this);
+		super.onChange();
+	}
+}
 
 class Mech extends Container implements PhysicsComponent {
-	private _location: Vector = { x: 0, y: 0 };
-
-	constructor(location: Vector) {
+	constructor(position: Vector) {
 		super();
 
 		this.body = new MechBody(0);
@@ -17,29 +30,16 @@ class Mech extends Container implements PhysicsComponent {
 		this.rightArm = new MechArm(0, "right");
 		this.rightArm.zIndex = this.zIndex - 1;
 		this.addChild(this.rightArm);
-		this.leftFoot = new MechFoot(0, location);
+		this.leftFoot = new MechFoot(0, position);
 		this.leftFoot.zIndex = this.zIndex - 2;
 		this.addChild(this.leftFoot);
-		this.rightFoot = new MechFoot(0, location);
+		this.rightFoot = new MechFoot(0, position);
 		this.rightFoot.zIndex = this.zIndex - 2;
 		this.addChild(this.rightFoot);
 
-		this.zIndex = 1;
-		this.location = location;
-	}
-
-	public get location(): Vector {
-		return this._location;
-	}
-	public set location(value: Vector) {
-		this._location = value;
-
-		this.position.x = Math.round(value.x);
-		this.position.y = Math.round(value.y);
-
-		// Force correction of feet relative to mech
-		this.leftFoot.location = this.leftFoot.location;
-		this.rightFoot.location = this.rightFoot.location;
+		this.transform = new ObservableTransform(() => this.adjustFeet());
+		this.position.x = position.x;
+		this.position.y = position.y;
 	}
 
 	public readonly body: MechBody;
@@ -48,24 +48,32 @@ class Mech extends Container implements PhysicsComponent {
 	public readonly leftFoot: MechFoot;
 	public readonly rightFoot: MechFoot;
 
-	public velocity: Vector = { x: 0, y: 0 };
-	public acceleration: Vector = { x: 0, y: 0 };
-	public size: Vector = { x: 32, y: 32 };
-	public edges: Edges = { bottom: true, left: true, right: true, top: true };
+	public readonly velocity: Vector = { x: 0, y: 0 };
+	public readonly acceleration: Vector = { x: 0, y: 0 };
+	public readonly size: Vector = { x: 32, y: 32 };
+	public readonly edges: Edges = { bottom: true, left: true, right: true, top: true };
 	public destroyed: boolean = false;
+
+	private adjustFeet(): void {
+		this.leftFoot.position.x = this.leftFoot.absolutePosition.x - this.position.x;
+		this.leftFoot.position.y = this.leftFoot.absolutePosition.y - this.position.y;
+
+		this.rightFoot.position.x = this.rightFoot.absolutePosition.x - this.position.x;
+		this.rightFoot.position.y = this.rightFoot.absolutePosition.y - this.position.y;
+	}
 }
 
 class MechBody extends Sprite {
 	private _spritesheet: Spritesheet;
 	private _direction: number = 0;
 
-	constructor(initialDirection: number) {
+	constructor(direction: number) {
 		super();
 
 		this._spritesheet = getResource(Resource.Mech).spritesheet!;
 
 		this.anchor.set(0.5);
-		this.direction = initialDirection;
+		this.direction = direction;
 	}
 
 	public get direction(): number {
@@ -85,17 +93,16 @@ class MechBody extends Sprite {
 class MechArm extends Sprite {
 	private _spritesheet: Spritesheet;
 	private _direction: number = 0;
-	private _location: Vector = { x: 0, y: 0 };
 	private _side: "left" | "right";
 
-	constructor(initialDirection: number, side: "left" | "right") {
+	constructor(direction: number, side: "left" | "right") {
 		super();
 
 		this._spritesheet = getResource(Resource.Mech).spritesheet!;
 		this._side = side;
 
 		this.anchor.set(0.5);
-		this.direction = initialDirection;
+		this.direction = direction;
 	}
 
 	public get direction(): number {
@@ -110,31 +117,21 @@ class MechArm extends Sprite {
 		this.texture = this._spritesheet.textures[`arm_${this._side}_${roundedDegreeAngle % 90}.png`];
 		this.angle = Math.floor(roundedDegreeAngle / 90) * 90;
 	}
-	public get location(): Vector {
-		return this._location;
-	}
-	public set location(value: Vector) {
-		this._location = value;
-
-		this.position.x = Math.round(this._location.x);
-		this.position.y = Math.round(this._location.y);
-	}
 }
 
 class MechFoot extends Sprite {
 	private _spritesheet: Spritesheet;
-	private _location: Vector = { x: 0, y: 0 };
 	private _direction: number = 0;
 
-	constructor(initialDirection: number, initalLocation: Vector) {
+	constructor(direction: number, position: Vector) {
 		super();
 
 		this._spritesheet = getResource(Resource.Mech).spritesheet!;
 
 		this.anchor.set(0.5);
-		this.direction = initialDirection;
-		this.location = initalLocation;
-		this.desiredLocation = initalLocation;
+		this.direction = direction;
+		this.absolutePosition = new ObservablePoint(this.adjust, this, position.x, position.y);
+		this.desiredAbsolutePosition = { ...position };
 	}
 
 	public get direction(): number {
@@ -149,18 +146,15 @@ class MechFoot extends Sprite {
 		this.texture = this._spritesheet.textures[`foot_${roundedDegreeAngle % 90}.png`];
 		this.angle = Math.floor(roundedDegreeAngle / 90) * 90;
 	}
-	public get location(): Vector {
-		return this._location;
-	}
-	public set location(value: Vector) {
-		this._location = value;
+	public readonly desiredAbsolutePosition: Vector;
+	public readonly absolutePosition: ObservablePoint;
 
+	private adjust(): void {
 		if (!this.parent || !(this.parent instanceof Mech)) return;
 
-		this.position.x = Math.round(this._location.x - this.parent.location.x);
-		this.position.y = Math.round(this._location.y - this.parent.location.y);
+		this.position.x = this.absolutePosition.x - this.parent.position.x;
+		this.position.y = this.absolutePosition.y - this.parent.position.y;
 	}
-	public desiredLocation: Vector;
 }
 
 export { Mech, MechBody, MechArm, MechFoot };

@@ -9,7 +9,7 @@ const inputSystem: System = (game) => {
 	if (currentKeyboardInput.w) keyboardMoveVector.y--;
 
 	game.input.moveDirection = hasValue(keyboardMoveVector) ? normalise(keyboardMoveVector) : keyboardMoveVector;
-	game.input.cursorLocation = game.stage.toLocal(game.renderer.plugins.interaction.mouse.global);
+	game.input.cursorPosition = game.stage.toLocal(game.renderer.plugins.interaction.mouse.global);
 };
 
 enum Keys {

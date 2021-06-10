@@ -12,15 +12,21 @@ const collisionSystem: System = (game) => {
 			const penetrationVector = getShortestPenetrationVector(entity, otherEntity);
 			if (!penetrationVector) continue;
 
-			entity.location = subtract(entity.location, penetrationVector);
+			entity.position.x -= penetrationVector.x;
+			entity.position.y -= penetrationVector.y;
 
 			if (hasPhysics(otherEntity)) {
 				const velocityAverage = divide(add(entity.velocity, otherEntity.velocity), 2);
-				entity.velocity = velocityAverage;
-				otherEntity.velocity = velocityAverage;
+
+				entity.velocity.x = velocityAverage.x;
+				entity.velocity.y = velocityAverage.y;
+
+				otherEntity.velocity.x = velocityAverage.x;
+				otherEntity.velocity.y = velocityAverage.y;
 			} else {
 				const velocityModifier = normalise({ x: Math.abs(penetrationVector.y), y: Math.abs(penetrationVector.x) });
-				entity.velocity = multiply(entity.velocity, velocityModifier);
+				entity.velocity.x *= velocityModifier.x;
+				entity.velocity.y *= velocityModifier.y;
 			}
 		}
 	}

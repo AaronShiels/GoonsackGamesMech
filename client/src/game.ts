@@ -16,7 +16,7 @@ interface GameSettings {
 
 interface GameInput {
 	moveDirection: Vector;
-	cursorLocation: Vector;
+	cursorPosition: Vector;
 }
 
 interface GameState {
@@ -37,7 +37,7 @@ class Game extends Application {
 		element.appendChild(this.view);
 
 		this.camera = { x: 0, y: 0, ...settings };
-		this.input = { cursorLocation: { x: settings.width / 2, y: settings.height / 2 }, moveDirection: { x: 0, y: 0 } };
+		this.input = { cursorPosition: { x: settings.width / 2, y: settings.height / 2 }, moveDirection: { x: 0, y: 0 } };
 	}
 
 	public readonly camera: Rectangle;
@@ -59,15 +59,14 @@ class Game extends Application {
 		// Load map
 		const tiles = generateTileData(defaultMap, "ground").map((td) => new Tile(td));
 		const buildings = generateObjectData(defaultMap, "buildings").flatMap((od) => createBuilding(od));
-		// const buildings = [...createBuilding(generateObjectData(defaultMap, "buildings")[0])];
 		this.stage.addChild(...tiles, ...buildings);
 
 		// Initialise player
 		const mech = new Mech({ x: 80, y: 120 });
 		this.stage.addChild(mech);
-		this.camera.x = mech.location.x;
-		this.camera.y = mech.location.y;
-		this.input.cursorLocation = mech.location;
+		this.camera.x = mech.position.x;
+		this.camera.y = mech.position.y;
+		this.input.cursorPosition = mech.position;
 
 		// Start game loop
 		this.ticker.add((delta): void => systems.forEach((system) => system(this, delta / 60)));

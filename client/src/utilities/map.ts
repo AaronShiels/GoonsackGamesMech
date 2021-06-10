@@ -31,13 +31,13 @@ interface TileSet {
 
 interface TileData {
 	textureAtlas: { texture: Texture; frame: Rectangle };
-	location: Vector;
+	position: Vector;
 	size: Vector;
 	neighbours: { bottom: boolean; left: boolean; right: boolean; top: boolean };
 }
 
 interface ObjectData {
-	location: Vector;
+	position: Vector;
 	size: Vector;
 	name: string;
 	type: string;
@@ -56,7 +56,7 @@ const generateTileData = (map: TileMap, layerName: string): TileData[] => {
 	const tiles: TileData[] = [];
 	for (let yIndex = 0; yIndex < layer.height; yIndex++)
 		for (let xIndex = 0; xIndex < layer.width; xIndex++) {
-			const location = {
+			const position = {
 				x: xIndex * map.tilewidth + map.tilewidth / 2,
 				y: yIndex * map.tileheight + map.tileheight / 2
 			};
@@ -87,7 +87,7 @@ const generateTileData = (map: TileMap, layerName: string): TileData[] => {
 
 			const tileData = {
 				textureAtlas: { texture: textureAtlasTexture, frame: textureAtlasFrame },
-				location,
+				position,
 				size,
 				neighbours
 			};
@@ -103,7 +103,7 @@ const generateObjectData = (map: TileMap, layerName: string): ObjectData[] => {
 	if (!isObjectGroup(layer)) throw new Error("Invalid layer provided.");
 
 	return layer.objects.map((v) => ({
-		location: { x: v.x + v.width / 2, y: v.y + v.height / 2 },
+		position: { x: v.x + v.width / 2, y: v.y + v.height / 2 },
 		size: { x: v.width, y: v.height },
 		name: v.name,
 		type: v.type
