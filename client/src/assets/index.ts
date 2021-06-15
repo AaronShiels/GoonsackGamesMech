@@ -4,11 +4,13 @@ import defaultMap from "./maps/map.json";
 enum Resource {
 	Mech = "mech",
 	Building = "building",
+	HUD = "hud",
 	Map = "map"
 }
 const resourceLookup: Record<Resource, string> = {
 	mech: "assets/mech/mech.json",
 	building: "assets/building/building.json",
+	hud: "assets/hud/hud.json",
 	map: "assets/maps/map.png"
 };
 

@@ -4,8 +4,11 @@ import { multiply } from "../utilities";
 import { Mech, MechArm, MechFoot } from "../entities";
 
 const walkingForce = 200;
-const bodyTurnSpeed = 3;
-const armTurnSpeed = 4;
+const maxTurnThreshold = Math.PI / 16;
+const maxBodyTurnSpeed = 3;
+const minBodyTurnSpeed = 0.25;
+const maxArmTurnSpeed = 8;
+const minArmTurnSpeed = 0.0;
 const footMoveSpeed = 200;
 const maxFootNormalDistance = 16;
 const footTangentDistance = 12;
@@ -36,7 +39,8 @@ const updateBodyDirection = (mech: Mech, targetPosition: Vector, deltaSeconds: n
 
 	const targetAngle = Math.atan2(targetVector.y, targetVector.x);
 	const differenceAngle = boundAngle(targetAngle - mech.body.direction);
-	const deltaAngle = differenceAngle > 0 ? Math.min(differenceAngle, bodyTurnSpeed * deltaSeconds) : Math.max(differenceAngle, -bodyTurnSpeed * deltaSeconds);
+	const deltaAngle =
+		differenceAngle > 0 ? Math.min(differenceAngle, maxBodyTurnSpeed * deltaSeconds) : Math.max(differenceAngle, -maxBodyTurnSpeed * deltaSeconds);
 	const newAngle = boundAngle(mech.body.direction + deltaAngle);
 
 	mech.body.direction = newAngle;
@@ -50,7 +54,8 @@ const updateArmDirection = (mech: Mech, arm: MechArm, targetPosition: Vector, de
 	const targetVector = subtract(targetPosition, absoluteArmPosition);
 	const targetAngle = Math.atan2(targetVector.y, targetVector.x);
 	const differenceAngle = boundAngle(targetAngle - arm.direction);
-	const deltaAngle = differenceAngle > 0 ? Math.min(differenceAngle, armTurnSpeed * deltaSeconds) : Math.max(differenceAngle, -armTurnSpeed * deltaSeconds);
+	const turnSpeed = Math.max(Math.min(Math.abs(differenceAngle) / maxTurnThreshold, maxArmTurnSpeed), minArmTurnSpeed);
+	const deltaAngle = differenceAngle > 0 ? Math.min(differenceAngle, turnSpeed * deltaSeconds) : Math.max(differenceAngle, -turnSpeed * deltaSeconds);
 	const newAngle = boundAngle(arm.direction + deltaAngle);
 
 	arm.direction = newAngle;

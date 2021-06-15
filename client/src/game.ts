@@ -1,6 +1,6 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
-import { Entity, Tile, isEntity, Mech, createBuilding } from "./entities";
-import { Rectangle, Vector } from "./utilities";
+import { Entity, Tile, isEntity, Mech, createBuilding, ReticleHemisphere, ReticlePointer } from "./entities";
+import { Rectangle, Side, Vector } from "./utilities";
 import { systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
 import { generateTileData, generateObjectData } from "./utilities/map";
@@ -62,11 +62,14 @@ class Game extends Application {
 		this.stage.addChild(...tiles, ...buildings);
 
 		// Initialise player
-		const mech = new Mech({ x: 80, y: 120 });
+		const initalPosition = { x: 80, y: 120 };
+
+		this.camera.x = initalPosition.x;
+		this.camera.y = initalPosition.y;
+		this.input.cursorPosition = initalPosition;
+
+		const mech = new Mech(initalPosition);
 		this.stage.addChild(mech);
-		this.camera.x = mech.position.x;
-		this.camera.y = mech.position.y;
-		this.input.cursorPosition = mech.position;
 
 		// Start game loop
 		this.ticker.add((delta): void => systems.forEach((system) => system(this, delta / 60)));

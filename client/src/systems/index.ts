@@ -9,6 +9,7 @@ import { Game } from "../game";
 import { inputSystem } from "./input";
 import { cameraSystem } from "./camera";
 import { elevationSystem } from "./elevation";
+import { hudSystem } from "./hud";
 
 type System = (game: Game, deltaSeconds: number) => void;
 
@@ -21,6 +22,7 @@ const systems = [
 	collisionSystem,
 	cameraSystem,
 	elevationSystem,
+	hudSystem,
 	renderSystem,
 	garbageCollectionSystem
 ];

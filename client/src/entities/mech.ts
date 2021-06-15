@@ -1,43 +1,40 @@
 import { Edges, PhysicsComponent } from "../components";
 import { getResource, Resource } from "../assets";
-import { boundAngle, toDegrees, Vector } from "../utilities";
+import { boundAngle, Side, toDegrees, Vector } from "../utilities";
 import { Container, ObservablePoint, Sprite, Spritesheet, Transform } from "pixi.js";
 
 class ObservableTransform extends Transform {
-	private _cb: (scope: Transform) => void;
+	private _callback: (scope: Transform) => void;
 
-	constructor(cb: (scope: Transform) => void) {
+	constructor(callback: (scope: Transform) => void) {
 		super();
 
-		this._cb = cb;
+		this._callback = callback;
 	}
 
 	protected onChange() {
-		this._cb(this);
+		this._callback(this);
 		super.onChange();
 	}
 }
 
 class Mech extends Container implements PhysicsComponent {
-	constructor(position: Vector) {
+	constructor(position: Vector, direction: number = 0) {
 		super();
 
-		this.body = new MechBody(0);
+		this.body = new MechBody(direction);
 		this.addChild(this.body);
-		this.leftArm = new MechArm(0, "left");
-		this.leftArm.zIndex = this.zIndex - 1;
+		this.leftArm = new MechArm(direction, Side.Left);
 		this.addChild(this.leftArm);
-		this.rightArm = new MechArm(0, "right");
-		this.rightArm.zIndex = this.zIndex - 1;
+		this.rightArm = new MechArm(direction, Side.Right);
 		this.addChild(this.rightArm);
-		this.leftFoot = new MechFoot(0, position);
-		this.leftFoot.zIndex = this.zIndex - 2;
+		this.leftFoot = new MechFoot(direction, position);
 		this.addChild(this.leftFoot);
-		this.rightFoot = new MechFoot(0, position);
-		this.rightFoot.zIndex = this.zIndex - 2;
+		this.rightFoot = new MechFoot(direction, position);
 		this.addChild(this.rightFoot);
 
 		this.transform = new ObservableTransform(() => this.adjustFeet());
+
 		this.position.x = position.x;
 		this.position.y = position.y;
 	}
@@ -93,15 +90,17 @@ class MechBody extends Sprite {
 class MechArm extends Sprite {
 	private _spritesheet: Spritesheet;
 	private _direction: number = 0;
-	private _side: "left" | "right";
+	private _side: Side;
 
-	constructor(direction: number, side: "left" | "right") {
+	constructor(direction: number, side: Side) {
 		super();
 
 		this._spritesheet = getResource(Resource.Mech).spritesheet!;
 		this._side = side;
 
 		this.anchor.set(0.5);
+		this.zIndex = -1;
+
 		this.direction = direction;
 	}
 
@@ -123,15 +122,17 @@ class MechFoot extends Sprite {
 	private _spritesheet: Spritesheet;
 	private _direction: number = 0;
 
-	constructor(direction: number, position: Vector) {
+	constructor(direction: number, absolutePosition: Vector) {
 		super();
 
 		this._spritesheet = getResource(Resource.Mech).spritesheet!;
 
 		this.anchor.set(0.5);
+		this.zIndex = -2;
+
 		this.direction = direction;
-		this.absolutePosition = new ObservablePoint(this.adjust, this, position.x, position.y);
-		this.desiredAbsolutePosition = { ...position };
+		this.absolutePosition = new ObservablePoint(this.adjust, this, absolutePosition.x, absolutePosition.y);
+		this.desiredAbsolutePosition = { ...absolutePosition };
 	}
 
 	public get direction(): number {
