@@ -12,8 +12,7 @@ class BuildingSegment extends Container implements ElevationComponent {
 	constructor(objectData: ObjectData, floor: number, roof: boolean) {
 		super();
 
-		this.position.x = objectData.position.x;
-		this.position.y = objectData.position.y;
+		this.position.set(objectData.position.x, objectData.position.y);
 		this.size = objectData.size;
 		this.edges = { bottom: !floor, left: !floor, right: !floor, top: !floor };
 		this.elevation = floor;

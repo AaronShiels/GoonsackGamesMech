@@ -1,6 +1,6 @@
 import { Edges, PhysicsComponent } from "../components";
 import { getResource, Resource } from "../assets";
-import { boundAngle, Side, toDegrees, Vector } from "../utilities";
+import { boundAngle, Side, subtract, toDegrees, Vector } from "../utilities";
 import { Container, ObservablePoint, Sprite, Spritesheet, Transform } from "pixi.js";
 
 class ObservableTransform extends Transform {
@@ -35,8 +35,7 @@ class Mech extends Container implements PhysicsComponent {
 
 		this.transform = new ObservableTransform(() => this.adjustFeet());
 
-		this.position.x = position.x;
-		this.position.y = position.y;
+		this.position.set(position.x, position.y);
 	}
 
 	public readonly body: MechBody;
@@ -45,18 +44,21 @@ class Mech extends Container implements PhysicsComponent {
 	public readonly leftFoot: MechFoot;
 	public readonly rightFoot: MechFoot;
 
+	public cannonRemainingReloadSeconds: number = 0;
+
 	public readonly velocity: Vector = { x: 0, y: 0 };
 	public readonly acceleration: Vector = { x: 0, y: 0 };
+	public readonly friction: number = 10;
 	public readonly size: Vector = { x: 32, y: 32 };
 	public readonly edges: Edges = { bottom: true, left: true, right: true, top: true };
 	public destroyed: boolean = false;
 
 	private adjustFeet(): void {
-		this.leftFoot.position.x = this.leftFoot.absolutePosition.x - this.position.x;
-		this.leftFoot.position.y = this.leftFoot.absolutePosition.y - this.position.y;
+		const relativeLeftFootPosition = subtract(this.leftFoot.absolutePosition, this.position);
+		this.leftFoot.position.set(relativeLeftFootPosition.x, relativeLeftFootPosition.y);
 
-		this.rightFoot.position.x = this.rightFoot.absolutePosition.x - this.position.x;
-		this.rightFoot.position.y = this.rightFoot.absolutePosition.y - this.position.y;
+		const relativeRightFootPosition = subtract(this.rightFoot.absolutePosition, this.position);
+		this.rightFoot.position.set(relativeRightFootPosition.x, relativeRightFootPosition.y);
 	}
 }
 
@@ -153,8 +155,8 @@ class MechFoot extends Sprite {
 	private adjust(): void {
 		if (!this.parent || !(this.parent instanceof Mech)) return;
 
-		this.position.x = this.absolutePosition.x - this.parent.position.x;
-		this.position.y = this.absolutePosition.y - this.parent.position.y;
+		const relativePosition = subtract(this.absolutePosition, this.parent.position);
+		this.position.set(relativePosition.x, relativePosition.y);
 	}
 }
 

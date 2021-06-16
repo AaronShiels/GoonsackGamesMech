@@ -2,6 +2,7 @@ import { hasBody, getBounds, Edges, hasEdges, BodyComponent } from "./body";
 import { ElevationComponent, isElevated } from "./elevation";
 import { EnemyComponent, isEnemy } from "./enemy";
 import { HealthComponent, hasHealth } from "./health";
+import { Particle, hasLimitedLifespan } from "./particle";
 import { hasPhysics, PhysicsComponent } from "./physics";
 
 export {
@@ -17,5 +18,7 @@ export {
 	HealthComponent,
 	hasHealth,
 	ElevationComponent,
-	isElevated
+	isElevated,
+	Particle,
+	hasLimitedLifespan
 };

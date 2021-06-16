@@ -1,6 +1,6 @@
 import { System } from ".";
-import { Mech, ReticleHemisphere, ReticlePointer } from "../entities";
-import { add, multiply, Side, subtract, Vector, dot } from "../utilities";
+import { Mech } from "../entities";
+import { add, multiply, Side, subtract, Vector, length, ReticleHemisphere, ReticlePointer } from "../utilities";
 
 let reticleLeft: ReticleHemisphere | undefined;
 let reticleRight: ReticleHemisphere | undefined;
@@ -39,7 +39,7 @@ const hudSystem: System = (game) => {
 const getReticlePosition = (armPosition: Vector, armDirection: number, cursorPosition: Vector): Vector => {
 	const directionUnitVector = { x: Math.cos(armDirection), y: Math.sin(armDirection) };
 	const armToCursorVector = subtract(cursorPosition, armPosition);
-	const projection = dot(directionUnitVector, armToCursorVector);
+	const projection = length(armToCursorVector);
 	const closestPoint = add(multiply(directionUnitVector, projection), armPosition);
 
 	return closestPoint;

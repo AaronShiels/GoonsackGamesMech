@@ -1,5 +1,5 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
-import { Entity, Tile, isEntity, Mech, createBuilding, ReticleHemisphere, ReticlePointer } from "./entities";
+import { Entity, Tile, isEntity, Mech, createBuilding } from "./entities";
 import { Rectangle, Side, Vector } from "./utilities";
 import { systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
@@ -15,6 +15,7 @@ interface GameSettings {
 }
 
 interface GameInput {
+	firing: boolean;
 	moveDirection: Vector;
 	cursorPosition: Vector;
 }
@@ -37,7 +38,7 @@ class Game extends Application {
 		element.appendChild(this.view);
 
 		this.camera = { x: 0, y: 0, ...settings };
-		this.input = { cursorPosition: { x: settings.width / 2, y: settings.height / 2 }, moveDirection: { x: 0, y: 0 } };
+		this.input = { firing: false, cursorPosition: { x: settings.width / 2, y: settings.height / 2 }, moveDirection: { x: 0, y: 0 } };
 	}
 
 	public readonly camera: Rectangle;

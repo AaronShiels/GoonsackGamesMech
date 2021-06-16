@@ -2,17 +2,21 @@ import { boundAngle, hasValue, subtract, length, add, normalise, dot, Vector } f
 import { System } from ".";
 import { multiply } from "../utilities";
 import { Mech, MechArm, MechFoot } from "../entities";
+import { Game } from "../game";
+import { ExplosionTiny } from "../entities";
+import { CannonBullet } from "../entities/projectile";
 
 const walkingForce = 200;
-const maxTurnThreshold = Math.PI / 16;
-const maxBodyTurnSpeed = 3;
-const minBodyTurnSpeed = 0.25;
-const maxArmTurnSpeed = 8;
-const minArmTurnSpeed = 0.0;
+const maxTurnThreshold = Math.PI / 32;
+const bodyTurnSpeed = 3;
+const maxArmTurnSpeed = 16;
 const footMoveSpeed = 200;
 const maxFootNormalDistance = 16;
 const footTangentDistance = 12;
 const armTangentDistance = 22;
+const armBarrelLength = 16;
+const cannonReloadSeconds = 1;
+const cannonVelocity = 1000;
 
 const mechSystem: System = (game, deltaSeconds) => {
 	if (!game.state.active()) return;
@@ -20,15 +24,27 @@ const mechSystem: System = (game, deltaSeconds) => {
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 
-	const acceleration = multiply(game.input.moveDirection, walkingForce);
+	applyMovement(mech, game.input.moveDirection);
+	applyRotation(mech, game.input.cursorPosition, deltaSeconds);
+	applyMechanics(mech, game.input.moveDirection, deltaSeconds);
+	applyCannon(game, mech, game.input.firing, deltaSeconds);
+};
+
+const applyMovement = (mech: Mech, direction: Vector): void => {
+	const acceleration = multiply(direction, walkingForce);
 
 	mech.acceleration.x = acceleration.x;
 	mech.acceleration.y = acceleration.y;
+};
 
-	updateBodyDirection(mech, game.input.cursorPosition, deltaSeconds);
-	updateArmDirection(mech, mech.leftArm, game.input.cursorPosition, deltaSeconds);
-	updateArmDirection(mech, mech.rightArm, game.input.cursorPosition, deltaSeconds);
-	updateDesiredFeetPositions(mech, game.input.moveDirection);
+const applyRotation = (mech: Mech, focalPoint: Vector, deltaSeconds: number): void => {
+	updateBodyDirection(mech, focalPoint, deltaSeconds);
+	updateArmDirection(mech, mech.leftArm, focalPoint, deltaSeconds);
+	updateArmDirection(mech, mech.rightArm, focalPoint, deltaSeconds);
+};
+
+const applyMechanics = (mech: Mech, direction: Vector, deltaSeconds: number): void => {
+	updateDesiredFeetPositions(mech, direction);
 	updateFootPosition(mech.leftFoot, deltaSeconds);
 	updateFootPosition(mech.rightFoot, deltaSeconds);
 };
@@ -39,8 +55,7 @@ const updateBodyDirection = (mech: Mech, targetPosition: Vector, deltaSeconds: n
 
 	const targetAngle = Math.atan2(targetVector.y, targetVector.x);
 	const differenceAngle = boundAngle(targetAngle - mech.body.direction);
-	const deltaAngle =
-		differenceAngle > 0 ? Math.min(differenceAngle, maxBodyTurnSpeed * deltaSeconds) : Math.max(differenceAngle, -maxBodyTurnSpeed * deltaSeconds);
+	const deltaAngle = differenceAngle > 0 ? Math.min(differenceAngle, bodyTurnSpeed * deltaSeconds) : Math.max(differenceAngle, -bodyTurnSpeed * deltaSeconds);
 	const newAngle = boundAngle(mech.body.direction + deltaAngle);
 
 	mech.body.direction = newAngle;
@@ -54,7 +69,7 @@ const updateArmDirection = (mech: Mech, arm: MechArm, targetPosition: Vector, de
 	const targetVector = subtract(targetPosition, absoluteArmPosition);
 	const targetAngle = Math.atan2(targetVector.y, targetVector.x);
 	const differenceAngle = boundAngle(targetAngle - arm.direction);
-	const turnSpeed = Math.max(Math.min(Math.abs(differenceAngle) / maxTurnThreshold, maxArmTurnSpeed), minArmTurnSpeed);
+	const turnSpeed = Math.min(Math.abs(differenceAngle) / maxTurnThreshold, maxArmTurnSpeed);
 	const deltaAngle = differenceAngle > 0 ? Math.min(differenceAngle, turnSpeed * deltaSeconds) : Math.max(differenceAngle, -turnSpeed * deltaSeconds);
 	const newAngle = boundAngle(arm.direction + deltaAngle);
 
@@ -142,6 +157,32 @@ const updateFootPosition = (foot: MechFoot, deltaSeconds: number): void => {
 			foot.absolutePosition.x = foot.desiredAbsolutePosition.x;
 			foot.absolutePosition.y = foot.desiredAbsolutePosition.y;
 		}
+};
+
+const applyCannon = (game: Game, mech: Mech, firing: boolean, deltaSeconds: number): void => {
+	if (firing && mech.cannonRemainingReloadSeconds <= 0) {
+		const leftArmAbsolutePosition = add(mech.position, mech.leftArm.position);
+		const leftArmDirectionUnitVector = { x: Math.cos(mech.leftArm.direction), y: Math.sin(mech.leftArm.direction) };
+		const leftArmBarrelPosition = add(leftArmAbsolutePosition, multiply(leftArmDirectionUnitVector, armBarrelLength));
+		const leftCannonBulletVelocity = multiply(leftArmDirectionUnitVector, cannonVelocity);
+
+		const leftCannonBullet = new CannonBullet(leftArmBarrelPosition, leftCannonBulletVelocity, mech.leftArm.direction);
+		game.stage.addChild(leftCannonBullet);
+		const leftCannonFire = new ExplosionTiny(leftArmBarrelPosition);
+		game.stage.addChild(leftCannonFire);
+
+		const rightArmAbsolutePosition = add(mech.position, mech.rightArm.position);
+		const rightArmDirectionUnitVector = { x: Math.cos(mech.rightArm.direction), y: Math.sin(mech.rightArm.direction) };
+		const rightArmBarrelPosition = add(rightArmAbsolutePosition, multiply(rightArmDirectionUnitVector, armBarrelLength));
+		const rightCannonBulletVelocity = multiply(rightArmDirectionUnitVector, cannonVelocity);
+
+		const rightCannonBullet = new CannonBullet(rightArmBarrelPosition, rightCannonBulletVelocity, mech.rightArm.direction);
+		game.stage.addChild(rightCannonBullet);
+		const rightCannonFire = new ExplosionTiny(rightArmBarrelPosition);
+		game.stage.addChild(rightCannonFire);
+
+		mech.cannonRemainingReloadSeconds = cannonReloadSeconds;
+	} else if (mech.cannonRemainingReloadSeconds > 0) mech.cannonRemainingReloadSeconds -= deltaSeconds;
 };
 
 export { mechSystem };

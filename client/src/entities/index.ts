@@ -1,6 +1,6 @@
 import { BuildingSegment, createBuilding } from "./building";
-import { ReticleHemisphere, ReticlePointer } from "../utilities/hud";
 import { Mech, MechBody, MechArm, MechFoot } from "./mech";
+import { ExplosionTiny } from "./explosion";
 import { Tile } from "./tile";
 
 interface Entity {
@@ -9,4 +9,4 @@ interface Entity {
 
 const isEntity = (object: any): object is Entity => "destroyed" in object;
 
-export { Entity, isEntity, Mech, MechBody, MechArm, MechFoot, Tile, BuildingSegment, createBuilding, ReticleHemisphere, ReticlePointer };
+export { Entity, isEntity, Mech, MechBody, MechArm, MechFoot, Tile, BuildingSegment, createBuilding, ExplosionTiny };

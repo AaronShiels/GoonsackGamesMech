@@ -8,8 +8,11 @@ const inputSystem: System = (game) => {
 	if (currentKeyboardInput.s) keyboardMoveVector.y++;
 	if (currentKeyboardInput.w) keyboardMoveVector.y--;
 
+	const mouseButtons: number = game.renderer.plugins.interaction.mouse.buttons;
+
 	game.input.moveDirection = hasValue(keyboardMoveVector) ? normalise(keyboardMoveVector) : keyboardMoveVector;
 	game.input.cursorPosition = game.stage.toLocal(game.renderer.plugins.interaction.mouse.global);
+	game.input.firing = !!(mouseButtons & 1);
 };
 
 enum Keys {
