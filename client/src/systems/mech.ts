@@ -7,16 +7,19 @@ import { ExplosionTiny } from "../entities";
 import { CannonBullet } from "../entities/projectile";
 
 const walkingForce = 200;
-const maxTurnThreshold = Math.PI / 32;
+const maxTurnThreshold = Math.PI / 16;
 const bodyTurnSpeed = 3;
-const maxArmTurnSpeed = 16;
+const maxArmTurnSpeed = 8;
 const footMoveSpeed = 200;
 const maxFootNormalDistance = 16;
 const footTangentDistance = 12;
 const armTangentDistance = 22;
 const armBarrelLength = 16;
-const cannonReloadSeconds = 1;
+const cannonReloadSeconds = 0.5;
 const cannonVelocity = 1000;
+const maxAngularRecoil = Math.PI / 32;
+const maxNormalRecoil = 6;
+const maxArmNormalSpeed = 12;
 
 const mechSystem: System = (game, deltaSeconds) => {
 	if (!game.state.active()) return;
@@ -39,6 +42,8 @@ const applyMovement = (mech: Mech, direction: Vector): void => {
 
 const applyRotation = (mech: Mech, focalPoint: Vector, deltaSeconds: number): void => {
 	updateBodyDirection(mech, focalPoint, deltaSeconds);
+	updateArmPosition(mech, mech.leftArm, "left");
+	updateArmPosition(mech, mech.rightArm, "right");
 	updateArmDirection(mech, mech.leftArm, focalPoint, deltaSeconds);
 	updateArmDirection(mech, mech.rightArm, focalPoint, deltaSeconds);
 };
@@ -59,9 +64,6 @@ const updateBodyDirection = (mech: Mech, targetPosition: Vector, deltaSeconds: n
 	const newAngle = boundAngle(mech.body.direction + deltaAngle);
 
 	mech.body.direction = newAngle;
-
-	updateArmPosition(mech.leftArm, newAngle, "left");
-	updateArmPosition(mech.rightArm, newAngle, "right");
 };
 
 const updateArmDirection = (mech: Mech, arm: MechArm, targetPosition: Vector, deltaSeconds: number): void => {
@@ -76,13 +78,15 @@ const updateArmDirection = (mech: Mech, arm: MechArm, targetPosition: Vector, de
 	arm.direction = newAngle;
 };
 
-const updateArmPosition = (arm: MechArm, bodyDirection: number, side: "left" | "right"): void => {
-	const bodyDirectionNormal = { x: Math.cos(bodyDirection), y: Math.sin(bodyDirection) };
+const updateArmPosition = (mech: Mech, arm: MechArm, side: "left" | "right"): void => {
+	const bodyDirectionNormal = { x: Math.cos(mech.body.direction), y: Math.sin(mech.body.direction) };
 	const tangentDirection = side == "left" ? 1 : -1;
+	const normalOffset = multiply({ x: bodyDirectionNormal.x, y: bodyDirectionNormal.y }, -mech.cannonRecoil);
 	const tangentOffset = multiply({ x: bodyDirectionNormal.y * tangentDirection, y: bodyDirectionNormal.x * -tangentDirection }, armTangentDistance);
+	const combinedOffset = add(normalOffset, tangentOffset);
 
-	arm.position.x = tangentOffset.x;
-	arm.position.y = tangentOffset.y;
+	arm.position.x = combinedOffset.x;
+	arm.position.y = combinedOffset.y;
 };
 
 const updateDesiredFeetPositions = (mech: Mech, moveDirection: Vector): void => {
@@ -171,10 +175,16 @@ const applyCannon = (game: Game, mech: Mech, firing: boolean, deltaSeconds: numb
 		const leftCannonFire = new ExplosionTiny(leftArmBarrelPosition);
 		game.stage.addChild(leftCannonFire);
 
+		const leftArmRecoilAngle = boundAngle(mech.leftArm.direction + maxAngularRecoil);
+		mech.leftArm.direction = leftArmRecoilAngle;
+
 		const rightArmAbsolutePosition = add(mech.position, mech.rightArm.position);
 		const rightArmDirectionUnitVector = { x: Math.cos(mech.rightArm.direction), y: Math.sin(mech.rightArm.direction) };
 		const rightArmBarrelPosition = add(rightArmAbsolutePosition, multiply(rightArmDirectionUnitVector, armBarrelLength));
 		const rightCannonBulletVelocity = multiply(rightArmDirectionUnitVector, cannonVelocity);
+
+		const rightArmRecoilAngle = boundAngle(mech.rightArm.direction - maxAngularRecoil);
+		mech.rightArm.direction = rightArmRecoilAngle;
 
 		const rightCannonBullet = new CannonBullet(rightArmBarrelPosition, rightCannonBulletVelocity, mech.rightArm.direction);
 		game.stage.addChild(rightCannonBullet);
@@ -182,7 +192,13 @@ const applyCannon = (game: Game, mech: Mech, firing: boolean, deltaSeconds: numb
 		game.stage.addChild(rightCannonFire);
 
 		mech.cannonRemainingReloadSeconds = cannonReloadSeconds;
+		mech.cannonRecoil = maxNormalRecoil;
 	} else if (mech.cannonRemainingReloadSeconds > 0) mech.cannonRemainingReloadSeconds -= deltaSeconds;
+
+	if (mech.cannonRecoil > 0) {
+		const deltaCannonRecoil = maxArmNormalSpeed * deltaSeconds;
+		mech.cannonRecoil = deltaCannonRecoil > mech.cannonRecoil ? 0 : mech.cannonRecoil - deltaCannonRecoil;
+	}
 };
 
 export { mechSystem };

@@ -1,26 +1,13 @@
 import { System } from ".";
-import { Mech } from "../entities";
-import { add, multiply, Side, subtract, Vector, length, ReticleHemisphere, ReticlePointer } from "../utilities";
+import { Mech, Reticle } from "../entities";
+import { add, subtract, boundAngle } from "../utilities";
 
-let reticleLeft: ReticleHemisphere | undefined;
-let reticleRight: ReticleHemisphere | undefined;
-let reticleCentre: ReticlePointer | undefined;
+const maximumInaccuracyAngle = Math.PI / 8;
+const maximumExpansion = 30;
 
 const hudSystem: System = (game) => {
-	if (!reticleLeft) {
-		reticleLeft = new ReticleHemisphere(Side.Left, game.input.cursorPosition);
-		game.stage.addChild(reticleLeft);
-	}
-	if (!reticleRight) {
-		reticleRight = new ReticleHemisphere(Side.Right, game.input.cursorPosition);
-		game.stage.addChild(reticleRight);
-	}
-	if (!reticleCentre) {
-		reticleCentre = new ReticlePointer(game.input.cursorPosition);
-		game.stage.addChild(reticleCentre);
-	}
-
-	reticleCentre.position.set(game.input.cursorPosition.x, game.input.cursorPosition.y);
+	const reticle = game.entities.filter((e) => e instanceof Reticle)[0] as Reticle;
+	reticle.position.set(game.input.cursorPosition.x, game.input.cursorPosition.y);
 
 	if (!game.state.active()) return;
 
@@ -28,21 +15,18 @@ const hudSystem: System = (game) => {
 	if (!mech) return;
 
 	const leftArmPosition = add(mech.leftArm.position, mech.position);
-	const leftReticlePosition = getReticlePosition(leftArmPosition, mech.leftArm.direction, game.input.cursorPosition);
-	reticleLeft.position.set(leftReticlePosition.x, leftReticlePosition.y);
+	const leftArmReticleDirectionVector = subtract(reticle.position, leftArmPosition);
+	const leftArmReticleAngle = Math.atan2(leftArmReticleDirectionVector.y, leftArmReticleDirectionVector.x);
+	const leftArmAngleDifference = Math.abs(boundAngle(leftArmReticleAngle - mech.leftArm.direction));
 
 	const rightArmPosition = add(mech.rightArm.position, mech.position);
-	const rightReticlePosition = getReticlePosition(rightArmPosition, mech.rightArm.direction, game.input.cursorPosition);
-	reticleRight.position.set(rightReticlePosition.x, rightReticlePosition.y);
-};
+	const rightArmReticleDirectionVector = subtract(reticle.position, rightArmPosition);
+	const rightArmReticleAngle = Math.atan2(rightArmReticleDirectionVector.y, rightArmReticleDirectionVector.x);
+	const rightArmAngleDifference = Math.abs(boundAngle(rightArmReticleAngle - mech.rightArm.direction));
 
-const getReticlePosition = (armPosition: Vector, armDirection: number, cursorPosition: Vector): Vector => {
-	const directionUnitVector = { x: Math.cos(armDirection), y: Math.sin(armDirection) };
-	const armToCursorVector = subtract(cursorPosition, armPosition);
-	const projection = length(armToCursorVector);
-	const closestPoint = add(multiply(directionUnitVector, projection), armPosition);
-
-	return closestPoint;
+	const inaccuracyRatio = Math.min(leftArmAngleDifference + rightArmAngleDifference, maximumInaccuracyAngle) / maximumInaccuracyAngle;
+	const expansion = inaccuracyRatio * maximumExpansion;
+	reticle.expansion = expansion;
 };
 
 export { hudSystem };

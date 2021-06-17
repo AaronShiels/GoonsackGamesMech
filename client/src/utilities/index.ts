@@ -1,7 +1,6 @@
 import { boundAngle, toDegrees } from "./angles";
 import { Circle, Sector, circleRectangleIntersects, sectorRectangeIntersects } from "./circle";
 import { Side } from "./enums";
-import { ReticleHemisphere, ReticlePointer } from "./hud";
 import { TileData, generateTileData, generateObjectData, ObjectData } from "./map";
 import { Rectangle, centre, rectanglesIntersect, rectanglesIntersection, liesWithin } from "./rectangle";
 import { timestampSeconds } from "./time";
@@ -15,8 +14,6 @@ export {
 	TileData,
 	ObjectData,
 	Side,
-	ReticleHemisphere,
-	ReticlePointer,
 	add,
 	subtract,
 	multiply,

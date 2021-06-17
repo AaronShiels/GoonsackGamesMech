@@ -1,9 +1,9 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
-import { Entity, Tile, isEntity, Mech, createBuilding } from "./entities";
+import { Entity, Tile, isEntity, Mech, createBuilding, Reticle } from "./entities";
 import { Rectangle, Side, Vector } from "./utilities";
 import { systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
-import { generateTileData, generateObjectData } from "./utilities/map";
+import { generateTileData, generateObjectData } from "./utilities";
 
 // settings.ROUND_PIXELS = true;
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
@@ -57,19 +57,22 @@ class Game extends Application {
 		// Load resourcess
 		await loadResources();
 
-		// Load map
+		// Load game world
 		const tiles = generateTileData(defaultMap, "ground").map((td) => new Tile(td));
 		const buildings = generateObjectData(defaultMap, "buildings").flatMap((od) => createBuilding(od));
-		this.stage.addChild(...tiles, ...buildings);
+
+		const initalPosition = { x: 80, y: 120 };
+		const mech = new Mech(initalPosition);
+
+		const reticle = new Reticle(initalPosition);
+
+		this.stage.addChild(...tiles, ...buildings, mech, reticle);
 
 		// Initialise player
-		const initalPosition = { x: 80, y: 120 };
 
 		this.camera.x = initalPosition.x;
 		this.camera.y = initalPosition.y;
 		this.input.cursorPosition = initalPosition;
-
-		const mech = new Mech(initalPosition);
 		this.stage.addChild(mech);
 
 		// Start game loop

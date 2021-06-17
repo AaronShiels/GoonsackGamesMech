@@ -45,6 +45,7 @@ class Mech extends Container implements PhysicsComponent {
 	public readonly rightFoot: MechFoot;
 
 	public cannonRemainingReloadSeconds: number = 0;
+	public cannonRecoil: number = 0;
 
 	public readonly velocity: Vector = { x: 0, y: 0 };
 	public readonly acceleration: Vector = { x: 0, y: 0 };
