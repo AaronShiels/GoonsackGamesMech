@@ -6,7 +6,7 @@ class CannonBullet extends Graphics implements Particle {
 	constructor(position: Vector, velocity: Vector, direction: number) {
 		super();
 
-		this.beginFill(0xf7dea0);
+		this.beginFill(0xe6f385);
 		this.drawEllipse(0, 0, 6, 1);
 		this.endFill();
 

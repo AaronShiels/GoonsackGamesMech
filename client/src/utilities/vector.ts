@@ -3,16 +3,36 @@ interface Vector {
 	y: number;
 }
 
-const add = (vectorA: Vector, vectorB: Vector): Vector => ({
-	x: vectorA.x + vectorB.x,
-	y: vectorA.y + vectorB.y
-});
-const subtract = (vectorA: Vector, vectorB: Vector): Vector => ({
-	x: vectorA.x - vectorB.x,
-	y: vectorA.y - vectorB.y
-});
+const add = (vectorA: Vector, vectorBOrScalar: Vector | number): Vector => {
+	if (typeof vectorBOrScalar === "number")
+		vectorBOrScalar = {
+			x: vectorBOrScalar,
+			y: vectorBOrScalar
+		};
+
+	return {
+		x: vectorA.x + vectorBOrScalar.x,
+		y: vectorA.y + vectorBOrScalar.y
+	};
+};
+const subtract = (vectorA: Vector, vectorBOrScalar: Vector | number): Vector => {
+	if (typeof vectorBOrScalar === "number")
+		vectorBOrScalar = {
+			x: vectorBOrScalar,
+			y: vectorBOrScalar
+		};
+
+	return {
+		x: vectorA.x - vectorBOrScalar.x,
+		y: vectorA.y - vectorBOrScalar.y
+	};
+};
 const multiply = (vectorA: Vector, vectorBOrScalar: Vector | number): Vector => {
-	if (typeof vectorBOrScalar === "number") vectorBOrScalar = { x: vectorBOrScalar, y: vectorBOrScalar };
+	if (typeof vectorBOrScalar === "number")
+		vectorBOrScalar = {
+			x: vectorBOrScalar,
+			y: vectorBOrScalar
+		};
 
 	return {
 		x: vectorA.x * vectorBOrScalar.x,
@@ -20,7 +40,11 @@ const multiply = (vectorA: Vector, vectorBOrScalar: Vector | number): Vector => 
 	};
 };
 const divide = (vectorA: Vector, vectorBOrScalar: Vector | number): Vector => {
-	if (typeof vectorBOrScalar === "number") vectorBOrScalar = { x: vectorBOrScalar, y: vectorBOrScalar };
+	if (typeof vectorBOrScalar === "number")
+		vectorBOrScalar = {
+			x: vectorBOrScalar,
+			y: vectorBOrScalar
+		};
 
 	return {
 		x: vectorA.x / vectorBOrScalar.x,

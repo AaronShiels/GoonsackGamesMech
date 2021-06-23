@@ -52,7 +52,7 @@ class Game extends Application {
 
 	async load(): Promise<void> {
 		// Initialise render target
-		this.renderer.backgroundColor = parseInt("FFFFFF", 16);
+		this.renderer.backgroundColor = 0x1f512b;
 
 		// Load resourcess
 		await loadResources();

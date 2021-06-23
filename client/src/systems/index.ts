@@ -11,6 +11,7 @@ import { cameraSystem } from "./camera";
 import { elevationSystem } from "./elevation";
 import { hudSystem } from "./hud";
 import { particleSystem } from "./particle";
+import { shadowSystem } from "./shadow";
 
 type System = (game: Game, deltaSeconds: number) => void;
 
@@ -25,6 +26,7 @@ const systems = [
 	elevationSystem,
 	particleSystem,
 	hudSystem,
+	shadowSystem,
 	renderSystem,
 	garbageCollectionSystem
 ];
