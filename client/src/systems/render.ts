@@ -1,5 +1,7 @@
 import { AnimatedSprite } from "pixi.js";
-import { System } from ".";
+import { Initialiser, System } from ".";
+
+const renderInit: Initialiser = (game) => (game.renderer.backgroundColor = 0x1f512b);
 
 const renderSystem: System = (game, deltaSeconds) => {
 	game.stage.x = -((game.camera.x - game.camera.width / 2) * game.stage.scale.x);
@@ -14,4 +16,4 @@ const renderSystem: System = (game, deltaSeconds) => {
 	}
 };
 
-export { renderSystem };
+export { renderInit, renderSystem };

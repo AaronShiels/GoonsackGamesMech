@@ -1,7 +1,7 @@
 import { Application, SCALE_MODES, settings } from "pixi.js";
-import { Entity, Tile, isEntity, Mech, createBuilding, Reticle } from "./entities";
-import { Rectangle, Side, Vector } from "./utilities";
-import { systems } from "./systems";
+import { Entity, Tile, isEntity, Mech, createBuilding } from "./entities";
+import { Rectangle, Vector } from "./utilities";
+import { initialisers, systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
 import { generateTileData, generateObjectData } from "./utilities";
 
@@ -51,31 +51,17 @@ class Game extends Application {
 	}
 
 	async load(): Promise<void> {
-		// Initialise render target
-		this.renderer.backgroundColor = 0x1f512b;
-
 		// Load resourcess
 		await loadResources();
 
 		// Load game world
 		const tiles = generateTileData(defaultMap, "ground").map((td) => new Tile(td));
 		const buildings = generateObjectData(defaultMap, "buildings").flatMap((od) => createBuilding(od));
-
-		const initalPosition = { x: 80, y: 120 };
-		const mech = new Mech(initalPosition);
-
-		const reticle = new Reticle(initalPosition);
-
-		this.stage.addChild(...tiles, ...buildings, mech, reticle);
-
-		// Initialise player
-
-		this.camera.x = initalPosition.x;
-		this.camera.y = initalPosition.y;
-		this.input.cursorPosition = initalPosition;
-		this.stage.addChild(mech);
+		const mech = new Mech({ x: 80, y: 120 });
+		this.stage.addChild(...tiles, ...buildings, mech);
 
 		// Start game loop
+		initialisers.forEach((init) => init(this));
 		this.ticker.add((delta): void => systems.forEach((system) => system(this, delta / 60)));
 
 		console.log(`Game started using ${this.renderer.type === 1 ? "WebGL" : "canvas"} renderer.`);

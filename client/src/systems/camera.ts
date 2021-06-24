@@ -1,10 +1,17 @@
-import { System } from ".";
-import { BuildingSegment, Mech } from "../entities";
-import { Game } from "../game";
-import { add, multiply, normalise, subtract, length, round } from "../utilities";
+import { Initialiser, System } from ".";
+import { Mech } from "../entities";
+import { add, multiply, normalise, subtract, length } from "../utilities";
 
 const focalCoefficient = 0.25;
 const scrollSpeed = 100;
+
+const cameraInit: Initialiser = (game) => {
+	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
+	if (!mech) throw new Error("Player not initialised!");
+
+	game.camera.x = mech.position.x;
+	game.camera.y = mech.position.y;
+};
 
 const cameraSystem: System = (game, deltaSeconds) => {
 	if (!game.state.active()) return;
@@ -26,4 +33,4 @@ const cameraSystem: System = (game, deltaSeconds) => {
 	game.camera.y += differenceLength < deltaLength ? difference.y : delta.y;
 };
 
-export { cameraSystem };
+export { cameraInit, cameraSystem };

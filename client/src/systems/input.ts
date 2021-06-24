@@ -1,5 +1,10 @@
-import { System } from ".";
+import { Initialiser, System } from ".";
 import { hasValue, normalise } from "../utilities";
+
+const inputInit: Initialiser = (game) => {
+	window.addEventListener("keydown", handleKeyDown, false);
+	window.addEventListener("keyup", handleKeyUp, false);
+};
 
 const inputSystem: System = (game) => {
 	const keyboardMoveVector = { x: 0, y: 0 };
@@ -53,7 +58,4 @@ const handleKeyUp = (event: KeyboardEvent): void => {
 	event.preventDefault();
 };
 
-window.addEventListener("keydown", handleKeyDown, false);
-window.addEventListener("keyup", handleKeyUp, false);
-
-export { inputSystem };
+export { inputInit, inputSystem };

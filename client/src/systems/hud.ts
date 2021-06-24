@@ -1,12 +1,22 @@
-import { System } from ".";
-import { Mech, Reticle } from "../entities";
-import { add, subtract, boundAngle } from "../utilities";
+import { Container, Sprite } from "pixi.js";
+import { Initialiser, System } from ".";
+import { getResource, Resource } from "../assets";
+import { Mech } from "../entities";
+import { add, subtract, boundAngle, Vector } from "../utilities";
 
 const maximumInaccuracyAngle = Math.PI / 8;
 const maximumExpansion = 30;
 
+let reticle: Reticle | undefined;
+
+const hudInit: Initialiser = (game) => {
+	reticle = new Reticle(game.input.cursorPosition);
+	game.stage.addChild(reticle);
+};
+
 const hudSystem: System = (game) => {
-	const reticle = game.entities.filter((e) => e instanceof Reticle)[0] as Reticle;
+	if (!reticle) throw new Error("HUD not initialised");
+
 	reticle.position.set(game.input.cursorPosition.x, game.input.cursorPosition.y);
 
 	if (!game.state.active()) return;
@@ -29,4 +39,57 @@ const hudSystem: System = (game) => {
 	reticle.expansion = expansion;
 };
 
-export { hudSystem };
+class Reticle extends Container {
+	private _expansion: number = 0;
+	private _centreSprite: Sprite;
+	private _topLeftQuadrantSprite: Sprite;
+	private _topRightQuadrantSprite: Sprite;
+	private _bottomRightQuadrantSprite: Sprite;
+	private _bottomLeftQuadrantSprite: Sprite;
+
+	constructor(position: Vector) {
+		super();
+
+		this.zIndex = 10;
+		this.position.set(position.x, position.y);
+
+		const reticleCentreTexture = getResource(Resource.HUD).spritesheet!.textures["reticle_pointer.png"];
+		this._centreSprite = new Sprite(reticleCentreTexture);
+		this._centreSprite.anchor.set(0.5);
+		this.addChild(this._centreSprite);
+
+		const reticleQuadrantTexture = getResource(Resource.HUD).spritesheet!.textures["reticle_quadrant.png"];
+		this._topLeftQuadrantSprite = new Sprite(reticleQuadrantTexture);
+		this._topLeftQuadrantSprite.anchor.set(1, 1);
+		this.addChild(this._topLeftQuadrantSprite);
+
+		this._topRightQuadrantSprite = new Sprite(reticleQuadrantTexture);
+		this._topRightQuadrantSprite.anchor.set(1, 1);
+		this._topRightQuadrantSprite.rotation = Math.PI / 2;
+		this.addChild(this._topRightQuadrantSprite);
+
+		this._bottomRightQuadrantSprite = new Sprite(reticleQuadrantTexture);
+		this._bottomRightQuadrantSprite.anchor.set(1, 1);
+		this._bottomRightQuadrantSprite.rotation = Math.PI;
+		this.addChild(this._bottomRightQuadrantSprite);
+
+		this._bottomLeftQuadrantSprite = new Sprite(reticleQuadrantTexture);
+		this._bottomLeftQuadrantSprite.anchor.set(1, 1);
+		this._bottomLeftQuadrantSprite.rotation = (Math.PI * 3) / 2;
+		this.addChild(this._bottomLeftQuadrantSprite);
+	}
+
+	public get expansion(): number {
+		return this._expansion;
+	}
+	public set expansion(value: number) {
+		this._expansion = value;
+
+		this._topLeftQuadrantSprite.position.set(-value, -value);
+		this._topRightQuadrantSprite.position.set(value, -value);
+		this._bottomRightQuadrantSprite.position.set(value, value);
+		this._bottomLeftQuadrantSprite.position.set(-value, value);
+	}
+}
+
+export { hudInit, hudSystem };

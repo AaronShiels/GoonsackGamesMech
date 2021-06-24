@@ -1,21 +1,25 @@
 import { mechSystem } from "./mech";
 import { physicsSystem } from "./physics";
-import { renderSystem } from "./render";
+import { renderInit, renderSystem } from "./render";
 import { collisionSystem } from "./collision";
 import { garbageCollectionSystem } from "./garbageCollection";
 import { enemySystem } from "./enemy";
 import { healthSystem } from "./health";
 import { Game } from "../game";
-import { inputSystem } from "./input";
-import { cameraSystem } from "./camera";
+import { inputInit, inputSystem } from "./input";
+import { cameraInit, cameraSystem } from "./camera";
 import { elevationSystem } from "./elevation";
-import { hudSystem } from "./hud";
+import { hudInit, hudSystem } from "./hud";
 import { particleSystem } from "./particle";
-import { shadowSystem } from "./shadow";
+import { shadowInit, shadowSystem } from "./shadow";
+
+type Initialiser = (game: Game) => void;
 
 type System = (game: Game, deltaSeconds: number) => void;
 
-const systems = [
+const initialisers: Initialiser[] = [inputInit, cameraInit, hudInit, shadowInit, renderInit];
+
+const systems: System[] = [
 	inputSystem,
 	mechSystem,
 	enemySystem,
@@ -31,4 +35,4 @@ const systems = [
 	garbageCollectionSystem
 ];
 
-export { System, systems };
+export { System, systems, Initialiser, initialisers };
