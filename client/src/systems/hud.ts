@@ -4,7 +4,7 @@ import { getResource, Resource } from "../assets";
 import { Mech } from "../entities";
 import { add, subtract, boundAngle, Vector } from "../utilities";
 
-const maximumInaccuracyAngle = Math.PI / 8;
+const maximumInaccuracyAngle = Math.PI / 4;
 const maximumExpansion = 30;
 
 let reticle: Reticle | undefined;

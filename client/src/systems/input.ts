@@ -12,12 +12,15 @@ const inputSystem: System = (game) => {
 	if (currentKeyboardInput.a) keyboardMoveVector.x--;
 	if (currentKeyboardInput.s) keyboardMoveVector.y++;
 	if (currentKeyboardInput.w) keyboardMoveVector.y--;
+	game.input.moveDirection = hasValue(keyboardMoveVector) ? normalise(keyboardMoveVector) : keyboardMoveVector;
 
 	const mouseButtons: number = game.renderer.plugins.interaction.mouse.buttons;
-
-	game.input.moveDirection = hasValue(keyboardMoveVector) ? normalise(keyboardMoveVector) : keyboardMoveVector;
-	game.input.cursorPosition = game.stage.toLocal(game.renderer.plugins.interaction.mouse.global);
 	game.input.firing = !!(mouseButtons & 1);
+
+	const cursorPosition = game.renderer.plugins.interaction.mouse.global;
+	if (cursorPosition.x < -1000 || cursorPosition.x > 1000 || cursorPosition.y < -1000 || cursorPosition.y > 1000) return;
+
+	game.input.cursorPosition = game.stage.toLocal(cursorPosition);
 };
 
 enum Keys {
