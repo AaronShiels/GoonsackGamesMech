@@ -24,15 +24,15 @@ const hudSystem: System = (game) => {
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 
-	const leftArmPosition = add(mech.leftArm.position, mech.position);
+	const leftArmPosition = add(mech.leftArmPosition, mech.position);
 	const leftArmReticleDirectionVector = subtract(reticle.position, leftArmPosition);
 	const leftArmReticleAngle = Math.atan2(leftArmReticleDirectionVector.y, leftArmReticleDirectionVector.x);
-	const leftArmAngleDifference = Math.abs(boundAngle(leftArmReticleAngle - mech.leftArm.direction));
+	const leftArmAngleDifference = Math.abs(boundAngle(leftArmReticleAngle - mech.leftArmDirection));
 
-	const rightArmPosition = add(mech.rightArm.position, mech.position);
+	const rightArmPosition = add(mech.rightArmPosition, mech.position);
 	const rightArmReticleDirectionVector = subtract(reticle.position, rightArmPosition);
 	const rightArmReticleAngle = Math.atan2(rightArmReticleDirectionVector.y, rightArmReticleDirectionVector.x);
-	const rightArmAngleDifference = Math.abs(boundAngle(rightArmReticleAngle - mech.rightArm.direction));
+	const rightArmAngleDifference = Math.abs(boundAngle(rightArmReticleAngle - mech.rightArmDirection));
 
 	const inaccuracyRatio = Math.min(leftArmAngleDifference + rightArmAngleDifference, maximumInaccuracyAngle) / maximumInaccuracyAngle;
 	const expansion = inaccuracyRatio * maximumExpansion;
