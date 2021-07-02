@@ -4,8 +4,8 @@ import { Initialiser, System } from ".";
 const renderInit: Initialiser = (game) => (game.renderer.backgroundColor = 0x1f512b);
 
 const renderSystem: System = (game, deltaSeconds) => {
-	game.stage.x = -((game.camera.x - game.camera.width / 2) * game.stage.scale.x);
-	game.stage.y = -((game.camera.y - game.camera.height / 2) * game.stage.scale.y);
+	game.world.position.x = -(game.camera.x - game.camera.width / 2);
+	game.world.position.y = -(game.camera.y - game.camera.height / 2);
 
 	if (!game.state.active()) return;
 

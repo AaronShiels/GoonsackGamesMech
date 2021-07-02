@@ -3,10 +3,10 @@ import { isEntity } from "../entities";
 
 const garbageCollectionSystem: System = (game) => {
 	for (let i = game.entities.length - 1; i >= 0; i--) {
-		const entity = game.stage.getChildAt(i);
+		const entity = game.world.getChildAt(i);
 		if (!isEntity(entity) || !entity.destroyed) continue;
 
-		game.stage.removeChild(entity);
+		game.world.removeChild(entity);
 	}
 };
 

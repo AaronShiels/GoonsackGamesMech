@@ -1,4 +1,4 @@
-import { boundAngle, hasValue, subtract, add, Vector } from "../utilities";
+import { boundAngle, hasValue, subtract, add, Vector, round } from "../utilities";
 import { System } from ".";
 import { multiply } from "../utilities";
 import { Mech } from "../entities";
@@ -23,9 +23,11 @@ const mechSystem: System = (game, deltaSeconds) => {
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 
+	const worldCursorPosition = subtract(game.input.cursorPosition, game.world.position);
+
 	applyAcceleration(mech, game.input.moveDirection);
-	applyBodyRotation(mech, game.input.cursorPosition, deltaSeconds);
-	applyArmRotations(mech, game.input.cursorPosition, deltaSeconds);
+	applyBodyRotation(mech, worldCursorPosition, deltaSeconds);
+	applyArmRotations(mech, worldCursorPosition, deltaSeconds);
 	applyCannon(game, mech, game.input.firing, deltaSeconds);
 
 	mech.walk(deltaSeconds);
@@ -84,9 +86,9 @@ const applyCannon = (game: Game, mech: Mech, firing: boolean, deltaSeconds: numb
 		const leftCannonBulletVelocity = multiply(leftArmDirectionUnitVector, cannonVelocity);
 
 		const leftCannonBullet = new CannonBullet(leftArmBarrelPosition, leftCannonBulletVelocity, mech.leftArmDirection);
-		game.stage.addChild(leftCannonBullet);
+		game.world.addChild(leftCannonBullet);
 		const leftCannonFire = new ExplosionTiny(leftArmBarrelPosition);
-		game.stage.addChild(leftCannonFire);
+		game.world.addChild(leftCannonFire);
 
 		const leftArmRecoilAngle = boundAngle(mech.leftArmDirection + maxAngularRecoil);
 		mech.leftArmDirection = leftArmRecoilAngle;
@@ -100,9 +102,9 @@ const applyCannon = (game: Game, mech: Mech, firing: boolean, deltaSeconds: numb
 		mech.rightArmDirection = rightArmRecoilAngle;
 
 		const rightCannonBullet = new CannonBullet(rightArmBarrelPosition, rightCannonBulletVelocity, mech.rightArmDirection);
-		game.stage.addChild(rightCannonBullet);
+		game.world.addChild(rightCannonBullet);
 		const rightCannonFire = new ExplosionTiny(rightArmBarrelPosition);
-		game.stage.addChild(rightCannonFire);
+		game.world.addChild(rightCannonFire);
 
 		mech.cannonRemainingReloadSeconds = cannonReloadSeconds;
 		mech.cannonRecoil = maxNormalRecoil;

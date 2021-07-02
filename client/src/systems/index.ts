@@ -6,7 +6,7 @@ import { garbageCollectionSystem } from "./garbageCollection";
 import { enemySystem } from "./enemy";
 import { healthSystem } from "./health";
 import { Game } from "../game";
-import { inputInit, inputSystem } from "./input";
+import { inputInit, inputSystem, joystickZone } from "./input";
 import { cameraInit, cameraSystem } from "./camera";
 import { elevationSystem } from "./elevation";
 import { hudInit, hudSystem } from "./hud";

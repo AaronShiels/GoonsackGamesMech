@@ -12,7 +12,7 @@ let shadow: Shadow | undefined;
 
 const shadowInit: Initialiser = (game) => {
 	shadow = new Shadow(game.renderer);
-	game.stage.addChild(shadow);
+	game.world.addChild(shadow);
 };
 
 const shadowSystem: System = (game) => {

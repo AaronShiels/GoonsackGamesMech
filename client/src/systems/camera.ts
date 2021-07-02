@@ -19,7 +19,8 @@ const cameraSystem: System = (game, deltaSeconds) => {
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 
-	const cursorOffset = subtract(game.input.cursorPosition, game.camera);
+	const cursorWorldPosition = subtract(game.input.cursorPosition, game.world.position);
+	const cursorOffset = subtract(cursorWorldPosition, game.camera);
 	const desiredCameraPosition = add(mech.position, multiply(cursorOffset, focalCoefficient));
 
 	if (desiredCameraPosition.x === game.camera.x && desiredCameraPosition.y === game.camera.y) return;
