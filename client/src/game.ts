@@ -5,14 +5,8 @@ import { initialisers, systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
 import { generateTileData, generateObjectData } from "./utilities";
 
-// settings.ROUND_PIXELS = true;
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
 settings.SORTABLE_CHILDREN = true;
-
-interface GameSettings {
-	width: number;
-	height: number;
-}
 
 interface GameInput {
 	firing: boolean;
@@ -24,21 +18,22 @@ interface GameState {
 	active(): boolean;
 }
 
+const gameResolution = 400;
+
 class Game extends Application {
-	constructor(element: HTMLElement, settings: GameSettings) {
+	constructor(screenDimensions: number) {
 		super({
-			width: element.clientWidth,
-			height: (element.clientWidth / settings.width) * settings.height,
+			width: screenDimensions,
+			height: screenDimensions,
 			autoDensity: true,
 			resolution: window.devicePixelRatio
 		});
 
-		this.stage.scale.x = this.screen.width / settings.width;
-		this.stage.scale.y = this.screen.height / settings.height;
-		element.appendChild(this.view);
+		this.stage.scale.x = this.screen.width / gameResolution;
+		this.stage.scale.y = this.screen.height / gameResolution;
 
-		this.camera = { x: 0, y: 0, ...settings };
-		this.input = { firing: false, cursorPosition: { x: settings.width / 2, y: settings.height / 2 }, moveDirection: { x: 0, y: 0 } };
+		this.camera = { x: 0, y: 0, width: gameResolution, height: gameResolution };
+		this.input = { firing: false, cursorPosition: { x: this.camera.width / 2, y: this.camera.height / 2 }, moveDirection: { x: 0, y: 0 } };
 	}
 
 	public readonly camera: Rectangle;

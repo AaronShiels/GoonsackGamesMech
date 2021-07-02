@@ -1,8 +1,6 @@
 import { Game } from "./game";
 
-const element = document.getElementById("game") as HTMLDivElement | null;
-if (!element) throw new Error("Game element not found.");
-
-const settings = { width: 320, height: 240 };
-const game = new Game(element, settings);
+const screenDimensions = Math.min(window.innerWidth, window.innerHeight);
+const game = new Game(screenDimensions);
+document.body.appendChild(game.view);
 game.load();
