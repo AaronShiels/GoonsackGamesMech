@@ -2,22 +2,29 @@ import { Container, Graphics, Renderer, SCALE_MODES, Sprite } from "pixi.js";
 import { Initialiser, System } from ".";
 import { getResource, Resource } from "../assets";
 import { Mech } from "../entities";
-import { add, subtract, boundAngle, Vector, Circle, multiply } from "../utilities";
-import { joystickZone } from "./input";
+import { add, subtract, boundAngle, Vector, multiply, isTouch, touchControlPaneModifier } from "../utilities";
 
 const maximumInaccuracyAngle = Math.PI / 4;
 const maximumExpansion = 30;
+const joystickRadisuModifier = 0.4;
 
 let reticle: Reticle | undefined;
 let joystick: Joystick | undefined;
 
 const hudInit: Initialiser = (game) => {
-	if (joystickZone.radius) {
+	if (isTouch) {
+		const panelPosition = { x: game.camera.width * touchControlPaneModifier.x, y: game.camera.height * touchControlPaneModifier.y };
+		const panelSize = { x: game.camera.width * touchControlPaneModifier.width, y: game.camera.height * touchControlPaneModifier.height };
+		const panel = new Panel(panelPosition, panelSize);
+		game.hud.addChild(panel);
+
 		const joystickPosition = {
-			x: joystickZone.x,
-			y: joystickZone.y
+			x: (touchControlPaneModifier.x + touchControlPaneModifier.width / 2) * game.camera.width,
+			y: (touchControlPaneModifier.y + touchControlPaneModifier.height / 2) * game.camera.height
 		};
-		joystick = new Joystick(joystickPosition, joystickZone!.radius, game.renderer);
+		const joystickRadius =
+			Math.min(game.camera.width * touchControlPaneModifier.width, game.camera.height * touchControlPaneModifier.height) * joystickRadisuModifier;
+		joystick = new Joystick(joystickPosition, joystickRadius, game.renderer);
 		game.hud.addChild(joystick);
 	}
 
@@ -106,6 +113,16 @@ class Reticle extends Container {
 	}
 }
 
+class Panel extends Graphics {
+	constructor(position: Vector, size: Vector) {
+		super();
+
+		this.beginFill(0x000000);
+		this.drawRect(position.x, position.y, size.x, size.y);
+		this.endFill();
+	}
+}
+
 class Joystick extends Container {
 	private _backgroundSprite: Sprite;
 	private _stickSprite: Sprite;
@@ -118,22 +135,17 @@ class Joystick extends Container {
 		this._stickDistance = (joystickRadius / 8) * 7;
 
 		const graphics = new Graphics();
-		graphics.beginFill(0x000000);
+		graphics.beginFill(0xff8800);
 		graphics.drawCircle(0, 0, joystickRadius);
 		graphics.endFill();
 
 		const backgroundTexture = renderer.generateTexture(graphics, SCALE_MODES.NEAREST, window.devicePixelRatio);
 		this._backgroundSprite = new Sprite(backgroundTexture);
-		this._backgroundSprite.alpha = 0.5;
+		this._backgroundSprite.alpha = 0.2;
 		this._backgroundSprite.anchor.set(0.5);
 		this.addChild(this._backgroundSprite);
 
-		graphics.clear();
-		graphics.beginFill(0x000000);
-		graphics.drawCircle(0, 0, joystickRadius / 8);
-		graphics.endFill();
-
-		const stickTexture = renderer.generateTexture(graphics, SCALE_MODES.NEAREST, window.devicePixelRatio);
+		const stickTexture = getResource(Resource.HUD).spritesheet!.textures["joystick.png"];
 		this._stickSprite = new Sprite(stickTexture);
 		this._stickSprite.anchor.set(0.5);
 		this.addChild(this._stickSprite);

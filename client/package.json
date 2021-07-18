@@ -2,8 +2,8 @@
 	"name": "goonsackgames",
 	"version": "1.0.0",
 	"scripts": {
-		"build: production": "webpack --mode=production",
-		"watch: development": "webpack serve --mode=development --config webpack.config.js --progress --profile --content-base dist/"
+		"watch": "webpack serve --mode=development --config webpack.config.js --progress --profile --content-base dist/",
+		"build": "webpack --mode=production"
 	},
 	"repository": {
 		"type": "git",
@@ -28,7 +28,6 @@
 	},
 	"dependencies": {
 		"lodash": "^4.17.21",
-		"npm": "^7.6.0",
 		"pixi.js": "^5.3.9"
 	}
 }

@@ -1,8 +1,16 @@
 {"frames": {
 
+"joystick.png":
+{
+	"frame": {"x":0,"y":0,"w":14,"h":14},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":14},
+	"sourceSize": {"w":14,"h":14}
+},
 "reticle_pointer.png":
 {
-	"frame": {"x":0,"y":0,"w":4,"h":4},
+	"frame": {"x":0,"y":15,"w":4,"h":4},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":4,"h":4},
@@ -10,7 +18,7 @@
 },
 "reticle_quadrant.png":
 {
-	"frame": {"x":5,"y":0,"w":7,"h":7},
+	"frame": {"x":5,"y":15,"w":7,"h":7},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":7,"h":7},
@@ -21,8 +29,8 @@
 	"version": "1.0",
 	"image": "hud.png",
 	"format": "RGBA8888",
-	"size": {"w":12,"h":7},
+	"size": {"w":14,"h":22},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:14ca84419e5fb12b291bcfbaf8deb1e5:43b431970953bdd96887996c379e2a3a:1f12e3a3d447c2b9be1f7d9b1846589c$"
+	"smartupdate": "$TexturePacker:SmartUpdate:88029f99375f19df04e26f4fb288d63a:4abcfbc0e2f76695ea3ce50f3cee89e1:1f12e3a3d447c2b9be1f7d9b1846589c$"
 }
 }

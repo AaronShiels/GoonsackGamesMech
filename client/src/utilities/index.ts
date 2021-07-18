@@ -1,5 +1,6 @@
 import { boundAngle, toDegrees } from "./angles";
 import { Circle, Sector, circleRectangleIntersects, sectorRectangeIntersects } from "./circle";
+import { isTouch, orientation, touchControlPaneModifier } from "./device";
 import { Side } from "./enums";
 import { TileData, generateTileData, generateObjectData, ObjectData } from "./map";
 import { Rectangle, centre, rectanglesIntersect, rectanglesIntersection, liesWithin } from "./rectangle";
@@ -34,5 +35,8 @@ export {
 	boundAngle,
 	toDegrees,
 	generateTileData,
-	generateObjectData
+	generateObjectData,
+	isTouch,
+	orientation,
+	touchControlPaneModifier
 };

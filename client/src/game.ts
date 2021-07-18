@@ -1,9 +1,8 @@
 import { Application, Container, SCALE_MODES, settings } from "pixi.js";
 import { Entity, Tile, isEntity, Mech, createBuilding } from "./entities";
-import { Rectangle, Vector } from "./utilities";
 import { initialisers, systems } from "./systems";
 import { defaultMap, loadResources } from "./assets";
-import { generateTileData, generateObjectData } from "./utilities";
+import { Rectangle, Vector, generateTileData, generateObjectData, touchControlPaneModifier, isTouch } from "./utilities";
 
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
 settings.SORTABLE_CHILDREN = true;
@@ -18,28 +17,27 @@ interface GameState {
 	active(): boolean;
 }
 
+const minimumScreenDimension = Math.min(window.innerWidth, window.innerHeight);
 const gameResolution = 400;
+const controlPaneWidthAugment = isTouch ? touchControlPaneModifier.x + touchControlPaneModifier.width : 1;
+const controlPaneHeightAugment = isTouch ? touchControlPaneModifier.y + touchControlPaneModifier.height : 1;
+const screenWidth = minimumScreenDimension * controlPaneWidthAugment;
+const screenHeight = minimumScreenDimension * controlPaneHeightAugment;
 
 class Game extends Application {
-	constructor(screenDimensions: number) {
+	constructor() {
 		super({
-			width: screenDimensions,
-			height: screenDimensions,
+			width: screenWidth,
+			height: screenHeight,
 			autoDensity: true,
 			resolution: window.devicePixelRatio
 		});
 
-		this.stage.scale.x = this.screen.width / gameResolution;
-		this.stage.scale.y = this.screen.height / gameResolution;
+		this.stage.scale.set(minimumScreenDimension / gameResolution);
 
-		this.camera = {
-			x: 0,
-			y: 0,
-			width: gameResolution,
-			height: gameResolution
-		};
+		this.camera = { x: 0, y: 0, width: gameResolution, height: gameResolution };
 		this.input = {
-			cursorPosition: { x: 0, y: 0 },
+			cursorPosition: { x: gameResolution / 2, y: gameResolution / 2 },
 			moveDirection: { x: 0, y: 0 },
 			firing: false
 		};

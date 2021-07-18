@@ -13,18 +13,18 @@
 			}
 		},
 		{
-			"label": "npm: build: production",
+			"label": "npm: watch",
 			"type": "npm",
-			"script": "build: production",
+			"script": "watch",
 			"problemMatcher": ["$tsc"],
 			"options": {
 				"cwd": "${workspaceFolder}/client"
 			}
 		},
 		{
-			"label": "npm: watch: development",
+			"label": "npm: build",
 			"type": "npm",
-			"script": "watch: development",
+			"script": "build",
 			"problemMatcher": ["$tsc"],
 			"options": {
 				"cwd": "${workspaceFolder}/client"
