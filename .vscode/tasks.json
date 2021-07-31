@@ -22,18 +22,22 @@
 			"problemMatcher": ["$tsc"]
 		},
 		{
-			"label": "terraform: apply",
+			"label": "terraform: init",
 			"type": "shell",
 			"command": "terraform",
-			"args": ["apply"],
+			"args": ["init"],
 			"problemMatcher": []
 		},
 		{
-			"label": "aws: sync",
+			"label": "terraform: apply",
 			"type": "shell",
-			"command": "aws",
-			"args": ["s3", "sync", "./client/dist", "s3://goonsackgames.com", "--exclude", "*/raw/*"],
+			"command": "terraform",
+			"args": ["apply" /*"-auto-approve"*/],
 			"problemMatcher": []
+		},
+		{
+			"label": "deploy",
+			"dependsOn": ["npm: install", "npm: build", "terraform: init", "terraform: apply"]
 		}
 	]
 }
