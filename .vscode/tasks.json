@@ -10,16 +10,55 @@
 			"problemMatcher": ["$tsc"]
 		},
 		{
-			"label": "npm: watch",
+			"label": "npm: client: build: debug",
 			"type": "npm",
-			"script": "watch",
+			"script": "client: build: debug",
 			"problemMatcher": ["$tsc"]
 		},
 		{
-			"label": "npm: build",
+			"label": "npm: client: build: release",
 			"type": "npm",
-			"script": "build",
+			"script": "client: build: release",
 			"problemMatcher": ["$tsc"]
+		},
+		{
+			"label": "npm: server: build: debug",
+			"type": "npm",
+			"script": "server: build: debug",
+			"problemMatcher": []
+		},
+		{
+			"label": "npm: server: build: release",
+			"type": "npm",
+			"script": "server: build: release",
+			"problemMatcher": []
+		},
+		{
+			"label": "docker: login",
+			"type": "shell",
+			"command": "aws ecr get-login-password --profile personal --region us-west-2 | docker login --username AWS --password-stdin 255537259750.dkr.ecr.us-west-2.amazonaws.com/goonsackgames",
+			"problemMatcher": []
+		},
+		{
+			"label": "docker: build",
+			"type": "shell",
+			"command": "docker",
+			"args": ["build", "--file", "server.Dockerfile", "--tag", "255537259750.dkr.ecr.us-west-2.amazonaws.com/goonsackgames", "."],
+			"problemMatcher": []
+		},
+		{
+			"label": "docker: push",
+			"type": "shell",
+			"command": "docker",
+			"args": ["push", "255537259750.dkr.ecr.us-west-2.amazonaws.com/goonsackgames"],
+			"problemMatcher": []
+		},
+		{
+			"label": "docker-compose: debug",
+			"type": "shell",
+			"command": "docker-compose",
+			"args": ["--file", "docker-compose.debug.yml", "up"],
+			"problemMatcher": []
 		},
 		{
 			"label": "terraform: init",
@@ -32,12 +71,22 @@
 			"label": "terraform: apply",
 			"type": "shell",
 			"command": "terraform",
-			"args": ["apply" /*"-auto-approve"*/],
+			"args": ["apply"],
 			"problemMatcher": []
 		},
 		{
 			"label": "deploy",
-			"dependsOn": ["npm: install", "npm: build", "terraform: init", "terraform: apply"]
+			"dependsOn": [
+				"docker: build",
+				"docker: login",
+				"docker: push",
+				"npm: install",
+				"npm: client: build: release",
+				"terraform: init",
+				"terraform: apply"
+			],
+			"dependsOrder": "sequence",
+			"problemMatcher": []
 		}
 	]
 }

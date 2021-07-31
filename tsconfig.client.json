@@ -1,12 +1,13 @@
 {
 	"compilerOptions": {
 		"lib": ["ESNext", "DOM"],
+		"types": ["lodash", "uuid"],
 		"target": "ES6",
 		"strict": true,
-		"moduleResolution": "node",
+		"moduleResolution": "Node",
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true,
-		"outDir": "./dist/"
+		"outDir": "./dist/client/"
 	},
 	"include": ["./src/client/index.ts"]
 }

@@ -4,10 +4,12 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const config = (_, { mode }) => {
 	if (!mode) throw new Error("Mode not provided");
+	const debugBuild = mode !== "production";
+	console.log(`Configuration: ${debugBuild ? "Debug" : "Release"}`);
 
 	const entry = "./src/client/index.ts";
 
-	const devtool = mode === "production" ? false : "inline-source-map";
+	const devtool = debugBuild ? "inline-source-map" : false;
 	const devServer = { contentBase: path.join(__dirname, "dist/client"), port: 8080 };
 
 	const resolve = { extensions: [".ts", ".tsx", ".js", ".jsx", ".json"] };
@@ -15,7 +17,15 @@ const config = (_, { mode }) => {
 	const tsLoaderRule = {
 		test: /\.ts(x?)$/,
 		exclude: /node_modules/,
-		use: [{ loader: "ts-loader", options: { transpileOnly: mode === "production" } }]
+		use: [
+			{
+				loader: "ts-loader",
+				options: {
+					transpileOnly: !debugBuild,
+					configFile: "tsconfig.client.json"
+				}
+			}
+		]
 	};
 	const module = { rules: [tsLoaderRule] };
 

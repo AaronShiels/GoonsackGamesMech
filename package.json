@@ -2,8 +2,10 @@
 	"name": "goonsackgames",
 	"version": "1.0.0",
 	"scripts": {
-		"watch": "webpack serve --mode=development --config webpack.config.js --progress --profile --content-base dist/",
-		"build": "webpack --mode=production"
+		"client: build: debug": "webpack --mode=development --config webpack.config.js --watch",
+		"client: build: release": "webpack --mode=production --config webpack.config.js",
+		"server: build: debug": "tsc --project tsconfig.server.json --sourceMap --watch",
+		"server: build: release": "tsc --project tsconfig.server.json"
 	},
 	"repository": {
 		"type": "git",
@@ -17,6 +19,7 @@
 	"homepage": "https://github.com/AaronShiels/GoonsackGames#readme",
 	"devDependencies": {
 		"@types/lodash": "^4.14.168",
+		"@types/node": "^16.4.8",
 		"@types/uuid": "^8.3.0",
 		"copy-webpack-plugin": "^7.0.0",
 		"html-webpack-plugin": "^5.2.0",

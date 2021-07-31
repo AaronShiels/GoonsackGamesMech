@@ -5,11 +5,21 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Game Client",
+			"name": "Client",
 			"type": "pwa-chrome",
 			"request": "launch",
 			"url": "http://localhost:8080",
-			"webRoot": "${workspaceFolder}/client/src",
+			"sourceMaps": true
+		},
+		{
+			"name": "Server",
+			"type": "node",
+			"request": "launch",
+			"program": "./dist/server/index.js",
+			"outFiles": ["${workspaceFolder}/dist/server/**/*.js"],
+			"env": {
+				"SERVER_HOST": "localhost:6020"
+			},
 			"sourceMaps": true
 		}
 	]
