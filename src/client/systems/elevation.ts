@@ -5,8 +5,6 @@ import { multiply, subtract } from "../utilities";
 const elevationPerspectiveCoefficient = 16;
 
 const elevationSystem: System = (game) => {
-	if (!game.state.active()) return;
-
 	for (const entity of game.entities) {
 		if (!isElevated(entity)) continue;
 

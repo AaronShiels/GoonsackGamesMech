@@ -2,7 +2,7 @@ import { System } from ".";
 import { hasHealth } from "../components";
 
 const healthSystem: System = (game) => {
-	if (!game.state.active()) return;
+	if (!game.isServer) return;
 
 	for (const entity of game.entities) {
 		if (!hasHealth(entity)) continue;

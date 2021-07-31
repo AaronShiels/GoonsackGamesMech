@@ -12,12 +12,13 @@ import { elevationSystem } from "./elevation";
 import { hudInit, hudSystem } from "./hud";
 import { particleSystem } from "./particle";
 import { shadowInit, shadowSystem } from "./shadow";
+import { worldInit } from "./world";
 
 type Initialiser = (game: Game) => void;
 
 type System = (game: Game, deltaSeconds: number) => void;
 
-const initialisers: Initialiser[] = [inputInit, cameraInit, hudInit, shadowInit, renderInit];
+const initialisers: Initialiser[] = [worldInit, inputInit, cameraInit, hudInit, shadowInit, renderInit];
 
 const systems: System[] = [
 	inputSystem,

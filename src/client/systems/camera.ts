@@ -14,8 +14,6 @@ const cameraInit: Initialiser = (game) => {
 };
 
 const cameraSystem: System = (game, deltaSeconds) => {
-	if (!game.state.active()) return;
-
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 

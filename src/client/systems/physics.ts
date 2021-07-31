@@ -3,8 +3,6 @@ import { hasBody, hasPhysics } from "../components";
 import { multiply, subtract } from "../utilities";
 
 const physicsSystem: System = (game, deltaSeconds) => {
-	if (!game.state.active()) return;
-
 	for (const entity of game.entities) {
 		if (!hasBody(entity) || !hasPhysics(entity)) continue;
 

@@ -7,8 +7,6 @@ const renderSystem: System = (game, deltaSeconds) => {
 	game.world.position.x = -(game.camera.x - game.camera.width / 2);
 	game.world.position.y = -(game.camera.y - game.camera.height / 2);
 
-	if (!game.state.active()) return;
-
 	for (const entity of game.entities) {
 		if (!(entity instanceof AnimatedSprite)) continue;
 

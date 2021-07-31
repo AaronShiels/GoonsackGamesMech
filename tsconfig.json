@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"lib": ["ESNext", "DOM"],
+		"target": "ES6",
+		"strict": true,
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
+		"outDir": "./dist/"
+	},
+	"include": ["./src/client/index.ts"]
+}

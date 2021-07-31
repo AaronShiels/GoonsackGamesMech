@@ -37,8 +37,6 @@ const hudSystem: System = (game) => {
 
 	reticle.position.set(game.input.cursorPosition.x, game.input.cursorPosition.y);
 
-	if (!game.state.active()) return;
-
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 

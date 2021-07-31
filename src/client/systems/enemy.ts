@@ -2,7 +2,7 @@ import { System } from ".";
 import { isEnemy } from "../components";
 
 const enemySystem: System = (game) => {
-	if (!game.state.active()) return;
+	if (!game.isServer) return;
 
 	for (const entity of game.entities) {
 		if (!isEnemy(entity)) continue;

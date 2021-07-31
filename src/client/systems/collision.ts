@@ -3,6 +3,8 @@ import { BodyComponent, getBounds, hasBody, hasEdges, hasPhysics } from "../comp
 import { add, divide, rectanglesIntersection, length, multiply, normalise, subtract, Vector, round } from "../utilities";
 
 const collisionSystem: System = (game) => {
+	if (!game.isServer) return;
+
 	for (const entity of game.entities) {
 		if (!hasPhysics(entity) || !hasBody(entity) || !hasEdges(entity)) continue;
 

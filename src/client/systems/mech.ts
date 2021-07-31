@@ -18,14 +18,12 @@ const maxNormalRecoil = 6;
 const maxArmNormalSpeed = 12;
 
 const mechSystem: System = (game, deltaSeconds) => {
-	if (!game.state.active()) return;
-
 	const mech = game.entities.filter((e) => e instanceof Mech)[0] as Mech | undefined;
 	if (!mech) return;
 
 	const worldCursorPosition = subtract(game.input.cursorPosition, game.world.position);
 
-	applyAcceleration(mech, game.input.moveDirection);
+	applyAcceleration(game, mech);
 	applyBodyRotation(mech, worldCursorPosition, deltaSeconds);
 	applyArmRotations(mech, worldCursorPosition, deltaSeconds);
 	applyCannon(game, mech, game.input.firing, deltaSeconds);
@@ -33,8 +31,10 @@ const mechSystem: System = (game, deltaSeconds) => {
 	mech.walk(deltaSeconds);
 };
 
-const applyAcceleration = (mech: Mech, direction: Vector): void => {
-	const acceleration = multiply(direction, walkingForce);
+const applyAcceleration = (game: Game, mech: Mech): void => {
+	if (!game.isServer) return;
+
+	const acceleration = multiply(game.input.moveDirection, walkingForce);
 
 	mech.acceleration.x = acceleration.x;
 	mech.acceleration.y = acceleration.y;

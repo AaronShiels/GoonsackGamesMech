@@ -2,6 +2,7 @@ import { boundAngle, toDegrees } from "./angles";
 import { Circle, Sector, circleRectangleIntersects, sectorRectangeIntersects } from "./circle";
 import { isTouch, orientation, touchControlPaneModifier } from "./device";
 import { Side } from "./enums";
+import { getPlayerId, getGameId } from "./identity";
 import { TileData, generateTileData, generateObjectData, ObjectData } from "./map";
 import { Rectangle, centre, rectanglesIntersect, rectanglesIntersection, liesWithin } from "./rectangle";
 import { timestampSeconds } from "./time";
@@ -38,5 +39,7 @@ export {
 	generateObjectData,
 	isTouch,
 	orientation,
-	touchControlPaneModifier
+	touchControlPaneModifier,
+	getPlayerId,
+	getGameId
 };

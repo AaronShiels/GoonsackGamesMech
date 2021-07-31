@@ -2,8 +2,6 @@ import { System } from ".";
 import { hasLimitedLifespan } from "../components";
 
 const particleSystem: System = (game, deltaSeconds) => {
-	if (!game.state.active()) return;
-
 	for (const entity of game.entities) {
 		if (!hasLimitedLifespan(entity)) continue;
 
