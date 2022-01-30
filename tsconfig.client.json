@@ -1,12 +1,6 @@
 {
+	"extends": "./tsconfig.json",
 	"compilerOptions": {
-		"lib": ["ESNext", "DOM"],
-		"types": ["lodash", "uuid"],
-		"target": "ES6",
-		"strict": true,
-		"moduleResolution": "Node",
-		"resolveJsonModule": true,
-		"allowSyntheticDefaultImports": true,
 		"outDir": "./dist/client/"
 	},
 	"include": ["./src/client/index.ts"]

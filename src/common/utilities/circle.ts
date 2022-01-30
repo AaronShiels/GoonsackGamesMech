@@ -1,4 +1,5 @@
-import { centre, Rectangle, subtract, Vector } from ".";
+import { centre, Rectangle } from "./rectangle.js";
+import { subtract, Vector } from "./vector.js";
 
 interface Circle extends Vector {
 	radius: number;

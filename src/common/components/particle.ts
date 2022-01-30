@@ -1,4 +1,4 @@
-import { PhysicsComponent } from "./physics";
+import { PhysicsComponent } from "./physics.js";
 
 interface Particle extends PhysicsComponent {
 	remainingSeconds: number;

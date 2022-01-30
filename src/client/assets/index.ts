@@ -9,6 +9,7 @@ enum Resource {
 	HUD = "hud",
 	Map = "map"
 }
+
 const resourceLookup: Record<Resource, string> = {
 	mech: "assets/mech/mech.json",
 	building: "assets/building/building.json",

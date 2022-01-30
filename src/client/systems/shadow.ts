@@ -1,8 +1,10 @@
 import { BLEND_MODES, Container, Graphics, Renderer, SCALE_MODES, Sprite } from "pixi.js";
-import { Initialiser, System } from ".";
-import { getBounds, hasBody } from "../components";
-import { Entity, Mech } from "../entities";
-import { add, subtract, Rectangle, Vector } from "../utilities";
+import { hasBody, getBounds } from "../../common/components/body.js";
+import { Rectangle } from "../../common/utilities/rectangle.js";
+import { add, subtract, Vector } from "../../common/utilities/vector.js";
+import { Mech } from "../entities/mech.js";
+import { Initialiser, System } from "../../common/systems/system.js";
+import { Entity } from "../../common/entities/entity.js";
 
 const shadowStrength = 0.2;
 const accuracyDelta: number = 0.01;

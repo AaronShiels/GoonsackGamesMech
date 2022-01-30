@@ -1,10 +1,10 @@
-import { System } from ".";
-import { BodyComponent, getBounds, hasBody, hasEdges, hasPhysics } from "../components";
-import { add, divide, rectanglesIntersection, length, multiply, normalise, subtract, Vector, round } from "../utilities";
+import { hasBody, hasEdges, BodyComponent, getBounds } from "../../common/components/body.js";
+import { hasPhysics } from "../../common/components/physics.js";
+import { rectanglesIntersection } from "../../common/utilities/rectangle.js";
+import { add, divide, length, normalise, Vector } from "../../common/utilities/vector.js";
+import { System } from "../../common/systems/system.js";
 
 const collisionSystem: System = (game) => {
-	if (!game.isServer) return;
-
 	for (const entity of game.entities) {
 		if (!hasPhysics(entity) || !hasBody(entity) || !hasEdges(entity)) continue;
 

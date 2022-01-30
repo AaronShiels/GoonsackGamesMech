@@ -1,7 +1,8 @@
 import { AnimatedSprite } from "pixi.js";
-import { getResource, Resource } from "../assets";
-import { Edges, Particle } from "../components";
-import { Vector } from "../utilities";
+import { Edges } from "../../common/components/body.js";
+import { Particle } from "../../common/components/particle.js";
+import { Vector } from "../../common/utilities/vector.js";
+import { getResource, Resource } from "../assets/index.js";
 
 class ExplosionTiny extends AnimatedSprite implements Particle {
 	constructor(position: Vector) {

@@ -1,6 +1,6 @@
-import { System } from ".";
-import { isElevated } from "../components";
-import { multiply, subtract } from "../utilities";
+import { isElevated } from "../../common/components/elevation.js";
+import { multiply, subtract } from "../../common/utilities/vector.js";
+import { System } from "../../common/systems/system.js";
 
 const elevationPerspectiveCoefficient = 16;
 

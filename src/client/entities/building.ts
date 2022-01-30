@@ -1,7 +1,9 @@
 import { Container, ObservablePoint, Sprite } from "pixi.js";
-import { getResource, Resource } from "../assets";
-import { Edges, ElevationComponent } from "../components";
-import { ObjectData, Vector } from "../utilities";
+import { Edges } from "../../common/components/body.js";
+import { ElevationComponent } from "../../common/components/elevation.js";
+import { Vector } from "../../common/utilities/vector.js";
+import { getResource, Resource } from "../assets/index.js";
+import { ObjectData } from "../utilities/map.js";
 
 const maxFloors = 8;
 const minFloors = 4;

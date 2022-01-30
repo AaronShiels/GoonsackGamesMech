@@ -1,8 +1,23 @@
 import { Application, Container, SCALE_MODES, settings } from "pixi.js";
-import { Entity, isEntity } from "./entities";
-import { initialisers, systems } from "./systems";
 import { loadResources } from "./assets";
-import { Rectangle, Vector, touchControlPaneModifier, isTouch, getPlayerId, getGameId } from "./utilities";
+import { Vector } from "../common/utilities/vector.js";
+import { isTouch, touchControlPaneModifier } from "./utilities/device.js";
+import { getPlayerId, getGameId } from "./utilities/identity.js";
+import { Rectangle } from "../common/utilities/rectangle.js";
+import { Entity, isEntity } from "../common/entities/entity.js";
+import { Initialiser, System } from "../common/systems/system.js";
+import { cameraInit, cameraSystem } from "./systems/camera.js";
+import { collisionSystem } from "./systems/collision.js";
+import { elevationSystem } from "./systems/elevation.js";
+import { garbageCollectionSystem } from "./systems/garbageCollection.js";
+import { hudInit, hudSystem } from "./systems/hud.js";
+import { inputInit, inputSystem } from "./systems/input.js";
+import { mechSystem } from "./systems/mech.js";
+import { particleSystem } from "./systems/particle.js";
+import { physicsSystem } from "./systems/physics.js";
+import { renderInit, renderSystem } from "./systems/render.js";
+import { shadowInit, shadowSystem } from "./systems/shadow.js";
+import { worldInit } from "./systems/world.js";
 
 settings.SCALE_MODE = SCALE_MODES.NEAREST;
 settings.SORTABLE_CHILDREN = true;
@@ -11,10 +26,6 @@ interface GameInput {
 	moveDirection: Vector;
 	cursorPosition: Vector;
 	firing: boolean;
-}
-
-interface GameState {
-	active(): boolean;
 }
 
 const minimumScreenDimension = Math.min(window.innerWidth, window.innerHeight);
@@ -58,10 +69,6 @@ class Game extends Application {
 		return this.world.children.filter((e) => isEntity(e)) as unknown as Entity[];
 	}
 
-	public get isServer(): boolean {
-		return this.gameId === this.playerId;
-	}
-
 	async load(): Promise<void> {
 		// Load resourcess
 		await loadResources();
@@ -71,5 +78,21 @@ class Game extends Application {
 		this.ticker.add((delta): void => systems.forEach((system) => system(this, delta / 60)));
 	}
 }
+
+const initialisers: Initialiser[] = [worldInit, inputInit, cameraInit, hudInit, shadowInit, renderInit];
+
+const systems: System[] = [
+	inputSystem,
+	mechSystem,
+	physicsSystem,
+	collisionSystem,
+	cameraSystem,
+	elevationSystem,
+	particleSystem,
+	hudSystem,
+	shadowSystem,
+	renderSystem,
+	garbageCollectionSystem
+];
 
 export { Game };

@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"lib": ["ESNext", "DOM"],
+		"target": "ES2020",
+		"strict": true,
+		"moduleResolution": "Node",
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true
+	}
+}

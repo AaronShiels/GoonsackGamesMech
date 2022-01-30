@@ -1,6 +1,6 @@
-import { Initialiser, System } from ".";
-import { Mech } from "../entities";
-import { add, multiply, normalise, subtract, length } from "../utilities";
+import { add, length, multiply, normalise, subtract } from "../../common/utilities/vector.js";
+import { Mech } from "../entities/mech.js";
+import { Initialiser, System } from "../../common/systems/system.js";
 
 const focalCoefficient = 0.25;
 const scrollSpeed = 100;

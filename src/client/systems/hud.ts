@@ -1,8 +1,10 @@
 import { Container, Graphics, Renderer, SCALE_MODES, Sprite } from "pixi.js";
-import { Initialiser, System } from ".";
-import { getResource, Resource } from "../assets";
-import { Mech } from "../entities";
-import { add, subtract, boundAngle, Vector, multiply, isTouch, touchControlPaneModifier } from "../utilities";
+import { boundAngle } from "../../common/utilities/angles.js";
+import { add, multiply, subtract, Vector } from "../../common/utilities/vector.js";
+import { getResource, Resource } from "../assets/index.js";
+import { Mech } from "../entities/mech.js";
+import { isTouch, touchControlPaneModifier } from "../utilities/device.js";
+import { Initialiser, System } from "../../common/systems/system.js";
 
 const maximumInaccuracyAngle = Math.PI / 4;
 const maximumExpansion = 30;
@@ -42,15 +44,15 @@ const hudSystem: System = (game) => {
 
 	const reticleWorldPosition = subtract(reticle.position, game.world.position);
 
-	const leftArmPosition = add(mech.leftArmPosition, mech.position);
+	const leftArmPosition = add(mech.leftArm.position, mech.position);
 	const leftArmReticleDirectionVector = subtract(reticleWorldPosition, leftArmPosition);
 	const leftArmReticleAngle = Math.atan2(leftArmReticleDirectionVector.y, leftArmReticleDirectionVector.x);
-	const leftArmAngleDifference = Math.abs(boundAngle(leftArmReticleAngle - mech.leftArmDirection));
+	const leftArmAngleDifference = Math.abs(boundAngle(leftArmReticleAngle - mech.leftArm.direction));
 
-	const rightArmPosition = add(mech.rightArmPosition, mech.position);
+	const rightArmPosition = add(mech.rightArm.position, mech.position);
 	const rightArmReticleDirectionVector = subtract(reticleWorldPosition, rightArmPosition);
 	const rightArmReticleAngle = Math.atan2(rightArmReticleDirectionVector.y, rightArmReticleDirectionVector.x);
-	const rightArmAngleDifference = Math.abs(boundAngle(rightArmReticleAngle - mech.rightArmDirection));
+	const rightArmAngleDifference = Math.abs(boundAngle(rightArmReticleAngle - mech.rightArm.direction));
 
 	const inaccuracyRatio = Math.min(leftArmAngleDifference + rightArmAngleDifference, maximumInaccuracyAngle) / maximumInaccuracyAngle;
 	const expansion = inaccuracyRatio * maximumExpansion;

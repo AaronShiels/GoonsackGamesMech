@@ -41,51 +41,44 @@
 		},
 		{
 			"label": "docker: build",
-			"type": "shell",
+			"type": "process",
 			"command": "docker",
-			"args": ["build", "--file", "server.Dockerfile", "--tag", "255537259750.dkr.ecr.us-west-2.amazonaws.com/goonsackgames", "."],
+			"args": ["build", "--tag", "255537259750.dkr.ecr.us-west-2.amazonaws.com/goonsackgames", "."],
 			"problemMatcher": []
 		},
 		{
 			"label": "docker: push",
-			"type": "shell",
+			"type": "process",
 			"command": "docker",
 			"args": ["push", "255537259750.dkr.ecr.us-west-2.amazonaws.com/goonsackgames"],
 			"problemMatcher": []
 		},
 		{
 			"label": "docker-compose: debug",
-			"type": "shell",
+			"type": "process",
 			"command": "docker-compose",
 			"args": ["--file", "docker-compose.debug.yml", "up"],
 			"problemMatcher": []
 		},
 		{
 			"label": "terraform: init",
-			"type": "shell",
+			"type": "process",
 			"command": "terraform",
 			"args": ["init"],
 			"problemMatcher": []
 		},
 		{
 			"label": "terraform: apply",
-			"type": "shell",
+			"type": "process",
 			"command": "terraform",
 			"args": ["apply"],
 			"problemMatcher": []
 		},
 		{
-			"label": "deploy",
-			"dependsOn": [
-				"docker: build",
-				"docker: login",
-				"docker: push",
-				"npm: install",
-				"npm: client: build: release",
-				"terraform: init",
-				"terraform: apply"
-			],
-			"dependsOrder": "sequence",
+			"label": "aws: s3: sync",
+			"type": "shell",
+			"command": "aws",
+			"args": ["s3", "sync", "./dist/client", "s3://goonsackgames.com", "--profile", "personal"],
 			"problemMatcher": []
 		}
 	]

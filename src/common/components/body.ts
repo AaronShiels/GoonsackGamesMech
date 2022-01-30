@@ -1,11 +1,12 @@
-import { Entity } from "../entities";
-import { Rectangle, Vector } from "../utilities";
+import { Entity } from "../entities/entity.js";
+import { Rectangle } from "../utilities/rectangle.js";
+import { Vector } from "../utilities/vector.js";
 
 interface Edges {
-	bottom: boolean;
-	left: boolean;
-	right: boolean;
-	top: boolean;
+	readonly bottom: boolean;
+	readonly left: boolean;
+	readonly right: boolean;
+	readonly top: boolean;
 }
 
 interface BodyComponent extends Entity {

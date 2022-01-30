@@ -1,6 +1,7 @@
 import { Texture } from "pixi.js";
-import { Rectangle, Vector } from ".";
-import { getResource, Resource } from "../assets";
+import { Rectangle } from "../../common/utilities/rectangle.js";
+import { Vector } from "../../common/utilities/vector.js";
+import { getResource, Resource } from "../assets/index.js";
 
 interface TileMap {
 	layers: Array<TileLayer | ObjectGroup>;

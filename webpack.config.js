@@ -1,18 +1,34 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
+import { dirname, resolve as resolvePath } from "path";
+import { fileURLToPath } from "url";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import CopyPlugin from "copy-webpack-plugin";
+import ResolveTypeScriptPlugin from "resolve-typescript-plugin"; // Maybe remove
 
 const config = (_, { mode }) => {
 	if (!mode) throw new Error("Mode not provided");
 	const debugBuild = mode !== "production";
-	console.log(`Configuration: ${debugBuild ? "Debug" : "Release"}`);
+	const src = "./src/client";
+	const dist = "./dist/client";
+	var absRoot = dirname(fileURLToPath(import.meta.url));
 
-	const entry = "./src/client/index.ts";
+	console.log(`Mode: ${debugBuild ? "Debug" : "Release"}`);
+	console.log(`Root: ${absRoot}\nSource: ${src}\nDistributables: ${dist}`);
+
+	const entry = `${src}/index.ts`;
 
 	const devtool = debugBuild ? "inline-source-map" : false;
-	const devServer = { contentBase: path.join(__dirname, "dist/client"), port: 8080 };
+	const devServer = {
+		static: {
+			directory: dist
+		},
+		port: 8080
+	};
 
-	const resolve = { extensions: [".ts", ".tsx", ".js", ".jsx", ".json"] };
+	const resolveTypeScriptPlugin = new ResolveTypeScriptPlugin.default();
+	const resolve = {
+		extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
+		plugins: [resolveTypeScriptPlugin]
+	};
 
 	const tsLoaderRule = {
 		test: /\.ts(x?)$/,
@@ -29,7 +45,8 @@ const config = (_, { mode }) => {
 	};
 	const module = { rules: [tsLoaderRule] };
 
-	const output = { filename: "app.[contenthash].js", path: path.join(__dirname, "dist/client"), clean: true };
+	var absDist = resolvePath(absRoot, dist);
+	const output = { filename: "app.[contenthash].js", path: absDist, clean: true };
 
 	const htmlPluginConfig = new HtmlWebpackPlugin({ title: "GoonSackGames", template: "./src/client/index.html" });
 	const copyPlugin = new CopyPlugin({ patterns: [{ from: "assets/*/*", context: "./src/client" }] });
@@ -47,4 +64,4 @@ const config = (_, { mode }) => {
 	};
 };
 
-module.exports = config;
+export default config;

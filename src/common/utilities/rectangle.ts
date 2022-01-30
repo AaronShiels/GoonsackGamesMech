@@ -1,4 +1,4 @@
-import { Vector } from ".";
+import { Vector } from "./vector.js";
 
 interface Rectangle extends Vector {
 	width: number;

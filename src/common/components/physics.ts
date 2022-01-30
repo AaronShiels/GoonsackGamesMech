@@ -1,5 +1,5 @@
-import { Vector } from "../utilities";
-import { BodyComponent } from "./body";
+import { Vector } from "../utilities/vector.js";
+import { BodyComponent } from "./body.js";
 
 interface PhysicsComponent extends BodyComponent {
 	readonly velocity: Vector;

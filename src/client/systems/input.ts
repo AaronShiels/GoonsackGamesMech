@@ -1,6 +1,8 @@
 import { cloneDeep } from "lodash";
-import { Initialiser, System } from ".";
-import { divide, hasValue, isTouch, normalise, Rectangle, subtract, length, touchControlPaneModifier, Vector } from "../utilities";
+import { Rectangle } from "../../common/utilities/rectangle.js";
+import { divide, hasValue, length, normalise, subtract, Vector } from "../../common/utilities/vector.js";
+import { isTouch, touchControlPaneModifier } from "../utilities/device.js";
+import { Initialiser, System } from "../../common/systems/system.js";
 
 const tapThreshold = 400;
 const screenOffset: Vector = { x: 0, y: 0 };
