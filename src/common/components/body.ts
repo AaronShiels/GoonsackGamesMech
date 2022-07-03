@@ -9,7 +9,7 @@ interface Edges {
 	readonly top: boolean;
 }
 
-interface BodyComponent extends Entity {
+interface BodyComponent {
 	readonly position: Vector;
 	readonly size: Vector;
 	readonly edges: Edges;

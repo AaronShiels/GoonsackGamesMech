@@ -1,10 +1,11 @@
 import { dirname, resolve as resolvePath } from "path";
 import { fileURLToPath } from "url";
+import ResolveTypeScriptPlugin from "resolve-typescript-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import webpack from "webpack";
 import CopyPlugin from "copy-webpack-plugin";
-import ResolveTypeScriptPlugin from "resolve-typescript-plugin"; // Maybe remove
 
-const config = (_, { mode }) => {
+const config = (env, { mode }) => {
 	if (!mode) throw new Error("Mode not provided");
 	const debugBuild = mode !== "production";
 	const src = "./src/client";
@@ -17,21 +18,9 @@ const config = (_, { mode }) => {
 	const entry = `${src}/index.ts`;
 
 	const devtool = debugBuild ? "inline-source-map" : false;
-	const devServer = {
-		static: {
-			directory: dist
-		},
-		port: 8080
-	};
-
-	const resolveTypeScriptPlugin = new ResolveTypeScriptPlugin.default();
-	const resolve = {
-		extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
-		plugins: [resolveTypeScriptPlugin]
-	};
 
 	const tsLoaderRule = {
-		test: /\.ts(x?)$/,
+		test: /\.tsx?$/,
 		exclude: /node_modules/,
 		use: [
 			{
@@ -45,18 +34,24 @@ const config = (_, { mode }) => {
 	};
 	const module = { rules: [tsLoaderRule] };
 
+	const resolveTypeScriptPlugin = new ResolveTypeScriptPlugin();
+	const resolve = {
+		extensions: [".tsx", ".ts", ".js"],
+		plugins: [resolveTypeScriptPlugin]
+	};
+
 	var absDist = resolvePath(absRoot, dist);
 	const output = { filename: "app.[contenthash].js", path: absDist, clean: true };
 
 	const htmlPluginConfig = new HtmlWebpackPlugin({ title: "GoonSackGames", template: "./src/client/index.html" });
-	const copyPlugin = new CopyPlugin({ patterns: [{ from: "assets/*/*", context: "./src/client" }] });
-	const plugins = [htmlPluginConfig, copyPlugin];
+	const definePlugin = new webpack.DefinePlugin({ SERVER_HOST: JSON.stringify(env.SERVER_HOST) });
+	// const copyPlugin = new CopyPlugin({ patterns: [{ from: "assets/*/*", context: "./src/client" }] });
+	const plugins = [htmlPluginConfig, definePlugin /*, copyPlugin*/];
 
 	return {
 		entry,
 		mode,
 		devtool,
-		devServer,
 		resolve,
 		module,
 		output,

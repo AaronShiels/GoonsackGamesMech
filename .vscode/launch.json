@@ -15,10 +15,11 @@
 			"name": "Server",
 			"type": "node",
 			"request": "launch",
-			"program": "./dist/server/index.js",
+			"program": "./dist/server/server/index.js",
 			"outFiles": ["${workspaceFolder}/dist/server/**/*.js"],
 			"env": {
-				"SERVER_HOST": "localhost:6020"
+				"SERVER_HOST": "localhost:6020",
+				"TICK_RATE": "20"
 			},
 			"sourceMaps": true
 		}

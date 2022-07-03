@@ -1,7 +1,7 @@
-import { Game } from "../../client/game.js";
+import { GameState } from "../state.js";
 
-type Initialiser = (game: Game) => void;
+type Initialiser = (state: GameState) => void;
 
-type System = (game: Game, deltaSeconds: number) => void;
+type System = (state: GameState, delta: number) => void;
 
 export { System, Initialiser };

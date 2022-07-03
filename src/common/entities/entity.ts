@@ -1,4 +1,6 @@
 interface Entity {
+	readonly id: string;
+	readonly type: string;
 	destroyed: boolean;
 }
 
