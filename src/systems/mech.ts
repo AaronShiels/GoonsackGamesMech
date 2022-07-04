@@ -1,10 +1,10 @@
-import { boundAngle } from "../../common/utilities/angles.js";
-import { add, hasValue, multiply, subtract, Vector } from "../../common/utilities/vector.js";
+import { boundAngle } from "../utilities/angles.js";
+import { add, hasValue, multiply, subtract, Vector } from "../utilities/vector.js";
 import { ExplosionTiny } from "../entities/explosion.js";
 import { Mech } from "../entities/mech.js";
 import { CannonBullet } from "../entities/projectile.js";
 import { Game } from "../game.js";
-import { System } from "../../common/systems/system.js";
+import { System } from "./system.js";
 
 const walkingForce = 200;
 const maxTurnThreshold = Math.PI / 16;

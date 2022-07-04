@@ -7,8 +7,8 @@ import ResolveTypeScriptPlugin from "resolve-typescript-plugin"; // Maybe remove
 const config = (_, { mode }) => {
 	if (!mode) throw new Error("Mode not provided");
 	const debugBuild = mode !== "production";
-	const src = "./src/client";
-	const dist = "./dist/client";
+	const src = "./src";
+	const dist = "./dist";
 	var absRoot = dirname(fileURLToPath(import.meta.url));
 
 	console.log(`Mode: ${debugBuild ? "Debug" : "Release"}`);
@@ -38,7 +38,7 @@ const config = (_, { mode }) => {
 				loader: "ts-loader",
 				options: {
 					transpileOnly: !debugBuild,
-					configFile: "tsconfig.client.json"
+					configFile: "tsconfig.json"
 				}
 			}
 		]
@@ -48,8 +48,8 @@ const config = (_, { mode }) => {
 	var absDist = resolvePath(absRoot, dist);
 	const output = { filename: "app.[contenthash].js", path: absDist, clean: true };
 
-	const htmlPluginConfig = new HtmlWebpackPlugin({ title: "GoonSackGames", template: "./src/client/index.html" });
-	const copyPlugin = new CopyPlugin({ patterns: [{ from: "assets/*/*", context: "./src/client" }] });
+	const htmlPluginConfig = new HtmlWebpackPlugin({ title: "GoonSackGames - Mech", template: "./src/index.html" });
+	const copyPlugin = new CopyPlugin({ patterns: [{ from: "assets/*/*", context: "./src" }] });
 	const plugins = [htmlPluginConfig, copyPlugin];
 
 	return {

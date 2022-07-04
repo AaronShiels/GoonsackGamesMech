@@ -1,4 +1,4 @@
-import { Game } from "../../client/game.js";
+import { Game } from "../game.js";
 
 type Initialiser = (game: Game) => void;
 

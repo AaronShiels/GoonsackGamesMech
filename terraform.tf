@@ -11,6 +11,6 @@ terraform {
     region  = "us-west-2"
 
     bucket = "aaronshiels-state"
-    key    = "goonsackgames.com/terraform.tfstate"
+    key    = "mech.goonsackgames.com/terraform.tfstate"
   }
 }

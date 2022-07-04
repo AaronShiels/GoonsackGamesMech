@@ -10,48 +10,16 @@
 			"problemMatcher": ["$tsc"]
 		},
 		{
-			"label": "npm: client: build: debug",
+			"label": "npm: build: debug",
 			"type": "npm",
-			"script": "client: build: debug",
+			"script": "build: debug",
 			"problemMatcher": ["$tsc"]
 		},
 		{
-			"label": "npm: client: build: release",
+			"label": "npm: build: release",
 			"type": "npm",
-			"script": "client: build: release",
+			"script": "build: release",
 			"problemMatcher": ["$tsc"]
-		},
-		{
-			"label": "npm: server: build: debug",
-			"type": "npm",
-			"script": "server: build: debug",
-			"problemMatcher": []
-		},
-		{
-			"label": "npm: server: build: release",
-			"type": "npm",
-			"script": "server: build: release",
-			"problemMatcher": []
-		},
-		{
-			"label": "docker: login",
-			"type": "shell",
-			"command": "aws ecr get-login-password --profile personal --region us-west-2 | docker login --username AWS --password-stdin 255537259750.dkr.ecr.us-west-2.amazonaws.com/goonsackgames",
-			"problemMatcher": []
-		},
-		{
-			"label": "docker: build",
-			"type": "process",
-			"command": "docker",
-			"args": ["build", "--tag", "255537259750.dkr.ecr.us-west-2.amazonaws.com/goonsackgames", "."],
-			"problemMatcher": []
-		},
-		{
-			"label": "docker: push",
-			"type": "process",
-			"command": "docker",
-			"args": ["push", "255537259750.dkr.ecr.us-west-2.amazonaws.com/goonsackgames"],
-			"problemMatcher": []
 		},
 		{
 			"label": "docker-compose: debug",
@@ -64,7 +32,7 @@
 			"label": "terraform: init",
 			"type": "process",
 			"command": "terraform",
-			"args": ["init"],
+			"args": ["init", "-reconfigure"],
 			"problemMatcher": []
 		},
 		{
@@ -78,7 +46,7 @@
 			"label": "aws: s3: sync",
 			"type": "shell",
 			"command": "aws",
-			"args": ["s3", "sync", "./dist/client", "s3://goonsackgames.com", "--profile", "personal"],
+			"args": ["s3", "sync", "./dist", "s3://mech.goonsackgames.com", "--profile", "personal"],
 			"problemMatcher": []
 		}
 	]

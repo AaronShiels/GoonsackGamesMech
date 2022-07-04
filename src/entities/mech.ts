@@ -1,8 +1,8 @@
 import { Container, Sprite, Spritesheet, Transform } from "pixi.js";
-import { MechComponent } from "../../common/components/mech.js";
-import { Edges } from "../../common/components/body.js";
-import { add, dot, hasValue, length, multiply, normalise, subtract, Vector } from "../../common/utilities/vector.js";
-import { boundAngle, toDegrees } from "../../common/utilities/angles.js";
+import { MechComponent } from "../components/mech.js";
+import { Edges } from "../components/body.js";
+import { add, dot, hasValue, length, multiply, normalise, subtract, Vector } from "../utilities/vector.js";
+import { boundAngle, toDegrees } from "../utilities/angles.js";
 import { getResource, Resource } from "../assets/index.js";
 
 const armTangentDistance = 22;

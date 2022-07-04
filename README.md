@@ -1,3 +1,3 @@
-# Goonsack Games
+# Mech
 
-Try it out at https://www.goonsackgames.com
+Try it out at https://mech.goonsackgames.com

@@ -1,7 +1,7 @@
 import { Container, ObservablePoint, Sprite } from "pixi.js";
-import { Edges } from "../../common/components/body.js";
-import { ElevationComponent } from "../../common/components/elevation.js";
-import { Vector } from "../../common/utilities/vector.js";
+import { Edges } from "../components/body.js";
+import { ElevationComponent } from "../components/elevation.js";
+import { Vector } from "../utilities/vector.js";
 import { getResource, Resource } from "../assets/index.js";
 import { ObjectData } from "../utilities/map.js";
 

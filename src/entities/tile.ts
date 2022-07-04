@@ -1,6 +1,6 @@
 import { Rectangle as PixiRectangle, Sprite, Texture } from "pixi.js";
-import { BodyComponent, Edges } from "../../common/components/body.js";
-import { Vector } from "../../common/utilities/vector.js";
+import { BodyComponent, Edges } from "../components/body.js";
+import { Vector } from "../utilities/vector.js";
 import { TileData } from "../utilities/map.js";
 
 class Tile extends Sprite implements BodyComponent {

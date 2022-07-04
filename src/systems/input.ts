@@ -1,8 +1,8 @@
 import { cloneDeep } from "lodash";
-import { Rectangle } from "../../common/utilities/rectangle.js";
-import { divide, hasValue, length, normalise, subtract, Vector } from "../../common/utilities/vector.js";
-import { isTouch, touchControlPaneModifier } from "../utilities/device.js";
-import { Initialiser, System } from "../../common/systems/system.js";
+import { Rectangle } from "../utilities/rectangle.js";
+import { divide, hasValue, length, normalise, subtract, Vector } from "../utilities/vector.js";
+import { touchControlPaneModifier } from "../utilities/device.js";
+import { Initialiser, System } from "./system.js";
 
 const tapThreshold = 400;
 const screenOffset: Vector = { x: 0, y: 0 };
@@ -27,49 +27,54 @@ const inputInit: Initialiser = (game) => {
 	window.addEventListener("pointerdown", handlePointerDown, false);
 	window.addEventListener("pointerup", handlePointerUp, false);
 	window.addEventListener("pointermove", handlePointerMove, false);
+	window.addEventListener("keydown", handleKeyDown, false);
+	window.addEventListener("keyup", handleKeyUp, false);
 
-	if (isTouch) {
-		controlPane.x = game.camera.width * touchControlPaneModifier.x;
-		controlPane.y = game.camera.height * touchControlPaneModifier.y;
-		controlPane.width = game.camera.width * touchControlPaneModifier.width;
-		controlPane.height = game.camera.height * touchControlPaneModifier.height;
-	} else {
-		window.addEventListener("keydown", handleKeyDown, false);
-		window.addEventListener("keyup", handleKeyUp, false);
+	controlPane.x = game.camera.width * touchControlPaneModifier.x;
+	controlPane.y = game.camera.height * touchControlPaneModifier.y;
+	controlPane.width = game.camera.width * touchControlPaneModifier.width;
+	controlPane.height = game.camera.height * touchControlPaneModifier.height;
 
-		game.view.style.cursor = "none";
-	}
+	game.view.style.cursor = "none";
 };
 
 const inputSystem: System = (game) => {
 	const timestamp = Date.now();
 
 	// Movement
-	if (isTouch) {
-		if (isPressed(controlPanePointerInput) || (isMoved(controlPanePointerInput) && isDown(controlPanePointerInput))) {
-			const controlPaneCentre = divide({ x: controlPane.width, y: controlPane.height }, 2);
-			const controlPanePositionCentreOffset = subtract(controlPanePointerInput.position, controlPaneCentre);
-			const deadzoneLength =
-				Math.min(game.camera.width * touchControlPaneModifier.width, game.camera.height * touchControlPaneModifier.height) *
-				controlPaneTouchDeadzoneRatio;
-			game.input.moveDirection =
-				hasValue(controlPanePositionCentreOffset) && length(controlPanePositionCentreOffset) > deadzoneLength
-					? normalise(controlPanePositionCentreOffset)
-					: { x: 0, y: 0 };
-		}
-	} else {
-		const keyboardMoveVector = { x: 0, y: 0 };
-		if (isDown(joypadInput.right)) keyboardMoveVector.x++;
-		if (isDown(joypadInput.left)) keyboardMoveVector.x--;
-		if (isDown(joypadInput.down)) keyboardMoveVector.y++;
-		if (isDown(joypadInput.up)) keyboardMoveVector.y--;
+	if (isPressed(controlPanePointerInput) || (isMoved(controlPanePointerInput) && isDown(controlPanePointerInput))) {
+		const controlPaneCentre = divide({ x: controlPane.width, y: controlPane.height }, 2);
+		const controlPanePositionCentreOffset = subtract(controlPanePointerInput.position, controlPaneCentre);
+		const deadzoneLength =
+			Math.min(game.camera.width * touchControlPaneModifier.width, game.camera.height * touchControlPaneModifier.height) * controlPaneTouchDeadzoneRatio;
+		game.input.moveDirection =
+			hasValue(controlPanePositionCentreOffset) && length(controlPanePositionCentreOffset) > deadzoneLength
+				? normalise(controlPanePositionCentreOffset)
+				: { x: 0, y: 0 };
+	} else if (
+		isPressed(joypadInput.right) ||
+		isUnpressed(joypadInput.right) ||
+		isPressed(joypadInput.left) ||
+		isUnpressed(joypadInput.left) ||
+		isPressed(joypadInput.down) ||
+		isUnpressed(joypadInput.down) ||
+		isPressed(joypadInput.up) ||
+		isUnpressed(joypadInput.up)
+	) {
+		const newMoveDirection = cloneDeep(game.input.moveDirection);
+		if (isPressed(joypadInput.right)) newMoveDirection.x = 1;
+		if (isPressed(joypadInput.left)) newMoveDirection.x = -1;
+		if (isUnpressed(joypadInput.right) || isUnpressed(joypadInput.left)) newMoveDirection.x = 0;
+		if (isPressed(joypadInput.down)) newMoveDirection.y = 1;
+		if (isPressed(joypadInput.up)) newMoveDirection.y = -1;
+		if (isUnpressed(joypadInput.down) || isUnpressed(joypadInput.up)) newMoveDirection.y = 0;
 
-		game.input.moveDirection = hasValue(keyboardMoveVector) ? normalise(keyboardMoveVector) : keyboardMoveVector;
+		game.input.moveDirection = hasValue(newMoveDirection) ? normalise(newMoveDirection) : { x: 0, y: 0 };
 	}
 
 	// Aiming
-	if (isMoved(mainPointerInput) && (!isTouch || isDown(mainPointerInput))) game.input.cursorPosition = cloneDeep(mainPointerInput.position);
-	game.input.firing = isTouch ? isTapped(mainPointerInput) : isDown(mainPointerInput);
+	if (isMoved(mainPointerInput) || isDown(mainPointerInput)) game.input.cursorPosition = cloneDeep(mainPointerInput.position);
+	game.input.firing = isDown(mainPointerInput);
 
 	lastUpdate = timestamp;
 };
@@ -120,18 +125,16 @@ const controlPanePointerInput: PointerInput = {
 const handlePointerDown = (event: PointerEvent): void => {
 	const timestamp = Date.now();
 
-	if (isTouch) {
-		const position = toGamePosition(event);
-		if (inPane(position, controlPane)) {
-			controlPanePointerInput.down = timestamp;
-			controlPanePointerInput.moved = timestamp;
-			controlPanePointerInput.position = subtract(position, controlPane);
-		} else {
-			mainPointerInput.down = timestamp;
-			mainPointerInput.moved = timestamp;
-			mainPointerInput.position = position;
-		}
-	} else mainPointerInput.down = timestamp;
+	const position = toGamePosition(event);
+	if (inPane(position, controlPane)) {
+		controlPanePointerInput.down = timestamp;
+		controlPanePointerInput.moved = timestamp;
+		controlPanePointerInput.position = subtract(position, controlPane);
+	} else {
+		mainPointerInput.down = timestamp;
+		mainPointerInput.moved = timestamp;
+		mainPointerInput.position = position;
+	}
 
 	event.preventDefault();
 };
@@ -139,11 +142,9 @@ const handlePointerDown = (event: PointerEvent): void => {
 const handlePointerUp = (event: PointerEvent): void => {
 	const timestamp = Date.now();
 
-	if (isTouch) {
-		const position = toGamePosition(event);
-		if (inPane(position, controlPane)) {
-			controlPanePointerInput.up = timestamp;
-		} else mainPointerInput.up = timestamp;
+	const position = toGamePosition(event);
+	if (inPane(position, controlPane)) {
+		controlPanePointerInput.up = timestamp;
 	} else mainPointerInput.up = timestamp;
 
 	event.preventDefault();
@@ -153,7 +154,7 @@ const handlePointerMove = (event: PointerEvent | DragEvent): void => {
 	const timestamp = Date.now();
 	const position = toGamePosition(event);
 
-	if (isTouch && inPane(position, controlPane)) {
+	if (inPane(position, controlPane)) {
 		controlPanePointerInput.position = subtract(position, controlPane);
 		controlPanePointerInput.moved = timestamp;
 	} else {
@@ -169,19 +170,19 @@ const handleKeyDown = (event: KeyboardEvent): void => {
 
 	switch (event.key) {
 		case Keys.W: {
-			joypadInput.up.down = timestamp;
+			if (isUp(joypadInput.up)) joypadInput.up.down = timestamp;
 			break;
 		}
 		case Keys.A: {
-			joypadInput.left.down = timestamp;
+			if (isUp(joypadInput.left)) joypadInput.left.down = timestamp;
 			break;
 		}
 		case Keys.S: {
-			joypadInput.down.down = timestamp;
+			if (isUp(joypadInput.down)) joypadInput.down.down = timestamp;
 			break;
 		}
 		case Keys.D: {
-			joypadInput.right.down = timestamp;
+			if (isUp(joypadInput.right)) joypadInput.right.down = timestamp;
 			break;
 		}
 	}
@@ -192,19 +193,19 @@ const handleKeyUp = (event: KeyboardEvent): void => {
 
 	switch (event.key) {
 		case Keys.W: {
-			joypadInput.up.up = timestamp;
+			if (isDown(joypadInput.up)) joypadInput.up.up = timestamp;
 			break;
 		}
 		case Keys.A: {
-			joypadInput.left.up = timestamp;
+			if (isDown(joypadInput.left)) joypadInput.left.up = timestamp;
 			break;
 		}
 		case Keys.S: {
-			joypadInput.down.up = timestamp;
+			if (isDown(joypadInput.down)) joypadInput.down.up = timestamp;
 			break;
 		}
 		case Keys.D: {
-			joypadInput.right.up = timestamp;
+			if (isDown(joypadInput.right)) joypadInput.right.up = timestamp;
 			break;
 		}
 	}

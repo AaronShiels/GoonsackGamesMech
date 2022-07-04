@@ -4,7 +4,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      project = "goonsackgames.com"
+      project = "mech.goonsackgames.com"
     }
   }
 }
@@ -17,7 +17,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      project = "goonsackgames.com"
+      project = "mech.goonsackgames.com"
     }
   }
 }

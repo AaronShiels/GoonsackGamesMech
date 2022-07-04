@@ -1,5 +1,5 @@
 import { AnimatedSprite } from "pixi.js";
-import { Initialiser, System } from "../../common/systems/system.js";
+import { Initialiser, System } from "./system.js";
 
 const renderInit: Initialiser = (game) => (game.renderer.backgroundColor = 0x1f512b);
 

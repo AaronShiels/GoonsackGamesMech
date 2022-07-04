@@ -1,7 +1,7 @@
-import { hasBody } from "../../common/components/body.js";
-import { hasPhysics } from "../../common/components/physics.js";
-import { multiply, subtract } from "../../common/utilities/vector.js";
-import { System } from "../../common/systems/system.js";
+import { hasBody } from "../components/body.js";
+import { hasPhysics } from "../components/physics.js";
+import { multiply, subtract } from "../utilities/vector.js";
+import { System } from "./system.js";
 
 const physicsSystem: System = (game, deltaSeconds) => {
 	for (const entity of game.entities) {

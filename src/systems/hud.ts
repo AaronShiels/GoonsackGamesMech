@@ -1,10 +1,10 @@
 import { Container, Graphics, Renderer, SCALE_MODES, Sprite } from "pixi.js";
-import { boundAngle } from "../../common/utilities/angles.js";
-import { add, multiply, subtract, Vector } from "../../common/utilities/vector.js";
+import { boundAngle } from "../utilities/angles.js";
+import { add, multiply, subtract, Vector } from "../utilities/vector.js";
 import { getResource, Resource } from "../assets/index.js";
 import { Mech } from "../entities/mech.js";
-import { isTouch, touchControlPaneModifier } from "../utilities/device.js";
-import { Initialiser, System } from "../../common/systems/system.js";
+import { touchControlPaneModifier } from "../utilities/device.js";
+import { Initialiser, System } from "./system.js";
 
 const maximumInaccuracyAngle = Math.PI / 4;
 const maximumExpansion = 30;
@@ -14,21 +14,19 @@ let reticle: Reticle | undefined;
 let joystick: Joystick | undefined;
 
 const hudInit: Initialiser = (game) => {
-	if (isTouch) {
-		const panelPosition = { x: game.camera.width * touchControlPaneModifier.x, y: game.camera.height * touchControlPaneModifier.y };
-		const panelSize = { x: game.camera.width * touchControlPaneModifier.width, y: game.camera.height * touchControlPaneModifier.height };
-		const panel = new Panel(panelPosition, panelSize);
-		game.hud.addChild(panel);
+	const panelPosition = { x: game.camera.width * touchControlPaneModifier.x, y: game.camera.height * touchControlPaneModifier.y };
+	const panelSize = { x: game.camera.width * touchControlPaneModifier.width, y: game.camera.height * touchControlPaneModifier.height };
+	const panel = new Panel(panelPosition, panelSize);
+	game.hud.addChild(panel);
 
-		const joystickPosition = {
-			x: (touchControlPaneModifier.x + touchControlPaneModifier.width / 2) * game.camera.width,
-			y: (touchControlPaneModifier.y + touchControlPaneModifier.height / 2) * game.camera.height
-		};
-		const joystickRadius =
-			Math.min(game.camera.width * touchControlPaneModifier.width, game.camera.height * touchControlPaneModifier.height) * joystickRadisuModifier;
-		joystick = new Joystick(joystickPosition, joystickRadius, game.renderer);
-		game.hud.addChild(joystick);
-	}
+	const joystickPosition = {
+		x: (touchControlPaneModifier.x + touchControlPaneModifier.width / 2) * game.camera.width,
+		y: (touchControlPaneModifier.y + touchControlPaneModifier.height / 2) * game.camera.height
+	};
+	const joystickRadius =
+		Math.min(game.camera.width * touchControlPaneModifier.width, game.camera.height * touchControlPaneModifier.height) * joystickRadisuModifier;
+	joystick = new Joystick(joystickPosition, joystickRadius, game.renderer);
+	game.hud.addChild(joystick);
 
 	reticle = new Reticle(game.input.cursorPosition);
 	game.hud.addChild(reticle);

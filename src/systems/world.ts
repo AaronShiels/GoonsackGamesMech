@@ -3,7 +3,7 @@ import { createBuilding } from "../entities/building.js";
 import { Mech } from "../entities/mech.js";
 import { Tile } from "../entities/tile.js";
 import { generateObjectData, generateTileData } from "../utilities/map.js";
-import { Initialiser } from "../../common/systems/system.js";
+import { Initialiser } from "./system.js";
 
 const worldInit: Initialiser = (game) => {
 	const tiles = generateTileData(defaultMap, "ground").map((td) => new Tile(td));

@@ -1,26 +1,23 @@
 {
-	"name": "goonsackgames",
+	"name": "goonsackgamesmech",
 	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
-		"client: build: debug": "webpack serve --mode development --config webpack.config.js",
-		"client: build: release": "webpack --mode production --config webpack.config.js",
-		"server: build: debug": "tsc --project tsconfig.server.json --sourceMap --watch",
-		"server: build: release": "tsc --project tsconfig.server.json"
+		"build: debug": "webpack serve --mode development --config webpack.config.js",
+		"build: release": "webpack --mode production --config webpack.config.js"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/AaronShiels/GoonsackGames.git"
+		"url": "git+https://github.com/AaronShiels/GoonsackGamesMech.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/AaronShiels/GoonsackGames/issues"
+		"url": "https://github.com/AaronShiels/GoonsackGamesMech/issues"
 	},
-	"homepage": "https://github.com/AaronShiels/GoonsackGames#readme",
+	"homepage": "https://github.com/AaronShiels/GoonsackGamesMech#readme",
 	"devDependencies": {
 		"@types/lodash": "^4.14.178",
-		"@types/node": "^17.0.13",
 		"@types/uuid": "^8.3.4",
 		"copy-webpack-plugin": "^10.2.3",
 		"html-webpack-plugin": "^5.5.0",
@@ -32,7 +29,6 @@
 		"webpack-dev-server": "^4.7.3"
 	},
 	"dependencies": {
-		"@deepstream/client": "^5.2.6",
 		"lodash": "^4.17.21",
 		"pixi.js": "^5.3.9",
 		"uuid": "^8.3.2"

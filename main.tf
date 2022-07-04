@@ -1,6 +1,6 @@
 
 locals {
-  domain_name = "goonsackgames.com"
+  domain_name = "mech.goonsackgames.com"
 }
 
 resource "aws_route53_zone" "zone" {
@@ -16,5 +16,4 @@ module "website" {
 
   domain_name    = local.domain_name
   hosted_zone_id = aws_route53_zone.zone.zone_id
-  content_dir    = "${path.module}/dist/client"
 }

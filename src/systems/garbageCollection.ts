@@ -1,5 +1,5 @@
-import { isEntity } from "../../common/entities/entity.js";
-import { System } from "../../common/systems/system.js";
+import { isEntity } from "../entities/entity.js";
+import { System } from "./system.js";
 
 const garbageCollectionSystem: System = (game) => {
 	for (let i = game.entities.length - 1; i >= 0; i--) {

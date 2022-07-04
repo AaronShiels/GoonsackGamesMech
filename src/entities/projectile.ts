@@ -1,7 +1,7 @@
 import { Graphics } from "pixi.js";
-import { Edges } from "../../common/components/body.js";
-import { Particle } from "../../common/components/particle.js";
-import { Vector } from "../../common/utilities/vector.js";
+import { Edges } from "../components/body.js";
+import { Particle } from "../components/particle.js";
+import { Vector } from "../utilities/vector.js";
 
 class CannonBullet extends Graphics implements Particle {
 	constructor(position: Vector, velocity: Vector, direction: number) {

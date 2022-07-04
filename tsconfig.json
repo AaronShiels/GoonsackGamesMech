@@ -5,6 +5,8 @@
 		"strict": true,
 		"moduleResolution": "Node",
 		"resolveJsonModule": true,
-		"allowSyntheticDefaultImports": true
-	}
+		"allowSyntheticDefaultImports": true,
+		"outDir": "./dist/"
+	},
+	"include": ["./src/**/*.ts"]
 }

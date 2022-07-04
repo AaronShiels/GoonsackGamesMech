@@ -1,8 +1,8 @@
-import { hasBody, hasEdges, BodyComponent, getBounds } from "../../common/components/body.js";
-import { hasPhysics } from "../../common/components/physics.js";
-import { rectanglesIntersection } from "../../common/utilities/rectangle.js";
-import { add, divide, length, normalise, Vector } from "../../common/utilities/vector.js";
-import { System } from "../../common/systems/system.js";
+import { hasBody, hasEdges, BodyComponent, getBounds } from "../components/body.js";
+import { hasPhysics } from "../components/physics.js";
+import { rectanglesIntersection } from "../utilities/rectangle.js";
+import { add, divide, length, normalise, Vector } from "../utilities/vector.js";
+import { System } from "./system.js";
 
 const collisionSystem: System = (game) => {
 	for (const entity of game.entities) {

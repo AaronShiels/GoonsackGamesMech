@@ -1,11 +1,11 @@
 import { Application, Container, SCALE_MODES, settings } from "pixi.js";
 import { loadResources } from "./assets";
-import { Vector } from "../common/utilities/vector.js";
-import { isTouch, touchControlPaneModifier } from "./utilities/device.js";
+import { Vector } from "./utilities/vector.js";
+import { touchControlPaneModifier } from "./utilities/device.js";
 import { getPlayerId, getGameId } from "./utilities/identity.js";
-import { Rectangle } from "../common/utilities/rectangle.js";
-import { Entity, isEntity } from "../common/entities/entity.js";
-import { Initialiser, System } from "../common/systems/system.js";
+import { Rectangle } from "./utilities/rectangle.js";
+import { Entity, isEntity } from "./entities/entity.js";
+import { Initialiser, System } from "./systems/system.js";
 import { cameraInit, cameraSystem } from "./systems/camera.js";
 import { collisionSystem } from "./systems/collision.js";
 import { elevationSystem } from "./systems/elevation.js";
@@ -30,8 +30,8 @@ interface GameInput {
 
 const minimumScreenDimension = Math.min(window.innerWidth, window.innerHeight);
 const gameResolution = 400;
-const controlPaneWidthAugment = isTouch ? touchControlPaneModifier.x + touchControlPaneModifier.width : 1;
-const controlPaneHeightAugment = isTouch ? touchControlPaneModifier.y + touchControlPaneModifier.height : 1;
+const controlPaneWidthAugment = touchControlPaneModifier.x + touchControlPaneModifier.width;
+const controlPaneHeightAugment = touchControlPaneModifier.y + touchControlPaneModifier.height;
 const screenWidth = minimumScreenDimension * controlPaneWidthAugment;
 const screenHeight = minimumScreenDimension * controlPaneHeightAugment;
 
