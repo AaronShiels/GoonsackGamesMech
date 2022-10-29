@@ -1,8 +1,3 @@
-locals {
-  website_hostname     = var.domain_name
-  website_hostname_www = "www.${var.domain_name}"
-}
-
 resource "aws_s3_bucket" "website" {
   bucket = var.domain_name
 
@@ -18,7 +13,7 @@ resource "aws_s3_bucket_policy" "website" {
 
 resource "aws_cloudfront_distribution" "website" {
   enabled             = true
-  aliases             = [local.website_hostname, local.website_hostname_www]
+  aliases             = [var.domain_name]
   default_root_object = "index.html"
 
   origin {
@@ -60,7 +55,7 @@ resource "aws_cloudfront_distribution" "website" {
 }
 
 resource "aws_route53_record" "website_a" {
-  name    = local.website_hostname
+  name    = var.domain_name
   zone_id = var.hosted_zone_id
   type    = "A"
 
@@ -71,18 +66,9 @@ resource "aws_route53_record" "website_a" {
   }
 }
 
-resource "aws_route53_record" "website_cname_www" {
-  name    = local.website_hostname_www
-  zone_id = var.hosted_zone_id
-  type    = "CNAME"
-  ttl     = "300"
-  records = [local.website_hostname]
-}
-
 resource "aws_acm_certificate" "website" {
-  domain_name               = local.website_hostname
-  subject_alternative_names = [local.website_hostname_www]
-  validation_method         = "DNS"
+  domain_name       = var.domain_name
+  validation_method = "DNS"
 
   provider = aws.certificate
 }

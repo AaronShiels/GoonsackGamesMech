@@ -1,3 +1,3 @@
-output "hostnames" {
-  value = [local.website_hostname, local.website_hostname_www]
+output "hostname" {
+  value = var.domain_name
 }
